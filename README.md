@@ -4,7 +4,7 @@
 
 Surplus **Mersive Solstice Pod Gen3** (`SP8096`) units are everywhere right now — compact matte-black plastic conference-room boxes stuck on **Android 7.1.1** and a 2016 **Linux 3.18** kernel. Inside, though, sits a surprisingly capable **Snapdragon 820 (`APQ8096`)** with 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in capture bridge.
 
-**Private repo · active hardware bring-up.** Self-booting **Android 15 (LineageOS 22.2)** on a minimal **Linux 4.4.302** kernel is running on physical hardware, with 4K@60 Hz HDMI out, Venus 4K hardware video decode, 5 GHz Wi-Fi (`ath10k_pci`), Bluetooth A2DP, Gigabit Ethernet, and Flirc IR remote verified on a living room TV. The 3.5 mm jack's right channel and `TC358840` HDMI input remain in progress. See [current status](#current-status) before flashing.
+**Active hardware bring-up.** Self-booting **Android 15 (LineageOS 22.2)** on a minimal **Linux 4.4.302** kernel is running on physical hardware, with 4K@60 Hz HDMI out, Venus 4K hardware video decode, 5 GHz Wi-Fi (`ath10k_pci`), Bluetooth A2DP, Gigabit Ethernet, and Flirc IR remote verified on a living room TV. The 3.5 mm jack's right channel and `TC358840` HDMI input remain in progress. See [current status](#current-status) before flashing.
 
 <p>
   <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/actions/workflows/ci.yml"><img src="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/actions/workflows/ci.yml/badge.svg" alt="CI" height="18"></a>

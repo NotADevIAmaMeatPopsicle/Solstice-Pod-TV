@@ -9,7 +9,7 @@
 3. **Optional TV APKs** placed in `tv-apks/` (`tvOS-Launcher`, `FLauncher`, `SmartTube`, `F-Droid` — downloaded from their official releases).
 
 ## Steps (~5–8 Minutes per Unit)
-1. **Enter fastboot:** Hold the internal PCB Volume-Down button on power-on (or run `adb reboot bootloader` if ADB is already available).
+1. **Enter fastboot:** Open the enclosure and hold the internal **`S3` (`VOL-`)** tactile button on the PCB during power-on (or run `adb reboot bootloader` if ADB is already available).
 2. **Back up stock partitions** (`boot`, `recovery`, `persist`, `modem`, `bluetooth`) to private local storage.
 3. **Dry-run verify** your image paths:
    ```powershell
