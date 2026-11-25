@@ -94,6 +94,12 @@ static void send_osd_name(uint8_t dst) {
     cec_send(dst, 0x47, (const uint8_t *)name, (uint8_t)len);
 }
 
+static void send_active_source(void) {
+    uint16_t pa = read_physical_addr();
+    uint8_t op[2] = { (uint8_t)(pa >> 8), (uint8_t)(pa & 0xFF) };
+    cec_send(0x0F, 0x82, op, 2);
+}
+
 static int map_cec_key(uint8_t cec_code) {
     switch (cec_code) {
         case 0x00: return KEY_ENTER;       /* Select / OK */
@@ -194,6 +200,15 @@ static void handle_msg(const struct cec_msg *rx) {
         }
         case 0x85: /* Request Active Source - do not steal TV input when user switches away */
             break;
+        case 0x86: { /* Set Stream Path - reply Active Source ONLY when TV selects OUR HDMI port */
+            if (rx->frame_size >= 4) {
+                uint16_t target_pa = (uint16_t)((rx->operand[0] << 8) | rx->operand[1]);
+                if (target_pa == read_physical_addr()) {
+                    send_active_source();
+                }
+            }
+            break;
+        }
         case 0x44: { /* User Control Pressed */
             if (rx->frame_size >= 3) {
                 int key = map_cec_key(rx->operand[0]);
