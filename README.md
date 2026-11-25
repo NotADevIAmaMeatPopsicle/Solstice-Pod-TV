@@ -18,15 +18,25 @@ Surplus **Mersive Solstice Pod Gen3** (`SP8096`) units are everywhere right now 
 **[Inside the box](#inside-the-box)** · **[The bench rig](#the-bench-rig)** · **[The bring-up story](#the-bring-up-story)** · **[Current status](#current-status)** · **[Flash a Pod in 5 minutes](#flash-a-pod-in-5-minutes)** · **[Build your own](docs/BUILD.md)** · **[Safety rules](docs/SAFETY.md)**
 
 <p align="center">
-  <img src="docs/images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view showing HDMI-IN and USB-C" width="460">
+  <img src="docs/images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view showing HDMI-IN and USB-C" width="460"><br>
+  <img src="docs/images/solstice-pod-gen3-rear.png" alt="Mersive Solstice Pod Gen3 (SP8096) rear I/O panel: Gigabit Ethernet PoE+, 12V DC, 3.5mm audio, 2x USB 3.0, HDMI 2, HDMI 1 4K" width="460">
 </p>
-<p align="center"><em>Mersive Solstice Pod Gen3 (SP8096)</em></p>
+<p align="center"><em>Mersive Solstice Pod Gen3 (SP8096) — front (HDMI-IN, USB-C) and rear (GbE PoE+, 12 V DC, 3.5 mm audio, 2× USB 3.0, HDMI 2, HDMI 1 4K)</em></p>
 
 ---
 
 ## Inside the box
 
-The first catch when you work on an SP8096: **there are no external reset or fastboot buttons on the enclosure.** If a flashed kernel hangs before `adbd` comes up, you have to open the plastic case and remove the internal metal heatsink to reach the **`S3` (`VOL-`)** tactile button on the PCB (`ASSY_003304_REVP2`). Once it's open, though, the board layout is clean and easy to work on — including an unpopulated **`P9 UART`** (`RX`/`TX`/`GND`) header right on the edge.
+The first catch when you work on an SP8096: **there are no external reset or fastboot buttons on the enclosure.** If a flashed kernel hangs before `adbd` comes up, you have to open the plastic case to reach the **`S3` (`VOL-`)** tactile button on the PCB (`ASSY_003304_REVP2`).
+
+### Teardown steps
+1. **Bottom cover (4 screws):** Peel back the **4 rubber feet on the bottom** of the enclosure to uncover the 4 case screws, then lift off the bottom cover.
+2. **Board removal (6 screws):** With the bottom cover off, remove the **6 screws on the underside of the PCB** (4 corner screws + 2 inner mounting screws, marked below) to free the board from the internal metal heatsink and reach `S3` (`VOL-`) and the unpopulated **`P9 UART`** (`RX`/`TX`/`GND`) header on the top side.
+
+<p align="center">
+  <img src="docs/images/teardown-pcb-6-screws.jpg" alt="Underside of the SP8096 PCB with arrows pointing to the 6 board mounting screws" width="760">
+</p>
+<p align="center"><em>Underside of the SP8096 PCB — remove these 6 screws (4 corner + 2 inner) to lift the board off the internal heatsink.</em></p>
 
 | Full board (`ASSY_003304_REVP2`) | APQ8096, QCA6174A Wi-Fi/BT & internal buttons |
 | :---: | :---: |

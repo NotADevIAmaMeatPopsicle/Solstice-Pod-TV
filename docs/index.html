@@ -341,13 +341,26 @@
       </div>
       <figure class="hero-card">
         <img src="images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view">
-        <figcaption>Mersive Solstice Pod Gen3 (SP8096) — front HDMI-IN and USB-C</figcaption>
+        <img src="images/solstice-pod-gen3-rear.png" alt="Mersive Solstice Pod Gen3 (SP8096) rear I/O panel" style="margin-top: 12px;">
+        <figcaption>Mersive Solstice Pod Gen3 (SP8096) — front (HDMI-IN, USB-C) and rear (GbE PoE+, 12 V, 3.5 mm, 2× USB 3.0, HDMI 2, HDMI 1 4K)</figcaption>
       </figure>
     </div>
 
     <section id="inside">
       <h2>Inside the box</h2>
-      <p>The first catch when working on an SP8096: <strong>there are no external reset or fastboot buttons on the enclosure.</strong> If a flashed kernel hangs before <code>adbd</code> starts, you have to open the plastic case and remove the internal metal heatsink to reach the <code>S3</code> (<code>VOL-</code>) tactile button on the PCB (<code>ASSY_003304_REVP2</code>). Once open, the layout is clean and easy to work on — including an unpopulated <code>P9 UART</code> (<code>RX</code>/<code>TX</code>/<code>GND</code>) header right on the edge.</p>
+      <p>The first catch when working on an SP8096: <strong>there are no external reset or fastboot buttons on the enclosure.</strong> If a flashed kernel hangs before <code>adbd</code> starts, you have to open the plastic case to reach the <code>S3</code> (<code>VOL-</code>) tactile button on the PCB (<code>ASSY_003304_REVP2</code>).</p>
+      <div class="callout">
+        <strong>Teardown steps:</strong>
+        <ol style="margin: 8px 0 0; padding-left: 20px;">
+          <li><strong>Bottom cover (4 screws):</strong> Peel back the <strong>4 rubber feet on the bottom</strong> of the enclosure to uncover the 4 case screws and lift off the bottom cover.</li>
+          <li><strong>Board removal (6 screws):</strong> Remove the <strong>6 screws on the underside of the PCB</strong> (4 corner + 2 inner, marked below) to free the board from the internal metal heatsink and reach <code>S3</code> (<code>VOL-</code>) and the unpopulated <code>P9 UART</code> (<code>RX</code>/<code>TX</code>/<code>GND</code>) header on the top side.</li>
+        </ol>
+      </div>
+
+      <figure class="photo" style="margin-top: 18px;">
+        <img src="images/teardown-pcb-6-screws.jpg" alt="Underside of the SP8096 PCB with arrows pointing to the 6 board mounting screws" style="height: auto; max-height: 440px; object-fit: contain; background: #1a1f1c;">
+        <figcaption><strong>Board mounting screws (6×)</strong>Remove the 4 corner screws and 2 inner mounting screws marked above to separate the PCB from the internal heatsink.</figcaption>
+      </figure>
 
       <div class="grid-2">
         <figure class="photo">
