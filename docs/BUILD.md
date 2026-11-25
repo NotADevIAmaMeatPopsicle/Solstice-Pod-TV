@@ -23,8 +23,8 @@ Download or extract these upstream inputs into a local working directory (e.g. `
    ```bash
    git clone --depth 1 https://github.com/LineageOS/android_kernel_lge_msm8996.git "$POD_WORK/android_kernel_lge_msm8996"
    ```
-2. **System donor:** Official **LineageOS 22.2** ZIP for **LG G5 (`h850`)** — extract `system.img` and the boot ramdisk into `$POD_DONOR_DIR`.
-3. **QCA6174A Wi-Fi & BT HAL donor:** Official **LineageOS 22.2** ZIP for **Xiaomi Mi 5 (`gemini`)** — extract QTI Wi-Fi/BT HALs using `system/scripts/extract-gemini-wifi-hal.sh` and `system/scripts/extract-gemini-bt-hal.sh`.
+2. **System donor:** Official **LineageOS 22.2** ZIP for **LG G5 (`h850`)**. Extract `system.img` and the boot ramdisk into `$POD_DONOR_DIR`.
+3. **QCA6174A Wi-Fi & BT HAL donor:** Official **LineageOS 22.2** ZIP for **Xiaomi Mi 5 (`gemini`)**. Extract QTI Wi-Fi/BT HALs using `system/scripts/extract-gemini-wifi-hal.sh` and `system/scripts/extract-gemini-bt-hal.sh`.
 4. **Upstream QCA6174A Wi-Fi firmware (`linux-firmware`):**
    - `ath10k/QCA6174/hw3.0/firmware-6.bin` (`WLAN.RM.4.4.1-00309`) → install as `firmware-5.bin`
    - `ath10k/QCA6174/hw3.0/board-2.bin` and `board.bin`

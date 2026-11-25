@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Solstice Pod TV — Mersive Solstice Pod Gen3 (SP8096) on Android 15</title>
+  <title>Solstice Pod TV: Mersive Solstice Pod Gen3 (SP8096) on Android 15</title>
   <meta name="description" content="Giving a retired Mersive Solstice Pod Gen3 (SP8096 / APQ8096) a second life as a 4K Android 15 (LineageOS 22.2) TV box.">
   <style>
     :root {
@@ -342,13 +342,13 @@
       <figure class="hero-card">
         <img src="images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view">
         <img src="images/solstice-pod-gen3-rear.png" alt="Mersive Solstice Pod Gen3 (SP8096) rear I/O panel" style="margin-top: 12px;">
-        <figcaption>Mersive Solstice Pod Gen3 (SP8096) — front (HDMI-IN, USB-C) and rear (GbE PoE+, 12 V, 3.5 mm, 2× USB 3.0, HDMI 2, HDMI 1 4K)</figcaption>
+        <figcaption>Mersive Solstice Pod Gen3 (SP8096): front (HDMI-IN, USB-C) and rear (GbE PoE+, 12 V, 3.5 mm, 2× USB 3.0, HDMI 2, HDMI 1 4K)</figcaption>
       </figure>
     </div>
 
     <section id="inside">
       <h2>Inside the box</h2>
-      <p>The first surprise when you start working on a Mersive Solstice Pod Gen3 (<code>SP8096</code>): <strong>there are no external reset or fastboot buttons anywhere on the case.</strong> To reach the internal <code>VOL-</code> (<code>S3</code>) button for fastboot — or the unpopulated <code>P9 UART</code> (<code>RX</code>/<code>TX</code>/<code>GND</code>) serial header — you have to open the plastic shell and lift the board (<code>ASSY_003304_REVP2</code>) out. Once it's open, though, it's a really clean board to work on. Jump down to the <a href="#flash">teardown &amp; flashing walkthrough</a> for the exact screws and button steps.</p>
+      <p>The first surprise when you start working on a Mersive Solstice Pod Gen3 (<code>SP8096</code>): <strong>there are no external reset or fastboot buttons anywhere on the case.</strong> To reach the internal <code>VOL-</code> (<code>S3</code>) button for fastboot, or the unpopulated <code>P9 UART</code> (<code>RX</code>/<code>TX</code>/<code>GND</code>) serial header, you have to open the plastic shell and lift the board (<code>ASSY_003304_REVP2</code>) out. Once it's open, though, it's a really clean board to work on. Jump down to the <a href="#flash">teardown &amp; flashing walkthrough</a> for the exact screws and button steps.</p>
 
       <div class="grid-2">
         <figure class="photo">
@@ -380,7 +380,7 @@
       <div class="story-list">
         <div class="story-item">
           <h3><span class="story-num">1</span>Staying under the 32 MB (<code>0x2000000</code>) bootloader wall</h3>
-          <p>The APQ8096 Little Kernel (<code>aboot</code>) silently refuses to boot if the uncompressed kernel + DTB crosses <code>0x2000000</code>. Starting from Qualcomm's minimal <code>msm_defconfig</code> — dropping LG phone drivers, UFS, battery/charger, NFC, touchscreens, and <code>cnss</code> — kept us safely under the ceiling, enforced by <code>check-image-layout.py</code>.</p>
+          <p>The APQ8096 Little Kernel (<code>aboot</code>) silently refuses to boot if the uncompressed kernel + DTB crosses <code>0x2000000</code>. Starting from Qualcomm's minimal <code>msm_defconfig</code> (dropping LG phone drivers, UFS, battery/charger, NFC, touchscreens, and <code>cnss</code>) kept us safely under the ceiling, enforced by <code>check-image-layout.py</code>.</p>
         </div>
         <div class="story-item">
           <h3><span class="story-num">2</span>Pairing the right LineageOS 22.2 donors</h3>
@@ -388,7 +388,7 @@
         </div>
         <div class="story-item">
           <h3><span class="story-num">3</span>Finding TLMM GPIO 127 for native 4K HDMI 1</h3>
-          <p>HDMI 2 (<code>ADV7533</code>) came up at 1080p60 while HDMI 1 (<code>9a0000.qcom,hdmi_tx</code>) looked dead. Diffing the stock DTB turned up <strong>TLMM GPIO 127</strong> — driving it HIGH on boot and enabling Display 2 after boot locked straight onto <strong>4K@60 Hz (594 MHz pixel clock)</strong> on a living room TV.</p>
+          <p>HDMI 2 (<code>ADV7533</code>) came up at 1080p60 while HDMI 1 (<code>9a0000.qcom,hdmi_tx</code>) looked dead. Diffing the stock DTB turned up <strong>TLMM GPIO 127</strong>. Driving it HIGH on boot and enabling Display 2 after boot locked straight onto <strong>4K@60 Hz (594 MHz pixel clock)</strong> on a living room TV.</p>
         </div>
         <div class="story-item">
           <h3><span class="story-num">4</span>Ditching <code>qcacld-3.0</code> and catching a 1-line crash in <code>ath10k</code></h3>
@@ -486,11 +486,11 @@
       <div class="grid-2">
         <figure class="photo">
           <img src="images/teardown-bottom-4-feet.jpg" alt="Underside of the Mersive Solstice Pod Gen3 with arrows pointing to the 4 rubber feet">
-          <figcaption><strong>Step 1 — Bottom cover (4 screws)</strong>Peel back the 4 rubber feet marked above, take out the case screws, and lift the bottom cover off.</figcaption>
+          <figcaption><strong>Step 1: Bottom cover (4 screws)</strong>Peel back the 4 rubber feet marked above, take out the case screws, and lift the bottom cover off.</figcaption>
         </figure>
         <figure class="photo">
           <img src="images/teardown-pcb-6-screws.jpg" alt="Underside of the SP8096 PCB with arrows pointing to the 6 board screws">
-          <figcaption><strong>Step 2 — Board screws (6 screws)</strong>Take out these 6 screws (4 corners + 2 in the middle) and the board is free to lift right out.</figcaption>
+          <figcaption><strong>Step 2: Board screws (6 screws)</strong>Take out these 6 screws (4 corners + 2 in the middle) and the board is free to lift right out.</figcaption>
         </figure>
       </div>
 
@@ -501,7 +501,7 @@
         </div>
         <div class="story-item">
           <h3><span class="story-num">2</span>Pull the board out and set the aluminum block aside (6 screws)</h3>
-          <p style="margin-bottom: 0;">Once the bottom cover is off, you'll see <strong>6 screws</strong> holding the board in place (4 in the corners and 2 in the middle, marked above). Take those out and the board is free to lift right out. That aluminum heatsink block isn't bolted to the board — it's only held on with a light layer of thermal paste, and mine fell right off while I was pulling the board out. Just set the aluminum block aside so you can see and reach the buttons on the top of the board.</p>
+          <p style="margin-bottom: 0;">Once the bottom cover is off, you'll see <strong>6 screws</strong> holding the board in place (4 in the corners and 2 in the middle, marked above). Take those out and the board is free to lift right out. That aluminum heatsink block isn't bolted to the board. It's only held on with a light layer of thermal paste, and mine fell right off while I was pulling the board out. Just set the aluminum block aside so you can see and reach the buttons on the top of the board.</p>
         </div>
         <div class="story-item">
           <h3><span class="story-num">3</span>Hold <code>VOL-</code> (<code>S3</code>) while powering on to enter Fastboot</h3>

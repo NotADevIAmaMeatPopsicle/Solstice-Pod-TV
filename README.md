@@ -2,7 +2,7 @@
 
 ### Giving a retired Mersive Solstice Pod Gen3 (`SP8096`) a second life as a 4K Android 15 TV box.
 
-Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now — compact matte-black plastic conference-room boxes stuck on **Android 7.1.1** and a 2016 **Linux 3.18** kernel. Inside, though, sits a surprisingly capable **Snapdragon 820 (`APQ8096`)** with 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in capture bridge.
+Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now. They are compact matte-black plastic conference-room boxes stuck on **Android 7.1.1** and a 2016 **Linux 3.18** kernel. Inside, though, sits a surprisingly capable **Snapdragon 820 (`APQ8096`)** with 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in capture bridge.
 
 **Active hardware bring-up.** Self-booting **Android 15 (LineageOS 22.2)** on a minimal **Linux 4.4.302** kernel is running on physical hardware, with 4K@60 Hz HDMI out, Venus 4K hardware video decode, 5 GHz Wi-Fi (`ath10k_pci`), Bluetooth A2DP, Gigabit Ethernet, and Flirc IR remote verified on a living room TV. The 3.5 mm jack's right channel and `TC358840` HDMI input remain in progress. See [current status](#current-status) before flashing.
 
@@ -21,13 +21,13 @@ Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now 
   <img src="docs/images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view showing HDMI-IN and USB-C" width="460"><br>
   <img src="docs/images/solstice-pod-gen3-rear.png" alt="Mersive Solstice Pod Gen3 (SP8096) rear I/O panel: Gigabit Ethernet PoE+, 12V DC, 3.5mm audio, 2x USB 3.0, HDMI 2, HDMI 1 4K" width="460">
 </p>
-<p align="center"><em>Mersive Solstice Pod Gen3 (SP8096) — front (HDMI-IN, USB-C) and rear (GbE PoE+, 12 V DC, 3.5 mm audio, 2× USB 3.0, HDMI 2, HDMI 1 4K)</em></p>
+<p align="center"><em>Mersive Solstice Pod Gen3 (SP8096): front (HDMI-IN, USB-C) and rear (GbE PoE+, 12 V DC, 3.5 mm audio, 2× USB 3.0, HDMI 2, HDMI 1 4K)</em></p>
 
 ---
 
 ## Inside the box
 
-The first surprise when you start working on a Mersive Solstice Pod Gen3 (`SP8096`): **there are no external reset or fastboot buttons anywhere on the case.** To reach the internal **`VOL-` (`S3`)** button for fastboot — or the unpopulated **`P9 UART`** (`RX`/`TX`/`GND`) serial header — you have to open the plastic shell and lift the board (`ASSY_003304_REVP2`) out. Once it's open, though, it's a really clean board to work on. Jump down to the [teardown & flashing walkthrough](#teardown--flashing-walkthrough) for the exact screws and button steps.
+The first surprise when you start working on a Mersive Solstice Pod Gen3 (`SP8096`): **there are no external reset or fastboot buttons anywhere on the case.** To reach the internal **`VOL-` (`S3`)** button for fastboot, or the unpopulated **`P9 UART`** (`RX`/`TX`/`GND`) serial header, you have to open the plastic shell and lift the board (`ASSY_003304_REVP2`) out. Once it's open, though, it's a really clean board to work on. Jump down to the [teardown & flashing walkthrough](#teardown--flashing-walkthrough) for the exact screws and button steps.
 
 | Full board (`ASSY_003304_REVP2`) | APQ8096, QCA6174A Wi-Fi/BT & internal buttons |
 | :---: | :---: |
@@ -53,13 +53,13 @@ Early kernel bring-up without serial output is pure guesswork, so a purple **FT2
 Getting a 2016-era `APQ8096` appliance all the way from stock Android 7.1.1 (Linux 3.18) to **Android 15 (LineageOS 22.2)** on **Linux 4.4.302** came down to five real-world fights:
 
 1. **Staying under the 32 MB (`0x2000000`) bootloader wall.**
-   The APQ8096 Little Kernel (`aboot`) silently refuses to boot if the uncompressed kernel + DTB crosses `0x2000000`. Starting from Qualcomm's minimal `msm_defconfig` — dropping LG phone drivers, UFS, battery/charger, NFC, touchscreens, and `cnss` — kept us safely under the ceiling, enforced automatically by `kernel/scripts/check-image-layout.py`.
+   The APQ8096 Little Kernel (`aboot`) silently refuses to boot if the uncompressed kernel + DTB crosses `0x2000000`. Starting from Qualcomm's minimal `msm_defconfig` (dropping LG phone drivers, UFS, battery/charger, NFC, touchscreens, and `cnss`) kept us safely under the ceiling, enforced automatically by `kernel/scripts/check-image-layout.py`.
 2. **Pairing the right LineageOS 22.2 donors.**
    We used official LineageOS 22.2 for the **LG G5 (`h850`)** as the `MSM8996` Android 15 system/GPU/Venus base, stripped its phone-only HALs, and transplanted the official LineageOS 22.2 **Xiaomi Mi 5 (`gemini`)** QTI Wi-Fi and Bluetooth HALs so the Pod's `QCA6174A / Rome` radio had native Android 15 HALs.
 3. **Finding TLMM GPIO 127 for native 4K HDMI 1.**
-   HDMI 2 (`ADV7533`) came up right away at `1080p60`, while HDMI 1 (`9a0000.qcom,hdmi_tx`) looked dead. Diffing the stock DTB revealed **GPIO 127** — driving it HIGH on boot and enabling Display 2 after boot locked straight onto **4K@60 Hz (`594 MHz` pixel clock)** on a living room TV.
+   HDMI 2 (`ADV7533`) came up right away at `1080p60`, while HDMI 1 (`9a0000.qcom,hdmi_tx`) looked dead. Diffing the stock DTB revealed **GPIO 127**. Driving it HIGH on boot and enabling Display 2 after boot locked straight onto **4K@60 Hz (`594 MHz` pixel clock)** on a living room TV.
 4. **Ditching `qcacld-3.0` and catching a 1-line crash in `ath10k`.**
-   Stock `qcacld-3.0` kept SSR-crashing on Linux 4.4.302. Switching to upstream `ath10k_pci` enumerated the card cleanly — then immediately panicked on `insmod` with a NULL pointer dereference at `0x0000001c` inside `ath10k_ce_send_nolock`.
+   Stock `qcacld-3.0` kept SSR-crashing on Linux 4.4.302. Switching to upstream `ath10k_pci` enumerated the card cleanly, then immediately panicked on `insmod` with a NULL pointer dereference at `0x0000001c` inside `ath10k_ce_send_nolock`.
    Turning on live `dmesg -w` led straight to `ce.c:491`: a Qualcomm CAF `WCN3990` backport had replaced `src_ring->sw_index` with `vaddr_rri_on_ddr[ce_id]` without checking `if (ar->rri_on_ddr)`. On QCA6174A PCI, `vaddr_rri_on_ddr` is `NULL`, and BMI uses Copy Engine 7 (`7 * 4 = 0x1c`). Fixing that line (`0017`), closing an edge-triggered MSI unmask race + disabling `pci_ps`/ASPM (`0018`), loading `WLAN.RM.4.4.1` (`firmware-5.bin`), and adding an 8-line `wlan.ko` shim for `/sys/module/wlan/parameters/fwpath` brought **5 GHz Wi-Fi** up at **866 Mbps Rx, 0% packet loss** alongside Bluetooth A2DP.
 5. **Couch control with Flirc USB.**
    Without an Android TV `tv.cec` HAL yet, plugging a **Flirc USB Gen2** into the rear USB 3.0 port with an old **Rosewill Media Center IR remote** worked out of the box as a native HID keyboard/remote.
@@ -87,12 +87,12 @@ Getting a 2016-era `APQ8096` appliance all the way from stock Android 7.1.1 (Lin
 
 Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los22-recovery-signed.img`, `pod-los22-system.simg`) from [docs/BUILD.md](docs/BUILD.md) and have Android Platform Tools (`adb` and `fastboot`, plus the Google `Android Bootloader Interface` USB driver on Windows), getting a stock Mersive Solstice Pod Gen3 (`SP8096`) onto Android 15 takes about **5–10 minutes**:
 
-| Step 1 — Bottom cover (4 screws under the rubber feet) | Step 2 — Board screws (6 screws holding the board in) |
+| Step 1: Bottom cover (4 screws under the rubber feet) | Step 2: Board screws (6 screws holding the board in) |
 | :---: | :---: |
 | ![Underside of the Mersive Solstice Pod Gen3 with arrows pointing to the 4 rubber feet](docs/images/teardown-bottom-4-feet.jpg) | ![Underside of the SP8096 PCB with arrows pointing to the 6 board screws](docs/images/teardown-pcb-6-screws.jpg) |
 
 1. **Take off the bottom cover (4 screws):** Unplug power and any cables, flip the Pod over, and peel back the **4 rubber feet** in the corners. Take out the 4 screws underneath and lift the bottom cover off.
-2. **Pull the board out and set the aluminum block aside (6 screws):** Once the bottom cover is off, you'll see **6 screws** holding the board in place (4 in the corners and 2 in the middle, marked above). Take those out and the board is free to lift right out. That aluminum heatsink block isn't bolted to the board — it's only held on with a light layer of thermal paste, and mine fell right off while I was pulling the board out. Just set the aluminum block aside so you can see and reach the buttons on the top of the board.
+2. **Pull the board out and set the aluminum block aside (6 screws):** Once the bottom cover is off, you'll see **6 screws** holding the board in place (4 in the corners and 2 in the middle, marked above). Take those out and the board is free to lift right out. That aluminum heatsink block isn't bolted to the board. It's only held on with a light layer of thermal paste, and mine fell right off while I was pulling the board out. Just set the aluminum block aside so you can see and reach the buttons on the top of the board.
 3. **Hold `VOL-` (`S3`) while powering on to enter Fastboot:**
    - Plug a **USB-C data cable** into the Pod's **front USB-C port** and connect it to your PC (the rear USB 3.0 ports won't work for fastboot or ADB).
    - Find the **`VOL-` (`S3`)** button on the top side of the board, just to the right of the USB-C port (between `VOL+` and `PWR`, marked below).
@@ -125,11 +125,11 @@ Read [installer/README.md](installer/README.md) and [docs/SAFETY.md](docs/SAFETY
 
 ## Documentation & licensing
 
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — Donor strategy, DTB, `ath10k_pci`, and HAL details
-- **[docs/BUILD.md](docs/BUILD.md)** — Reproducible Ubuntu 24.04 / WSL2 build guide
-- **[docs/SAFETY.md](docs/SAFETY.md)** — `0x2000000` ceiling, RAM-boot rule, and recovery notes
-- **[docs/AUDIO-AND-HDMI-IN.md](docs/AUDIO-AND-HDMI-IN.md)** — 3.5 mm right-channel & `TC358840` HDMI-in roadmap
-- **[NOTICE.md](NOTICE.md)** — Licensing, attribution, and what isn't stored in this repo
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Donor strategy, DTB, `ath10k_pci`, and HAL details
+- **[docs/BUILD.md](docs/BUILD.md)**: Reproducible Ubuntu 24.04 / WSL2 build guide
+- **[docs/SAFETY.md](docs/SAFETY.md)**: `0x2000000` ceiling, RAM-boot rule, and recovery notes
+- **[docs/AUDIO-AND-HDMI-IN.md](docs/AUDIO-AND-HDMI-IN.md)**: 3.5 mm right-channel & `TC358840` HDMI-in roadmap
+- **[NOTICE.md](NOTICE.md)**: Licensing, attribution, and what isn't stored in this repo
 
 ---
 

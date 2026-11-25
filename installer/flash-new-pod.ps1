@@ -25,7 +25,7 @@ Write-Host "Verified images:"
 Get-Item $bootImg, $recImg, $sysImg | Format-Table Name, Length, LastWriteTime -AutoSize
 
 if ($DryRun) {
-    Write-Host "DryRun enabled — exiting before touching any device."
+    Write-Host "DryRun enabled: exiting before touching any device."
     exit 0
 }
 
