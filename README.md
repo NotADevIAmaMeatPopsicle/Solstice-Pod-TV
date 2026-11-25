@@ -23,6 +23,20 @@ Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now.
 </p>
 <p align="center"><em>Mersive Solstice Pod Gen3 (SP8096): front (HDMI-IN, USB-C) and rear (GbE PoE+, 12 V DC, 3.5 mm audio, 2× USB 3.0, HDMI 2, HDMI 1 4K)</em></p>
 
+### Hardware specs at a glance
+
+| Spec | Mersive Solstice Pod Gen3 (`SP8096`) |
+| --- | --- |
+| **Processor** | Qualcomm Snapdragon 820 (`APQ8096`), quad-core Kryo (`arm64-v8a`) |
+| **GPU & Video** | Adreno 530 + Qualcomm Venus 4K hardware video decode |
+| **Memory** | 4 GB LPDDR4 RAM |
+| **Storage** | 16 GB internal eMMC (~9.4 GB used with Android 15 + starter TV apps) |
+| **Video Out** | Dual HDMI: `HDMI 1` native 4K@60 Hz (`594 MHz` pixel clock) + `HDMI 2` 1080p60 (`ADV7533`) |
+| **Video In** | Front `HDMI-IN` via Toshiba `TC358840` HDMI-to-CSI-2 bridge (work in progress) |
+| **Networking** | Gigabit Ethernet with PoE+ (`atl1c`) + Dual-band 802.11ac Wi-Fi & Bluetooth (`QCA6174A / QCNFA324`) |
+| **USB & Audio** | 2× rear USB 3.0, 1× front USB-C (fastboot/ADB), 3.5 mm stereo audio (`WCD9335`) |
+| **OS & Kernel** | Android 15 (LineageOS 22.2) on Linux `4.4.302-podmin+` (upgraded from stock Android 7.1.1 / Linux 3.18) |
+
 ---
 
 ## Inside the box
