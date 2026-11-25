@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SP8096 Android TV — Android 15 (LineageOS 22.2) on Solstice Pod Gen3</title>
-  <meta name="description" content="Turning a retired Mersive Solstice Pod Gen3 (SP8096 / APQ8096) into a 4K Android 15 (LineageOS 22.2) TV box.">
+  <title>Solstice Pod TV — Mersive Solstice Pod Gen3 (SP8096) on Android 15</title>
+  <meta name="description" content="Giving a retired Mersive Solstice Pod Gen3 (SP8096 / APQ8096) a second life as a 4K Android 15 (LineageOS 22.2) TV box.">
   <style>
     :root {
       --bg: #f7f4ee;
@@ -314,13 +314,13 @@
 <body>
   <header>
     <div class="wrap nav">
-      <div class="brand">SP8096 <span>Android TV</span></div>
+      <div class="brand">Solstice Pod <span>TV</span></div>
       <nav class="nav-links">
         <a href="#inside">Inside the box</a>
         <a href="#story">Bring-up story</a>
         <a href="#status">Status</a>
         <a href="#flash">Flash in 5 min</a>
-        <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv">GitHub</a>
+        <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV">GitHub</a>
       </nav>
     </div>
   </header>
@@ -328,8 +328,8 @@
   <main class="wrap">
     <div class="hero">
       <div>
-        <h1>SP8096 Android TV</h1>
-        <p class="subtitle">Turning a retired conference-room Solstice Pod Gen3 into a real 4K Android 15 TV box.</p>
+        <h1>Solstice Pod TV</h1>
+        <p class="subtitle">Giving a retired Mersive Solstice Pod Gen3 (<code>SP8096</code>) a second life as a 4K Android 15 TV box.</p>
         <div class="pills">
           <span class="pill">APQ8096 · Snapdragon 820</span>
           <span class="pill green">Android 15 · LineageOS 22.2</span>
@@ -499,22 +499,25 @@
 
     <section id="flash">
       <h2>Flash a Pod in 5 minutes</h2>
-      <p>Once you've built the three static images (<code>pod44-los22-boot-signed.img</code>, <code>pod44-los22-recovery-signed.img</code>, <code>pod-los22-system.simg</code>) using <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/BUILD.md">docs/BUILD.md</a>, converting any additional stock SP8096 takes ~5–8 minutes with zero compiling:</p>
+      <p>Once you've built the three static images (<code>pod44-los22-boot-signed.img</code>, <code>pod44-los22-recovery-signed.img</code>, <code>pod-los22-system.simg</code>) using <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/BUILD.md">docs/BUILD.md</a>, converting any additional stock Mersive Solstice Pod Gen3 (<code>SP8096</code>) takes ~5–8 minutes with zero compiling:</p>
       <pre><code>powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
   -PodName pod-02 `
   -ImagesDir .\out\images `
   -PlatformToolsDir .\platform-tools</code></pre>
-      <p>The installer never touches <code>persist</code>, <code>modem</code>, or <code>bt_firmware</code>, preserving each Pod's factory MAC addresses and calibration. Read <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/SAFETY.md">docs/SAFETY.md</a> before flashing.</p>
+      <p>The installer never touches <code>persist</code>, <code>modem</code>, or <code>bt_firmware</code>, preserving each Pod's factory MAC addresses and calibration. Read <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/SAFETY.md">docs/SAFETY.md</a> before flashing.</p>
     </section>
   </main>
 
   <footer class="wrap">
-    <div>SP8096 Android TV &middot; Apache-2.0 (scripts/docs) &amp; GPL-2.0 (kernel patches/shims)</div>
+    <div>Solstice Pod TV &middot; Apache-2.0 (scripts/docs) &amp; GPL-2.0 (kernel patches/shims)</div>
     <div>
-      <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/ARCHITECTURE.md">Architecture</a> &middot;
-      <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/BUILD.md">Build guide</a> &middot;
-      <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/SAFETY.md">Safety</a> &middot;
-      <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/NOTICE.md">Notice</a>
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/ARCHITECTURE.md">Architecture</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/BUILD.md">Build guide</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/SAFETY.md">Safety</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/NOTICE.md">Notice</a>
+    </div>
+    <div style="flex-basis: 100%; font-size: 0.8rem; opacity: 0.85;">
+      Front and rear reference images are from Mersive Technologies documentation; underside enclosure photo adapted from public FCC filing <code>2ADCSSP8096</code>. All PCB and bench photos are original. Unaffiliated with Mersive Technologies.
     </div>
   </footer>
 

@@ -1,13 +1,13 @@
-# SP8096 Android TV
+# Solstice Pod TV
 
-### Turning a retired conference-room Solstice Pod Gen3 into a real 4K Android 15 TV box.
+### Giving a retired Mersive Solstice Pod Gen3 (`SP8096`) a second life as a 4K Android 15 TV box.
 
-Surplus **Mersive Solstice Pod Gen3** (`SP8096`) units are everywhere right now — compact matte-black plastic conference-room boxes stuck on **Android 7.1.1** and a 2016 **Linux 3.18** kernel. Inside, though, sits a surprisingly capable **Snapdragon 820 (`APQ8096`)** with 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in capture bridge.
+Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now — compact matte-black plastic conference-room boxes stuck on **Android 7.1.1** and a 2016 **Linux 3.18** kernel. Inside, though, sits a surprisingly capable **Snapdragon 820 (`APQ8096`)** with 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in capture bridge.
 
 **Active hardware bring-up.** Self-booting **Android 15 (LineageOS 22.2)** on a minimal **Linux 4.4.302** kernel is running on physical hardware, with 4K@60 Hz HDMI out, Venus 4K hardware video decode, 5 GHz Wi-Fi (`ath10k_pci`), Bluetooth A2DP, Gigabit Ethernet, and Flirc IR remote verified on a living room TV. The 3.5 mm jack's right channel and `TC358840` HDMI input remain in progress. See [current status](#current-status) before flashing.
 
 <p>
-  <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/actions/workflows/ci.yml"><img src="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/actions/workflows/ci.yml/badge.svg" alt="CI" height="18"></a>
+  <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/actions/workflows/ci.yml"><img src="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/actions/workflows/ci.yml/badge.svg" alt="CI" height="18"></a>
   <img src="https://img.shields.io/badge/SoC-APQ8096-2274c7?style=flat" alt="SoC" height="18">
   <img src="https://img.shields.io/badge/OS-Android_15-2ea44f?style=flat" alt="OS" height="18">
   <img src="https://img.shields.io/badge/Kernel-4.4.302-00979d?style=flat" alt="Kernel" height="18">
@@ -112,4 +112,8 @@ The installer never touches `persist`, `modem`, or `bt_firmware`, preserving eac
 - **[docs/BUILD.md](docs/BUILD.md)** — Reproducible Ubuntu 24.04 / WSL2 build guide
 - **[docs/SAFETY.md](docs/SAFETY.md)** — `0x2000000` ceiling, RAM-boot rule, and recovery notes
 - **[docs/AUDIO-AND-HDMI-IN.md](docs/AUDIO-AND-HDMI-IN.md)** — 3.5 mm right-channel & `TC358840` HDMI-in roadmap
-- **[NOTICE.md](NOTICE.md)** — No proprietary blobs, APKs, or unit backups are stored in this repo
+- **[NOTICE.md](NOTICE.md)** — Licensing, attribution, and what isn't stored in this repo
+
+---
+
+<sub>Front and rear hardware reference images are from Mersive Technologies documentation; the underside enclosure photo is adapted from public FCC filing <code>2ADCSSP8096</code>. All PCB and bench photos are original. This is an independent project unaffiliated with Mersive Technologies.</sub>
