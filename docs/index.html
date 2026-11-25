@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SP8096 Android TV — Android 15 (LineageOS 22.2) on Solstice Pod Gen3</title>
+  <meta name="description" content="Turning a retired Mersive Solstice Pod Gen3 (SP8096 / APQ8096) into a 4K Android 15 (LineageOS 22.2) TV box.">
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --surface: #ffffff;
+      --surface-soft: #f0ebe1;
+      --ink: #1d231f;
+      --muted: #525d55;
+      --border: #ddd6c8;
+      --accent: #2f6f55;
+      --accent-soft: #e3efe9;
+      --blue: #2b5f8a;
+      --amber: #a35d14;
+      --amber-soft: #f8ecd9;
+      --code-bg: #1e2421;
+      --code-ink: #e8efe9;
+      --radius: 12px;
+      --shadow: 0 8px 28px rgba(29, 35, 31, 0.06);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.62;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 22px; }
+
+    /* Top nav */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(247, 244, 238, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      flex-wrap: wrap;
+    }
+    .brand {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .brand span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+    }
+    .nav-links a { color: var(--muted); font-weight: 500; }
+    .nav-links a:hover { color: var(--accent); text-decoration: none; }
+
+    /* Hero */
+    .hero {
+      padding: 46px 0 34px;
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 32px;
+      align-items: center;
+    }
+    @media (max-width: 780px) {
+      .hero { grid-template-columns: 1fr; padding-top: 28px; }
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+    }
+    .subtitle {
+      font-size: 1.12rem;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 20px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ink);
+    }
+    .pill.green { background: var(--accent-soft); border-color: #bfd9cc; color: var(--accent); }
+    .pill.amber { background: var(--amber-soft); border-color: #e7cfa7; color: var(--amber); }
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 18px 14px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .hero-card img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 10px;
+    }
+    .hero-card figcaption {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Sections */
+    section {
+      padding: 34px 0;
+      border-top: 1px solid var(--border);
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.5rem;
+      letter-spacing: -0.015em;
+    }
+    p { margin: 0 0 14px; }
+
+    /* Callout */
+    .callout {
+      background: var(--surface);
+      border-left: 4px solid var(--accent);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+    }
+    .callout strong { color: var(--ink); }
+
+    /* Photo grid */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+    @media (max-width: 700px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    figure.photo {
+      margin: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    figure.photo img {
+      width: 100%;
+      height: 290px;
+      object-fit: cover;
+      display: block;
+      cursor: zoom-in;
+      transition: transform 0.2s ease;
+    }
+    figure.photo img:hover { transform: scale(1.015); }
+    figure.photo figcaption {
+      padding: 11px 14px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    figure.photo figcaption strong { color: var(--ink); display: block; margin-bottom: 2px; }
+
+    /* Story cards */
+    .story-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .story-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+    .story-item h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      color: var(--ink);
+    }
+    .story-num {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    /* Table */
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--surface-soft);
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    tr:last-child td { border-bottom: none; }
+    .tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tag.ok { background: var(--accent-soft); color: var(--accent); }
+    .tag.partial { background: var(--amber-soft); color: var(--amber); }
+    .tag.todo { background: #e8ecf0; color: #475569; }
+
+    /* Code */
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      background: var(--surface-soft);
+      padding: 2px 5px;
+      border-radius: 5px;
+    }
+    pre {
+      background: var(--code-bg);
+      color: var(--code-ink);
+      padding: 16px 18px;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    pre code { background: none; padding: 0; color: inherit; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 26px 0 42px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 20, 17, 0.88);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 94vw;
+      max-height: 90vh;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <div class="brand">SP8096 <span>Android TV</span></div>
+      <nav class="nav-links">
+        <a href="#inside">Inside the box</a>
+        <a href="#story">Bring-up story</a>
+        <a href="#status">Status</a>
+        <a href="#flash">Flash in 5 min</a>
+        <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <div>
+        <h1>SP8096 Android TV</h1>
+        <p class="subtitle">Turning a retired conference-room Solstice Pod Gen3 into a real 4K Android 15 TV box.</p>
+        <div class="pills">
+          <span class="pill">APQ8096 · Snapdragon 820</span>
+          <span class="pill green">Android 15 · LineageOS 22.2</span>
+          <span class="pill">Linux 4.4.302-podmin</span>
+          <span class="pill amber">Active hardware bring-up</span>
+        </div>
+        <p>Surplus <strong>Mersive Solstice Pod Gen3</strong> (<code>SP8096</code>) units are compact matte-black plastic presentation boxes stuck on Android 7.1.1 and Linux 3.18. Inside sits a Snapdragon 820, 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in bridge.</p>
+        <p>Self-booting Android 15 (LineageOS 22.2) is running on physical hardware with 4K@60 Hz HDMI out, Venus 4K hardware video decode, 5 GHz Wi-Fi (<code>ath10k_pci</code>), Bluetooth A2DP, Gigabit Ethernet, and Flirc IR remote verified on a living room TV.</p>
+      </div>
+      <figure class="hero-card">
+        <img src="images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view">
+        <figcaption>Mersive Solstice Pod Gen3 (SP8096) — front HDMI-IN and USB-C</figcaption>
+      </figure>
+    </div>
+
+    <section id="inside">
+      <h2>Inside the box</h2>
+      <p>The first catch when working on an SP8096: <strong>there are no external reset or fastboot buttons on the enclosure.</strong> If a flashed kernel hangs before <code>adbd</code> starts, you have to open the plastic case and remove the internal metal heatsink to reach the <code>S3</code> (<code>VOL-</code>) tactile button on the PCB (<code>ASSY_003304_REVP2</code>). Once open, the layout is clean and easy to work on — including an unpopulated <code>P9 UART</code> (<code>RX</code>/<code>TX</code>/<code>GND</code>) header right on the edge.</p>
+
+      <div class="grid-2">
+        <figure class="photo">
+          <img src="images/pcb-top-full.jpg" alt="Full top side of the SP8096 PCB next to its internal metal heatsink">
+          <figcaption><strong>Full board (ASSY_003304_REVP2)</strong>Top side of the PCB next to its internal metal heatsink block.</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="images/pcb-soc-wifi-hdmi.jpg" alt="Closeup of APQ8096 SoC, QCNFA324 Wi-Fi/BT, TC358840, and internal buttons">
+          <figcaption><strong>SoC, QCA6174A &amp; internal buttons</strong>APQ8096, QCNFA324 Wi-Fi/BT with coax antennas, TC358840 HDMI-in, and VOL+/VOL-/PWR.</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="images/pcb-io-uart-eth.jpg" alt="Rear I/O, Gigabit Ethernet, PoE, 3.5 mm audio, USB 3.0, and P9 UART">
+          <figcaption><strong>Rear I/O &amp; P9 UART</strong>Atheros AR8151-B Gigabit Ethernet + PoE MagJack, 3.5 mm jack, dual USB 3.0, and P9 UART.</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="images/uart-bench-rig.jpg" alt="FT232H breakout wired to SP8096 P9 UART header">
+          <figcaption><strong>Bench serial rig</strong>Purple FT232H USB-to-serial breakout wired into P9 UART for earlycon and crash traces.</figcaption>
+        </figure>
+      </div>
+
+      <div class="callout">
+        <strong>Non-brick rule:</strong> Never <code>fastboot flash boot</code> an untested kernel, and never put an untested <code>insmod</code> in <code>on boot</code>. Always RAM-boot via <code>fastboot boot</code> first, test new <code>.ko</code> modules live from <code>/data/local/tmp/</code>, and only automate verified modules under <code>on property:sys.boot_completed=1</code>.
+      </div>
+    </section>
+
+    <section id="story">
+      <h2>The bring-up story</h2>
+      <p>Getting a 2016-era <code>APQ8096</code> appliance from stock Android 7.1.1 (Linux 3.18) to Android 15 (LineageOS 22.2) on Linux 4.4.302 came down to five real-world fights:</p>
+      <div class="story-list">
+        <div class="story-item">
+          <h3><span class="story-num">1</span>Staying under the 32 MB (<code>0x2000000</code>) bootloader wall</h3>
+          <p>The APQ8096 Little Kernel (<code>aboot</code>) silently refuses to boot if the uncompressed kernel + DTB crosses <code>0x2000000</code>. Starting from Qualcomm's minimal <code>msm_defconfig</code> — dropping LG phone drivers, UFS, battery/charger, NFC, touchscreens, and <code>cnss</code> — kept us safely under the ceiling, enforced by <code>check-image-layout.py</code>.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">2</span>Pairing the right LineageOS 22.2 donors</h3>
+          <p>Official LineageOS 22.2 for the <strong>LG G5 (<code>h850</code>)</strong> provided the <code>MSM8996</code> Android 15 system, Adreno 530 GPU, and Venus 4K decoder base (with phone-only HALs stripped), while official LineageOS 22.2 for the <strong>Xiaomi Mi 5 (<code>gemini</code>)</strong> supplied native QTI Wi-Fi and Bluetooth HALs for the Pod's <code>QCA6174A / Rome</code> radio.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">3</span>Finding TLMM GPIO 127 for native 4K HDMI 1</h3>
+          <p>HDMI 2 (<code>ADV7533</code>) came up at 1080p60 while HDMI 1 (<code>9a0000.qcom,hdmi_tx</code>) looked dead. Diffing the stock DTB turned up <strong>TLMM GPIO 127</strong> — driving it HIGH on boot and enabling Display 2 after boot locked straight onto <strong>4K@60 Hz (594 MHz pixel clock)</strong> on a living room TV.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">4</span>Ditching <code>qcacld-3.0</code> and catching a 1-line crash in <code>ath10k</code></h3>
+          <p>Stock <code>qcacld-3.0</code> kept SSR-crashing on Linux 4.4.302. Switching to upstream <code>ath10k_pci</code> enumerated the card cleanly, then immediately panicked at <code>0x0000001c</code> in <code>ath10k_ce_send_nolock</code>. Live <code>dmesg -w</code> pointed straight to <code>ce.c:491</code>: a CAF <code>WCN3990</code> backport dereferenced <code>vaddr_rri_on_ddr[ce_id]</code> without checking <code>if (ar-&gt;rri_on_ddr)</code> (<code>NULL[7] = 0x1c</code>). Patching that line (<code>0017</code>), closing an MSI unmask race + disabling <code>pci_ps</code>/ASPM (<code>0018</code>), loading <code>WLAN.RM.4.4.1</code> (<code>firmware-5.bin</code>), and adding an 8-line <code>wlan.ko</code> shim for <code>/sys/module/wlan/parameters/fwpath</code> brought <strong>5 GHz Wi-Fi</strong> up at <strong>866 Mbps Rx, 0% loss</strong> alongside Bluetooth A2DP.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">5</span>Couch control with Flirc USB</h3>
+          <p>Without an Android TV <code>tv.cec</code> HAL yet, plugging a <strong>Flirc USB Gen2</strong> into the rear USB 3.0 port with an old Rosewill Media Center IR remote worked out of the box as a native HID keyboard/remote.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="status">
+      <h2>Current status</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Subsystem</th>
+              <th>Hardware / Driver</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Boot &amp; OS</strong></td>
+              <td><code>APQ8096</code>, 4 GB RAM, 16 GB eMMC</td>
+              <td><span class="tag ok">Working</span></td>
+              <td>Cold self-boot into Android 15 (LineageOS 22.2) on Linux 4.4.302</td>
+            </tr>
+            <tr>
+              <td><strong>GPU &amp; 4K Decode</strong></td>
+              <td>Adreno 530 + Qualcomm Venus</td>
+              <td><span class="tag ok">Working</span></td>
+              <td>Smooth 4K hardware decode</td>
+            </tr>
+            <tr>
+              <td><strong>HDMI 1 (4K Out)</strong></td>
+              <td>Native <code>9a0000.qcom,hdmi_tx</code> (GPIO 127)</td>
+              <td><span class="tag ok">Working</span></td>
+              <td>Verified <code>4096x2160@60</code> &amp; <code>3840x2160@60</code> (594 MHz pixel clock)</td>
+            </tr>
+            <tr>
+              <td><strong>HDMI 2 (1080p Out)</strong></td>
+              <td>DSI0 &rarr; <code>ADV7533</code> + <code>SEC_MI2S_RX</code> audio</td>
+              <td><span class="tag ok">Working</span></td>
+              <td><code>1920x1080@60</code> with clean HDMI audio</td>
+            </tr>
+            <tr>
+              <td><strong>Wi-Fi (2.4 / 5 GHz)</strong></td>
+              <td>QCA6174A hw3.2 (upstream <code>ath10k_pci</code>)</td>
+              <td><span class="tag ok">Working</span></td>
+              <td>5 GHz 802.11ac, auto-loaded after <code>sys.boot_completed=1</code></td>
+            </tr>
+            <tr>
+              <td><strong>Bluetooth</strong></td>
+              <td><code>QCNFA324</code> (<code>bluetooth-power.ko</code> + QTI HAL)</td>
+              <td><span class="tag ok">Working</span></td>
+              <td>Verified A2DP audio + simultaneous Wi-Fi coexistence</td>
+            </tr>
+            <tr>
+              <td><strong>Ethernet &amp; USB 3.0</strong></td>
+              <td>Atheros <code>atl1c</code> + <code>6a00000.dwc3</code></td>
+              <td><span class="tag ok">Working</span></td>
+              <td>1000 Mbps Full Duplex; KB/mouse &amp; Flirc USB Gen2 verified</td>
+            </tr>
+            <tr>
+              <td><strong>3.5 mm Audio Jack</strong></td>
+              <td>WCD9335 (<code>J6 AUDIO</code>, <code>SLIMBUS_6_RX</code>)</td>
+              <td><span class="tag partial">Partial</span></td>
+              <td>Left channel works; right-channel mixer patch staged, awaiting re-test</td>
+            </tr>
+            <tr>
+              <td><strong>HDMI Input</strong></td>
+              <td>Toshiba <code>TC358840</code> (HDMI &rarr; CSI-2)</td>
+              <td><span class="tag partial">In progress</span></td>
+              <td>DTB grafted; needs kernel headroom trim + V4L2 driver</td>
+            </tr>
+            <tr>
+              <td><strong>HDMI-CEC</strong></td>
+              <td><code>qcom,hdmi_tx</code> CEC</td>
+              <td><span class="tag todo">Not started</span></td>
+              <td>Needs <code>android.hardware.tv.cec</code> HAL; Flirc USB works today</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="flash">
+      <h2>Flash a Pod in 5 minutes</h2>
+      <p>Once you've built the three static images (<code>pod44-los22-boot-signed.img</code>, <code>pod44-los22-recovery-signed.img</code>, <code>pod-los22-system.simg</code>) using <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/BUILD.md">docs/BUILD.md</a>, converting any additional stock SP8096 takes ~5–8 minutes with zero compiling:</p>
+      <pre><code>powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
+  -PodName pod-02 `
+  -ImagesDir .\out\images `
+  -PlatformToolsDir .\platform-tools</code></pre>
+      <p>The installer never touches <code>persist</code>, <code>modem</code>, or <code>bt_firmware</code>, preserving each Pod's factory MAC addresses and calibration. Read <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/SAFETY.md">docs/SAFETY.md</a> before flashing.</p>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <div>SP8096 Android TV &middot; Apache-2.0 (scripts/docs) &amp; GPL-2.0 (kernel patches/shims)</div>
+    <div>
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/ARCHITECTURE.md">Architecture</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/BUILD.md">Build guide</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/docs/SAFETY.md">Safety</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/sp8096-lineageos22-androidtv/blob/main/NOTICE.md">Notice</a>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+  <script>
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    document.querySelectorAll('figure.photo img, .hero-card img').forEach(img => {
+      img.addEventListener('click', () => {
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden', 'false');
+      });
+    });
+    lb.addEventListener('click', () => {
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') lb.click();
+    });
+  </script>
+</body>
+</html>
