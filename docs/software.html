@@ -215,6 +215,45 @@
       border-radius: 5px;
     }
 
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-top: 16px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--surface-soft);
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    tr:last-child td { border-bottom: none; }
+    .tag {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .tag.ok { background: var(--accent-soft); color: var(--accent); }
+    .tag.partial { background: var(--amber-soft); color: var(--amber); }
+    .tag.todo { background: #e8ecf0; color: #475569; }
+
     footer {
       border-top: 1px solid var(--border);
       padding: 26px 0 42px;
@@ -353,6 +392,64 @@
           <h3><span class="story-num">4</span>Clean TV defaults baked into the installer</h3>
           <p><code>installer/flash-new-pod.ps1</code> skips the phone setup wizard, disables the lockscreen and sleep timer, hides the phone status bar (<code>policy_control immersive.full=*</code>), disables 12 leftover phone apps, and sets Projectivy Launcher as the default home screen.</p>
         </div>
+      </div>
+    </section>
+
+    <section id="apps">
+      <h2>App compatibility (streaming &amp; game streaming)</h2>
+      <p>Because the Pod runs an unlocked custom Android 15 ROM without Google Android TV certification or Play Services (Widevine L3 software DRM instead of L1), open-source media and game-streaming apps run at full 4K@60 Hz hardware decode, while commercial DRM streamers have limits. No third-party APKs are bundled in this repo; users install official upstream releases or use <strong>Aurora Store</strong> / <strong>F-Droid</strong> directly on the Pod.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Category / App</th>
+              <th>Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>YouTube (SmartTube)</strong></td>
+              <td><span class="tag ok">Works great</span></td>
+              <td>Full 4K@60 Hz with Venus hardware decode, ad-free, remote-friendly.</td>
+            </tr>
+            <tr>
+              <td><strong>Xbox Remote Play / Cloud (Better xCloud)</strong></td>
+              <td><span class="tag ok">Works great</span></td>
+              <td>Open-source Android TV app for streaming from a local Xbox or Xbox Cloud Gaming.</td>
+            </tr>
+            <tr>
+              <td><strong>PC Game Streaming (Moonlight / Steam Link)</strong></td>
+              <td><span class="tag ok">Works great</span></td>
+              <td>Low-latency streaming over Gigabit Ethernet with Bluetooth or USB controllers (install Steam Link via Aurora Store).</td>
+            </tr>
+            <tr>
+              <td><strong>Self-Hosted &amp; Local Media (Plex, Jellyfin, Kodi, VLC)</strong></td>
+              <td><span class="tag ok">Works great</span></td>
+              <td>Full 4K hardware video decode; install Plex via Aurora Store or Jellyfin/Kodi from upstream releases.</td>
+            </tr>
+            <tr>
+              <td><strong>App Stores (F-Droid &amp; Aurora Store)</strong></td>
+              <td><span class="tag ok">Works great</span></td>
+              <td>Aurora Store installs official Play Store APKs anonymously without needing Google Play Services.</td>
+            </tr>
+            <tr>
+              <td><strong>Netflix</strong></td>
+              <td><span class="tag partial">Limited (L3)</span></td>
+              <td>Official Android TV Netflix app blocks uncertified devices. Mobile/tablet APK can run capped at 480p/540p (Widevine L3) with pointer navigation.</td>
+            </tr>
+            <tr>
+              <td><strong>Max (HBO), Prime Video, Hulu, Disney+</strong></td>
+              <td><span class="tag partial">Limited (L3)</span></td>
+              <td>Typically require Google Play Services / microG to sign in, cap at 720p/1080p on Widevine L3 (no 4K HDR), and some enforce Play Integrity checks.</td>
+            </tr>
+            <tr>
+              <td><strong>Apple TV</strong></td>
+              <td><span class="tag todo">Blocked (DRM)</span></td>
+              <td>Requires certified Widevine L1 and Google Play Services; refuses DRM playback on unlocked custom ROMs.</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </section>
 
