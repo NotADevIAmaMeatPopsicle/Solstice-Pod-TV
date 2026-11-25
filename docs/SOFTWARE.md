@@ -44,7 +44,6 @@ Under the hood, the Mersive Solstice Pod Gen3 (`SP8096`) is running **Android 15
 ## What is still a work in progress
 
 - **Polishing the TV UI:** Right now it is a functional bring-up UI, not a finished living-room experience. Cleaning up the launcher layout, 4K TV DPI/overscan defaults, Leanback/TV app icons, and overall look and feel is still ahead.
-- **3.5 mm stereo audio:** The left channel works on `J6 AUDIO` (`WCD9335` / `SLIMBUS_6_RX`); a right-channel mixer fix is staged and waiting on a headphone re-test.
-- **HDMI-CEC remote support:** Needs an `android.hardware.tv.cec` HAL so a standard TV remote can drive the UI directly over HDMI without needing a Flirc USB dongle.
+- **HDMI-CEC remote support:** Wiring `qcom,hdmi-tx-cec` in our DTS and adding an `android.hardware.tv.cec` HAL so a standard TV remote can drive the UI directly over HDMI without needing a Flirc USB dongle.
 - **HDMI Input (`TC358840`):** The Toshiba HDMI-to-CSI-2 bridge has its device-tree nodes drafted, and the next step is trimming kernel size headroom and bringing up the V4L2 capture driver (see [docs/AUDIO-AND-HDMI-IN.md](AUDIO-AND-HDMI-IN.md)).
 - **Production watchdog:** Re-enabling `msm_watchdog_v2` once the remaining drivers are finalized.

@@ -4,7 +4,7 @@
 
 Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now. They are compact matte-black plastic conference-room boxes stuck on **Android 7.1.1** and a 2016 **Linux 3.18** kernel. Inside, though, sits a surprisingly capable **Snapdragon 820 (`APQ8096`)** with 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in capture bridge.
 
-**Active hardware bring-up.** Self-booting **Android 15 (LineageOS 22.2)** on a minimal **Linux 4.4.302** kernel is running on physical hardware, with 4K@60 Hz HDMI out, Venus 4K hardware video decode, 5 GHz Wi-Fi (`ath10k_pci`), Bluetooth A2DP, Gigabit Ethernet, and Flirc IR remote verified on a living room TV. The 3.5 mm jack's right channel and `TC358840` HDMI input remain in progress. See [current status](#current-status) before flashing.
+**Active hardware bring-up.** Self-booting **Android 15 (LineageOS 22.2)** on a minimal **Linux 4.4.302** kernel is running on physical hardware, with 4K@60 Hz HDMI out (with automatic hot-plug / TV input-switch reconnect), Venus 4K hardware video decode, 5 GHz Wi-Fi (`ath10k_pci`), Bluetooth A2DP, Gigabit Ethernet, 3.5 mm stereo audio (`J6 AUDIO`), and Flirc IR remote verified on a living room TV. HDMI-CEC and `TC358840` HDMI input remain in progress. See [current status](#current-status) before flashing.
 
 <p>
   <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/actions/workflows/ci.yml"><img src="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/actions/workflows/ci.yml/badge.svg" alt="CI" height="18"></a>
@@ -86,14 +86,14 @@ Getting a 2016-era `APQ8096` appliance all the way from stock Android 7.1.1 (Lin
 | --- | --- | --- | --- |
 | **Boot & OS** | `APQ8096`, 4 GB RAM, 16 GB eMMC | Working | Cold self-boot into Android 15 (LineageOS 22.2) on Linux 4.4.302 |
 | **GPU & 4K Decode** | Adreno 530 + Qualcomm Venus | Working | Smooth 4K hardware decode |
-| **HDMI 1 (4K Out)** | Native `9a0000.qcom,hdmi_tx` (GPIO 127) | Working | Verified `4096x2160@60` & `3840x2160@60` (`594 MHz` pixel clock) |
+| **HDMI 1 (4K Out)** | Native `9a0000.qcom,hdmi_tx` (GPIO 127) | Working | Verified `4096x2160@60` & `3840x2160@60` (`594 MHz`), auto-enables on hot-plug / input switch |
 | **HDMI 2 (1080p Out)** | DSI0 → `ADV7533` bridge + `SEC_MI2S_RX` audio | Working | `1920x1080@60` with clean HDMI audio |
 | **Wi-Fi (2.4 / 5 GHz)** | QCA6174A hw3.2 (upstream `ath10k_pci`) | Working | 5 GHz 802.11ac, auto-loaded after `sys.boot_completed=1` |
 | **Bluetooth** | `QCNFA324` (`bluetooth-power.ko` + QTI HAL) | Working | Verified A2DP audio + simultaneous Wi-Fi coexistence |
 | **Ethernet & USB 3.0** | Atheros `atl1c` + `6a00000.dwc3` | Working | 1000 Mbps Full Duplex; KB/mouse & Flirc USB Gen2 verified |
-| **3.5 mm Audio Jack** | WCD9335 (`J6 AUDIO`, `SLIMBUS_6_RX`) | Partial | Left channel works; right-channel mixer patch staged, needs headphone re-test |
+| **3.5 mm Audio Jack** | WCD9335 (`J6 AUDIO`, `SLIMBUS_6_RX`) | Working | Verified left + right stereo output (`RX2`/`RX3` mixer path) |
 | **HDMI Input** | Toshiba `TC358840` (HDMI → CSI-2) | In progress | DTB grafted; needs kernel headroom trim + V4L2 driver ([notes](docs/AUDIO-AND-HDMI-IN.md)) |
-| **HDMI-CEC** | `qcom,hdmi_tx` CEC | Not started | Needs `android.hardware.tv.cec` HAL; Flirc USB works today |
+| **HDMI-CEC** | `qcom,hdmi_tx` CEC | In progress | Wiring `qcom,hdmi-tx-cec` in DTS + Android 15 CEC HAL; Flirc USB works today |
 
 ---
 

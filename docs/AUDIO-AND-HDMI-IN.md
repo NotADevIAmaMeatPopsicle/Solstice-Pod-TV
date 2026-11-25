@@ -1,8 +1,8 @@
 # Audio (3.5 mm Jack) & HDMI Input (`TC358840`) Roadmap
 
 ## 1. 3.5 mm Audio Jack (`J6 AUDIO`, WCD9335)
-- **Current state:** Left channel works; the `SLIMBUS_6_RX` patch in `audio_platform_info.xml` (`SND_DEVICE_OUT_HEADPHONES`, `SND_DEVICE_OUT_LINE`, etc.) is staged and flashed.
-- **Next verification step:** Test stereo headphones on `J6 AUDIO`. If the right channel is still silent, inspect live WCD9335 ALSA mixer controls (`HPHL`/`HPHR`, `RX1`/`RX2`, `COMP1`/`COMP2`, `SLIM RX2`/`RX3`, `RX INT2_2 MUX`) against the Pod's stock `mixer_paths_tasha.xml`.
+- **Current state:** **Working (stereo L+R verified).**
+- **Fix applied:** Routed `SND_DEVICE_OUT_HEADPHONES` / `SND_DEVICE_OUT_LINE` to `SLIMBUS_6_RX` in `audio_platform_info.xml` and configured `SLIM RX2 MUX` / `SLIM RX3 MUX` (`AIF4_PB`, `SLIM_6_RX Channels = Two`, `RX INT1_2 MUX = RX2`, `RX INT2_2 MUX = RX3`) in `mixer_paths_tasha.xml`. Verified with a 48 kHz L/R stereo tone test (440 Hz left, 660 Hz right, 523 Hz both).
 
 ## 2. HDMI Input (Toshiba `TC358840`)
 - **Hardware wiring (confirmed in `kernel/dts/apq8096-v3-sbc-pod.dts`):**
