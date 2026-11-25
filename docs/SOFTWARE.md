@@ -6,7 +6,7 @@
 
 | Projectivy Launcher on Android 15 | Android 15 & LineageOS 22.2 version |
 | :---: | :---: |
-| ![Projectivy Launcher running on the Mersive Solstice Pod Gen3](images/ui-launcher-wip.jpg) | ![Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3](images/ui-android15-version.png) |
+| ![Projectivy Launcher running on the Mersive Solstice Pod Gen3](images/ui-projectivy-home.jpg) | ![Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3](images/ui-android15-version.png) |
 
 | Custom kernel (`4.4.302-podmin+`) & build info | Internal storage (16 GB eMMC) |
 | :---: | :---: |
