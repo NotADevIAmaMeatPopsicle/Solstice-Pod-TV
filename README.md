@@ -33,10 +33,9 @@ The first catch when you work on an SP8096: **there are no external reset or fas
 1. **Bottom cover (4 screws):** Peel back the **4 rubber feet on the bottom** of the enclosure to uncover the 4 case screws, then lift off the bottom cover.
 2. **Board removal (6 screws):** With the bottom cover off, remove the **6 screws on the underside of the PCB** (4 corner screws + 2 inner mounting screws, marked below) to free the board from the internal metal heatsink and reach `S3` (`VOL-`) and the unpopulated **`P9 UART`** (`RX`/`TX`/`GND`) header on the top side.
 
-<p align="center">
-  <img src="docs/images/teardown-pcb-6-screws.jpg" alt="Underside of the SP8096 PCB with arrows pointing to the 6 board mounting screws" width="760">
-</p>
-<p align="center"><em>Underside of the SP8096 PCB — remove these 6 screws (4 corner + 2 inner) to lift the board off the internal heatsink.</em></p>
+| Step 1 — Bottom cover (4 screws under rubber feet) | Step 2 — Board removal (6 screws on PCB underside) |
+| :---: | :---: |
+| ![Underside of the Mersive Solstice Pod Gen3 showing arrows pointing to the 4 rubber feet hiding the case screws](docs/images/teardown-bottom-4-feet.jpg) | ![Underside of the SP8096 PCB with arrows pointing to the 6 board mounting screws](docs/images/teardown-pcb-6-screws.jpg) |
 
 | Full board (`ASSY_003304_REVP2`) | APQ8096, QCA6174A Wi-Fi/BT & internal buttons |
 | :---: | :---: |
