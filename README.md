@@ -123,13 +123,15 @@ Read [installer/README.md](installer/README.md) and [docs/SAFETY.md](docs/SAFETY
 
 ---
 
-## Documentation & licensing
+## Documentation, credits & licensing
 
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Donor strategy, DTB, `ath10k_pci`, and HAL details
 - **[docs/BUILD.md](docs/BUILD.md)**: Reproducible Ubuntu 24.04 / WSL2 build guide
 - **[docs/SAFETY.md](docs/SAFETY.md)**: `0x2000000` ceiling, RAM-boot rule, and recovery notes
 - **[docs/AUDIO-AND-HDMI-IN.md](docs/AUDIO-AND-HDMI-IN.md)**: 3.5 mm right-channel & `TC358840` HDMI-in roadmap
 - **[NOTICE.md](NOTICE.md)**: Licensing, attribution, and what isn't stored in this repo
+
+Big thanks to [erikb-lab/solstice-pod-gen3-androidtv](https://github.com/erikb-lab/solstice-pod-gen3-androidtv) for the initial Solstice Pod Gen3 Android TV lead and bring-up work that helped get this project started.
 
 ---
 
