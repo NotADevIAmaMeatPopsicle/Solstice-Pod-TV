@@ -11,6 +11,8 @@ while true; do
     for id in $ids; do
         if [ -n "$id" ]; then
             /system/bin/cmd display enable-display "$id" >/dev/null 2>&1
+            /system/bin/wm fixed-to-user-rotation -d "$id" enabled >/dev/null 2>&1
+            /system/bin/wm user-rotation -d "$id" lock 0 >/dev/null 2>&1
         fi
     done
     sleep 2
