@@ -321,8 +321,12 @@
       <p>These are direct screen captures straight off the Pod. We switched to <strong>Projectivy Launcher</strong> (ad-free, with a huge Android TV theming and wallpaper community), hid the phone status bar with immersive mode, and disabled the 12 leftover stock phone apps so the home screen stays clean.</p>
       <div class="grid-2">
         <figure class="photo">
-          <img src="images/ui-projectivy-home.jpg" alt="Projectivy Launcher running on the Mersive Solstice Pod Gen3 (Android 15)">
-          <figcaption><strong>Projectivy Launcher on Android 15</strong>Clean full-bleed TV home screen with leftover phone apps and the phone status bar hidden.</figcaption>
+          <img src="images/ui-home-apps.jpg" alt="Projectivy Launcher home screen with Plex, Snes9x EX+, Spotify, SmartTube and Better xCloud on the Mersive Solstice Pod Gen3">
+          <figcaption><strong>Home screen, ready to use</strong>Plex, Snes9x EX+, Spotify, SmartTube and Better xCloud in the TV Apps row. Just Wi-Fi, settings and the clock up top.</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="images/ui-smarttube.jpg" alt="SmartTube playing home feed on the Mersive Solstice Pod Gen3">
+          <figcaption><strong>SmartTube running on the Pod</strong>Ad-free YouTube on the big screen, driven by an Xbox controller or the TV remote over HDMI-CEC.</figcaption>
         </figure>
         <figure class="photo">
           <img src="images/ui-android15-version.png" alt="Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3">
@@ -390,14 +394,14 @@
         </div>
         <div class="story-item">
           <h3><span class="story-num">4</span>Clean TV defaults baked into the installer</h3>
-          <p><code>installer/flash-new-pod.ps1</code> skips the phone setup wizard, disables the lockscreen and sleep timer, hides the phone status bar (<code>policy_control immersive.full=*</code>), disables 12 leftover phone apps, and sets Projectivy Launcher as the default home screen.</p>
+          <p><code>installer/flash-new-pod.ps1</code> skips the phone setup wizard, disables the lockscreen and sleep timer, hides the phone status bar (<code>policy_control immersive.status=*</code>), disables 12 leftover phone apps, and sets Projectivy Launcher as the default home screen.</p>
         </div>
       </div>
     </section>
 
     <section id="apps">
       <h2>App compatibility (streaming &amp; game streaming)</h2>
-      <p>Because the Pod runs an unlocked custom Android 15 ROM without Google Android TV certification or Play Services (Widevine L3 software DRM instead of L1), open-source media and game-streaming apps run at full 4K@60 Hz hardware decode, while commercial DRM streamers have limits. No third-party APKs are bundled in this repo; users install official upstream releases or use <strong>Aurora Store</strong> / <strong>F-Droid</strong> directly on the Pod.</p>
+      <p>Because the Pod runs an unlocked custom Android 15 ROM without Google Android TV certification or Play Services (Widevine L3 software DRM instead of L1), open-source media and game-streaming apps run at full 4K@60 Hz hardware decode, while commercial DRM streamers have limits. No third-party APKs are bundled in this repo; users install official upstream releases or use <strong>Aptoide TV</strong> / <strong>F-Droid</strong> directly on the Pod.</p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -421,17 +425,17 @@
             <tr>
               <td><strong>PC Game Streaming (Steam Link)</strong></td>
               <td><span class="tag ok">Works great</span></td>
-              <td>Low-latency streaming over Gigabit Ethernet with Bluetooth or USB controllers (install Steam Link via Aurora Store).</td>
+              <td>Low-latency streaming over Gigabit Ethernet with Bluetooth or USB controllers (install Steam Link via Aptoide TV).</td>
             </tr>
             <tr>
               <td><strong>Self-Hosted &amp; Local Media (Plex, Jellyfin, Kodi, VLC)</strong></td>
               <td><span class="tag ok">Works great</span></td>
-              <td>Full 4K hardware video decode; install Plex via Aurora Store or Jellyfin/Kodi from upstream releases.</td>
+              <td>Full 4K hardware video decode; Plex installs from the official Plex download, or use Jellyfin/Kodi from upstream releases.</td>
             </tr>
             <tr>
-              <td><strong>App Stores (F-Droid &amp; Aurora Store)</strong></td>
+              <td><strong>App Stores (F-Droid &amp; Aptoide TV)</strong></td>
               <td><span class="tag ok">Works great</span></td>
-              <td>Aurora Store installs official Play Store APKs anonymously without needing Google Play Services.</td>
+              <td>Aptoide TV installs Android TV apps without needing Google Play Services.</td>
             </tr>
             <tr>
               <td><strong>Netflix</strong></td>

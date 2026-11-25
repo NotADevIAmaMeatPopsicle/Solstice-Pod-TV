@@ -4,15 +4,19 @@
 
 ## Live screen captures & device details
 
-| Projectivy Launcher on Android 15 | Android 15 & LineageOS 22.2 version |
+| Home screen, ready to use | SmartTube running on the Pod |
 | :---: | :---: |
-| ![Projectivy Launcher running on the Mersive Solstice Pod Gen3](images/ui-projectivy-home.jpg) | ![Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3](images/ui-android15-version.png) |
+| ![Projectivy Launcher home screen with Plex, Snes9x EX+, Spotify, SmartTube and Better xCloud](images/ui-home-apps.jpg) | ![SmartTube home feed on the Mersive Solstice Pod Gen3](images/ui-smarttube.jpg) |
 
-| Custom kernel (`4.4.302-podmin+`) & build info | Internal storage (16 GB eMMC) |
+| Android 15 & LineageOS 22.2 version | Custom kernel (`4.4.302-podmin+`) & build info |
 | :---: | :---: |
-| ![Android kernel 4.4.302-podmin+ and build number on the Mersive Solstice Pod Gen3](images/ui-kernel-version.png) | ![Android 15 Storage settings showing 16 GB internal eMMC on the Mersive Solstice Pod Gen3](images/ui-storage.png) |
+| ![Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3](images/ui-android15-version.png) | ![Android kernel 4.4.302-podmin+ and build number on the Mersive Solstice Pod Gen3](images/ui-kernel-version.png) |
 
-We switched to **Projectivy Launcher** (ad-free, with a large Android TV theming and wallpaper community), hid the phone status bar (`policy_control immersive.full=*`), and disabled the 12 leftover stock phone apps (`Dialer`, `Contacts`, `Messaging`, `Calculator`, `Clock`, `Camera`, `Calendar`, `Recorder`, `Gallery`, `Music`, and old Mersive apps) so the home screen stays clean.
+| Internal storage (16 GB eMMC) |
+| :---: |
+| ![Android 15 Storage settings showing 16 GB internal eMMC on the Mersive Solstice Pod Gen3](images/ui-storage.png) |
+
+We switched to **Projectivy Launcher** (ad-free, with a large Android TV theming and wallpaper community), hid the phone status bar (`policy_control immersive.status=*`), and disabled the 12 leftover stock phone apps (`Dialer`, `Contacts`, `Messaging`, `Calculator`, `Clock`, `Camera`, `Calendar`, `Recorder`, `Gallery`, `Music`, and old Mersive apps) so the home screen stays clean.
 
 ### Device details at a glance
 
@@ -37,19 +41,19 @@ We switched to **Projectivy Launcher** (ad-free, with a large Android TV theming
 1. **Fast cold self-boot into Android 15 (~26 s):** Everything lives on internal eMMC (`boot`, `recovery`, `system`) with `msm_watchdog_v2` enabled.
 2. **Automatic 4K@60 Hz HDMI hot-plug & TV input-switch reconnect:** `TLMM GPIO 127` wakes up native `HDMI 1` at `3840x2160@60` / `4096x2160@60` (`594 MHz` pixel clock), and our supervised `pod-hdmi-hotplug.sh` service automatically re-enables the external display whenever you switch TV inputs or hot-plug the cable.
 3. **Automatic Wi-Fi, Bluetooth A2DP, and 3.5 mm stereo audio:** `init.pod.wifi.rc` loads `ath10k_pci` after `sys.boot_completed=1`, and `J6 AUDIO` delivers verified left + right stereo audio over `SLIMBUS_6_RX`.
-4. **Clean TV defaults baked into `installer/flash-new-pod.ps1`:** Skips the phone setup wizard, disables lockscreen and sleep timer, hides the phone status bar (`policy_control immersive.full=*`), disables 12 leftover phone apps, and sets Projectivy Launcher as default home.
+4. **Clean TV defaults baked into `installer/flash-new-pod.ps1`:** Skips the phone setup wizard, disables lockscreen and sleep timer, hides the phone status bar (`policy_control immersive.status=*`), disables 12 leftover phone apps, and sets Projectivy Launcher as default home.
 
 ## App compatibility (streaming & game streaming)
 
-Because the Pod runs an unlocked custom Android 15 ROM without Google Android TV certification or Play Services (Widevine L3 software DRM instead of L1), open-source media and game-streaming apps run at full 4K@60 Hz hardware decode, while commercial DRM streamers have limits. No third-party APKs are bundled in this repo; users install official upstream releases or use **Aurora Store** / **F-Droid** directly on the Pod.
+Because the Pod runs an unlocked custom Android 15 ROM without Google Android TV certification or Play Services (Widevine L3 software DRM instead of L1), open-source media and game-streaming apps run at full 4K@60 Hz hardware decode, while commercial DRM streamers have limits. No third-party APKs are bundled in this repo; users install official upstream releases or use **Aptoide TV** / **F-Droid** directly on the Pod.
 
 | Category / App | Status | Notes |
 | --- | --- | --- |
 | **YouTube (SmartTube)** | Works great | Full 4K@60 Hz with Venus hardware decode, ad-free, remote-friendly |
 | **Xbox Remote Play / Cloud (Better xCloud)** | Works great | Open-source Android TV app for streaming from a local Xbox or Xbox Cloud Gaming |
-| **PC Game Streaming (Steam Link)** | Works great | Low-latency streaming over Gigabit Ethernet with Bluetooth or USB controllers (install Steam Link via Aurora Store) |
-| **Self-Hosted & Local Media (Plex, Jellyfin, Kodi, VLC)** | Works great | Full 4K hardware video decode; install Plex via Aurora Store or Jellyfin/Kodi from upstream releases |
-| **App Stores (F-Droid & Aurora Store)** | Works great | Aurora Store installs official Play Store APKs anonymously without needing Google Play Services |
+| **PC Game Streaming (Steam Link)** | Works great | Low-latency streaming over Gigabit Ethernet with Bluetooth or USB controllers (install Steam Link via Aptoide TV) |
+| **Self-Hosted & Local Media (Plex, Jellyfin, Kodi, VLC)** | Works great | Full 4K hardware video decode; Plex installs from the official Plex download, or use Jellyfin/Kodi from upstream releases |
+| **App Stores (F-Droid & Aptoide TV)** | Works great | Aptoide TV installs Android TV apps without needing Google Play Services |
 | **Netflix** | Limited (L3) | Official Android TV app blocks uncertified devices; mobile/tablet APK caps at 480p/540p (Widevine L3) |
 | **Max (HBO), Prime Video, Hulu, Disney+** | Limited (L3) | Typically need Play Services / microG to sign in, cap at 720p/1080p on Widevine L3, and some enforce Play Integrity checks |
 | **Apple TV** | Blocked (DRM) | Requires certified Widevine L1 and Google Play Services; refuses DRM playback on unlocked custom ROMs |
