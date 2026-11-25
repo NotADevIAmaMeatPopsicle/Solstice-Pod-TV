@@ -319,7 +319,7 @@
         <a href="#inside">Inside the box</a>
         <a href="#story">Bring-up story</a>
         <a href="#status">Status</a>
-        <a href="#flash">Flash in 5 min</a>
+        <a href="#flash">Teardown &amp; flash</a>
         <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV">GitHub</a>
       </nav>
     </div>
@@ -348,25 +348,7 @@
 
     <section id="inside">
       <h2>Inside the box</h2>
-      <p>The first catch when working on an SP8096: <strong>there are no external reset or fastboot buttons on the enclosure.</strong> If a flashed kernel hangs before <code>adbd</code> starts, you have to open the plastic case to reach the <code>S3</code> (<code>VOL-</code>) tactile button on the PCB (<code>ASSY_003304_REVP2</code>).</p>
-      <div class="callout">
-        <strong>Teardown steps:</strong>
-        <ol style="margin: 8px 0 0; padding-left: 20px;">
-          <li><strong>Bottom cover (4 screws):</strong> Peel back the <strong>4 rubber feet on the bottom</strong> of the enclosure to uncover the 4 case screws and lift off the bottom cover.</li>
-          <li><strong>Board removal (6 screws):</strong> Remove the <strong>6 screws on the underside of the PCB</strong> (4 corner + 2 inner, marked below) to free the board from the internal metal heatsink and reach <code>S3</code> (<code>VOL-</code>) and the unpopulated <code>P9 UART</code> (<code>RX</code>/<code>TX</code>/<code>GND</code>) header on the top side.</li>
-        </ol>
-      </div>
-
-      <div class="grid-2">
-        <figure class="photo">
-          <img src="images/teardown-bottom-4-feet.jpg" alt="Underside of the Mersive Solstice Pod Gen3 with arrows pointing to the 4 rubber feet">
-          <figcaption><strong>Step 1 — Bottom cover (4 screws)</strong>Peel back the 4 rubber feet marked above to remove the case screws and lift off the bottom cover.</figcaption>
-        </figure>
-        <figure class="photo">
-          <img src="images/teardown-pcb-6-screws.jpg" alt="Underside of the SP8096 PCB with arrows pointing to the 6 board mounting screws">
-          <figcaption><strong>Step 2 — Board removal (6 screws)</strong>Remove the 4 corner screws and 2 inner mounting screws marked above to lift the PCB off the internal heatsink.</figcaption>
-        </figure>
-      </div>
+      <p>The first catch when working on a Mersive Solstice Pod Gen3 (<code>SP8096</code>): <strong>there are no external reset or fastboot buttons on the enclosure.</strong> To reach the internal <code>S3</code> (<code>VOL-</code>) tactile button (needed for fastboot mode) or the unpopulated <code>P9 UART</code> (<code>RX</code>/<code>TX</code>/<code>GND</code>) header, you open the plastic case and lift the PCB (<code>ASSY_003304_REVP2</code>) off its internal metal heatsink. Jump to the <a href="#flash">teardown &amp; flashing walkthrough</a> below for exact screw locations and button timing.</p>
 
       <div class="grid-2">
         <figure class="photo">
@@ -498,13 +480,50 @@
     </section>
 
     <section id="flash">
-      <h2>Flash a Pod in 5 minutes</h2>
-      <p>Once you've built the three static images (<code>pod44-los22-boot-signed.img</code>, <code>pod44-los22-recovery-signed.img</code>, <code>pod-los22-system.simg</code>) using <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/BUILD.md">docs/BUILD.md</a>, converting any additional stock Mersive Solstice Pod Gen3 (<code>SP8096</code>) takes ~5–8 minutes with zero compiling:</p>
-      <pre><code>powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
+      <h2>Teardown &amp; flashing walkthrough</h2>
+      <p>Once you've built the three images (<code>pod44-los22-boot-signed.img</code>, <code>pod44-los22-recovery-signed.img</code>, <code>pod-los22-system.simg</code>) using <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/BUILD.md">docs/BUILD.md</a> and installed Android Platform Tools (<code>adb</code>/<code>fastboot</code>, plus the Google USB <code>Android Bootloader Interface</code> driver on Windows), converting a stock Mersive Solstice Pod Gen3 (<code>SP8096</code>) takes about 5–10 minutes.</p>
+
+      <div class="grid-2">
+        <figure class="photo">
+          <img src="images/teardown-bottom-4-feet.jpg" alt="Underside of the Mersive Solstice Pod Gen3 with arrows pointing to the 4 rubber feet">
+          <figcaption><strong>Step 1 — Bottom cover (4 screws)</strong>Peel back the 4 rubber feet marked above to uncover the case screws and lift off the bottom cover.</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="images/teardown-pcb-6-screws.jpg" alt="Underside of the SP8096 PCB with arrows pointing to the 6 board mounting screws">
+          <figcaption><strong>Step 2 — Board removal (6 screws)</strong>Remove the 4 corner screws and 2 inner mounting screws marked above to lift the PCB off the internal heatsink.</figcaption>
+        </figure>
+      </div>
+
+      <div class="story-list">
+        <div class="story-item">
+          <h3><span class="story-num">1</span>Remove the bottom cover (4 screws)</h3>
+          <p>Unplug power and all cables. Flip the Pod upside down, peel back the <strong>4 rubber feet</strong> in the corners, remove the 4 case screws underneath, and lift off the bottom cover.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">2</span>Free the PCB from the heatsink (6 screws)</h3>
+          <p>Remove the <strong>6 screws on the underside of the PCB</strong> (4 corner screws + 2 inner mounting screws, marked above) and carefully lift the board off the internal grey metal heatsink so you can reach the top side of the board.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">3</span>Boot into Fastboot using <code>S3</code> (<code>VOL-</code>)</h3>
+          <p>Plug a <strong>USB-C data cable</strong> from the Pod's <strong>front USB-C port</strong> into your PC (the rear USB 3.0 ports are host-only). Find the <code>S3</code> (<code>VOL-</code>) tactile button on the top side of the PCB (between <code>VOL+</code> and <code>PWR</code>, shown in the SoC closeup above).</p>
+          <p><strong>Press and hold <code>S3</code> (<code>VOL-</code>)</strong>, plug in <strong>12 V DC power</strong> (or PoE+ Ethernet), keep holding <code>VOL-</code> for <strong>~3–5 seconds</strong>, then release. Verify your PC sees the Pod:</p>
+          <pre><code>fastboot devices</code></pre>
+          <p style="margin-bottom: 0;">You should see a device ID followed by <code>fastboot</code>. On Windows, if nothing appears, open Device Manager and bind the device to the Google <code>Android Bootloader Interface</code> driver.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">4</span>Flash &amp; provision Android 15</h3>
+          <p>Back up stock partitions (<code>boot</code>, <code>recovery</code>, <code>persist</code>, <code>modem</code>, <code>bluetooth</code>) first if you haven't already, then run the installer:</p>
+          <pre><code>powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
   -PodName pod-02 `
   -ImagesDir .\out\images `
   -PlatformToolsDir .\platform-tools</code></pre>
-      <p>The installer never touches <code>persist</code>, <code>modem</code>, or <code>bt_firmware</code>, preserving each Pod's factory MAC addresses and calibration. Read <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/SAFETY.md">docs/SAFETY.md</a> before flashing.</p>
+          <p style="margin-bottom: 0;">The installer flashes <code>boot</code>, <code>recovery</code>, and <code>system</code>, formats <code>userdata</code> and <code>cache</code>, reboots into Android 15, disables the phone Setup Wizard / sleep timeout, and verifies Wi-Fi (<code>wlan0</code>) and Bluetooth. It never touches <code>persist</code>, <code>modem</code>, or <code>bt_firmware</code>, preserving each Pod's factory MAC addresses and calibration. Read <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/SAFETY.md">docs/SAFETY.md</a> before flashing.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">5</span>Reassemble &amp; plug into your TV</h3>
+          <p style="margin-bottom: 0;">Unplug power and USB-C, seat the PCB back onto the internal metal heatsink, reinstall the <strong>6 PCB screws</strong>, snap the bottom cover back on with the <strong>4 case screws</strong>, and press the <strong>4 rubber feet</strong> back in place. Connect <strong><code>HDMI 1</code> (the rightmost rear HDMI port)</strong> to your 4K TV, plug a USB keyboard/mouse or <strong>Flirc USB</strong> receiver into a rear USB 3.0 port, and power it on.</p>
+        </div>
+      </div>
     </section>
   </main>
 
