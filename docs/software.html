@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Software &amp; TV UI: Solstice Pod TV (Mersive Solstice Pod Gen3)</title>
-  <meta name="description" content="Android 15 (LineageOS 22.2) software stack, TV launcher setup, what works so far, and UI work in progress on the Mersive Solstice Pod Gen3 (SP8096).">
+  <meta name="description" content="Android 15 (LineageOS 22.2) software stack, Projectivy Launcher TV UI, live screen captures, and remaining work on the Mersive Solstice Pod Gen3 (SP8096).">
   <style>
     :root {
       --bg: #f7f4ee;
@@ -82,7 +82,7 @@
       font-size: 1.1rem;
       color: var(--muted);
       margin: 0 0 18px;
-      max-width: 740px;
+      max-width: 760px;
     }
     .pills {
       display: flex;
@@ -102,7 +102,6 @@
       color: var(--ink);
     }
     .pill.green { background: var(--accent-soft); border-color: #bfd9cc; color: var(--accent); }
-    .pill.amber { background: var(--amber-soft); border-color: #e7cfa7; color: var(--amber); }
 
     section {
       padding: 32px 0;
@@ -116,11 +115,11 @@
     p { margin: 0 0 14px; }
 
     .callout {
-      background: var(--amber-soft);
-      border-left: 4px solid var(--amber);
-      border-top: 1px solid #e7cfa7;
-      border-right: 1px solid #e7cfa7;
-      border-bottom: 1px solid #e7cfa7;
+      background: var(--accent-soft);
+      border-left: 4px solid var(--accent);
+      border-top: 1px solid #bfd9cc;
+      border-right: 1px solid #bfd9cc;
+      border-bottom: 1px solid #bfd9cc;
       border-radius: 8px;
       padding: 14px 18px;
       margin: 18px 0 0;
@@ -174,25 +173,6 @@
     }
     figure.photo figcaption strong { color: var(--ink); display: block; margin-bottom: 2px; }
 
-    .lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 100;
-      background: rgba(15, 20, 17, 0.88);
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      cursor: zoom-out;
-    }
-    .lightbox.open { display: flex; }
-    .lightbox img {
-      max-width: 94vw;
-      max-height: 90vh;
-      border-radius: 10px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
-
     .story-list {
       display: grid;
       gap: 14px;
@@ -242,6 +222,25 @@
       flex-wrap: wrap;
       gap: 12px;
     }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 20, 17, 0.88);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 94vw;
+      max-height: 90vh;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
   </style>
 </head>
 <body>
@@ -260,20 +259,21 @@
   <main class="wrap">
     <div class="page-head">
       <h1>Software &amp; TV UI</h1>
-      <p class="subtitle">What is actually running on the Mersive Solstice Pod Gen3 (<code>SP8096</code>), what we have built so far, and what is still rough around the edges.</p>
+      <p class="subtitle">What is running on the Mersive Solstice Pod Gen3 (<code>SP8096</code>), how we turned a LineageOS phone build into a clean living-room TV box, and what is still left on the list.</p>
       <div class="pills">
         <span class="pill green">Android 15 · LineageOS 22.2</span>
-        <span class="pill">Linux 4.4.302-podmin</span>
-        <span class="pill amber">UI still a work in progress</span>
+        <span class="pill">Linux 4.4.302-podmin+</span>
+        <span class="pill green">Projectivy Launcher</span>
+        <span class="pill green">HDMI-CEC + 4K@60 Hz</span>
       </div>
       <div class="callout">
-        <strong>Work in progress:</strong> The TV interface is running <strong>Projectivy Launcher</strong> with leftover phone apps hidden and the phone status bar turned off, though custom icon packs, themes, and streaming apps are still being tuned.
+        <strong>Current state:</strong> The Pod cold-boots straight into Android 15 and <strong>Projectivy Launcher</strong> with 4K@60 Hz HDMI out, automatic hot-plug / TV input-switch reconnect, 5 GHz Wi-Fi, Bluetooth A2DP, 3.5 mm stereo audio, native HDMI-CEC TV remote control, and <code>msm_watchdog_v2</code> enabled. The only remaining hardware work is <code>TC358840</code> HDMI input, plus optional custom theming and streaming apps.
       </div>
     </div>
 
     <section id="screens">
-      <h2>What the UI and device details look like right now</h2>
-      <p>These are direct screen captures straight off the Pod. We switched to <strong>Projectivy Launcher</strong> (which has a large Android TV theming and wallpaper community), hid the phone status bar with immersive mode, and disabled the 12 leftover stock phone apps so the home screen stays clean and ad-free.</p>
+      <h2>Live screen captures &amp; device details</h2>
+      <p>These are direct screen captures straight off the Pod. We switched to <strong>Projectivy Launcher</strong> (ad-free, with a huge Android TV theming and wallpaper community), hid the phone status bar with immersive mode, and disabled the 12 leftover stock phone apps so the home screen stays clean.</p>
       <div class="grid-2">
         <figure class="photo">
           <img src="images/ui-projectivy-home.jpg" alt="Projectivy Launcher running on the Mersive Solstice Pod Gen3 (Android 15)">
@@ -281,11 +281,11 @@
         </figure>
         <figure class="photo">
           <img src="images/ui-android15-version.png" alt="Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3">
-          <figcaption><strong>Android 15 &amp; LineageOS 22.2</strong>Live About Device readout showing Android 15 and LineageOS 22.2 running on the Pod.</figcaption>
+          <figcaption><strong>Android 15 &amp; LineageOS 22.2</strong>Live About Device readout running on the Pod.</figcaption>
         </figure>
         <figure class="photo">
           <img src="images/ui-kernel-version.png" alt="Kernel 4.4.302-podmin+ and build info on the Mersive Solstice Pod Gen3">
-          <figcaption><strong>Custom kernel (<code>4.4.302-podmin+</code>)</strong>Our minimal Linux 4.4.302 kernel and LineageOS 22.2 build info.</figcaption>
+          <figcaption><strong>Custom kernel (<code>4.4.302-podmin+</code>)</strong>Minimal Linux 4.4.302 kernel with HDMI-CEC and hardware watchdog enabled.</figcaption>
         </figure>
         <figure class="photo">
           <img src="images/ui-storage.png" alt="Storage settings showing 16 GB internal eMMC on the Mersive Solstice Pod Gen3">
@@ -306,7 +306,7 @@
     </section>
 
     <section id="stack">
-      <h2>What the software stack is</h2>
+      <h2>What is running under the hood</h2>
       <p>Stock Solstice Pods ship with a locked-down Android 7.1.1 image on Linux 3.18. We replaced that with a clean <strong>Android 15 (LineageOS 22.2)</strong> userspace running on our own minimal <strong>Linux 4.4.302</strong> kernel.</p>
       <div class="grid-2">
         <div class="card">
@@ -319,47 +319,47 @@
         </div>
         <div class="card">
           <h3>TV launcher &amp; apps</h3>
-          <p>Because the donor build starts out as a phone image, we skip the phone setup wizard, turn off the lockscreen, sleep timer, and phone status bar, hide 12 leftover phone apps, and set <strong>Projectivy Launcher</strong> as the default home screen (alongside optional upstream apps like <code>FLauncher</code>, <code>SmartTube</code>, and <code>F-Droid</code>; no APKs are bundled here).</p>
+          <p><strong>Projectivy Launcher</strong> runs as the default TV home screen, with full support for custom 4K wallpapers, icon packs, and channel rows. Optional upstream apps like <code>SmartTube</code>, <code>F-Droid</code>, and <code>FLauncher</code> install cleanly from their official releases (no APKs are bundled in this repo).</p>
         </div>
         <div class="card">
           <h3>Remote &amp; input (HDMI-CEC + Flirc)</h3>
-          <p>Native <strong>HDMI-CEC</strong> works over <code>HDMI 1</code> via our lightweight <code>pod-cec-daemon</code> (<code>fb1/cec</code> &rarr; <code>/dev/uinput</code>), so your regular TV remote drives the UI directly. A <strong>Flirc USB Gen2</strong> IR receiver or any USB keyboard/mouse also works out of the box on the rear USB 3.0 ports.</p>
+          <p>Native <strong>HDMI-CEC</strong> works over <code>HDMI 1</code> via our lightweight <code>pod-cec-daemon</code> (<code>fb1/cec</code> &rarr; <code>/dev/uinput</code>) on logical address <code>8</code>, so your TV remote drives the Pod without stealing inputs from game consoles. A <strong>Flirc USB Gen2</strong> or any USB keyboard/mouse also works on the rear USB 3.0 ports.</p>
         </div>
       </div>
     </section>
 
     <section id="done">
-      <h2>What we have done so far</h2>
+      <h2>What is working today</h2>
       <div class="story-list">
         <div class="story-item">
-          <h3><span class="story-num">1</span>Cold self-boot straight into Android 15</h3>
-          <p>Everything lives on internal eMMC (<code>boot</code>, <code>recovery</code>, and <code>system</code>). Plug in power and it boots straight into Android 15 and your TV launcher with no PC connected.</p>
+          <h3><span class="story-num">1</span>Fast cold self-boot into Android 15 (~26 s)</h3>
+          <p>Everything lives on internal eMMC (<code>boot</code>, <code>recovery</code>, and <code>system</code>) with <code>msm_watchdog_v2</code> enabled. Plug in power and it boots straight into Projectivy Launcher with no PC connected.</p>
         </div>
         <div class="story-item">
-          <h3><span class="story-num">2</span>Automatic Wi-Fi and Bluetooth after boot</h3>
-          <p>Our <code>init.pod.wifi.rc</code> waits for <code>sys.boot_completed=1</code> before loading <code>bluetooth-power.ko</code> and the upstream <code>ath10k_pci</code> stack (plus a small <code>wlan.ko</code> shim). That way 5 GHz Wi-Fi and Bluetooth A2DP come up automatically on every boot without ever risking an early-boot lockup.</p>
+          <h3><span class="story-num">2</span>Automatic 4K@60 Hz HDMI hot-plug &amp; TV input-switch reconnect</h3>
+          <p>Driving <code>TLMM GPIO 127</code> HIGH on boot wakes up native <code>HDMI 1</code> at <code>3840x2160@60</code> and <code>4096x2160@60</code> (594 MHz pixel clock). Our supervised <code>pod-hdmi-hotplug.sh</code> service automatically enables the external HDMI display whenever you switch TV inputs (like from an Xbox back to the Pod) or hot-plug the cable, with no black screen or mirror prompt.</p>
         </div>
         <div class="story-item">
-          <h3><span class="story-num">3</span>Native 4K@60 Hz output and hardware decode</h3>
-          <p>Driving <code>TLMM GPIO 127</code> HIGH on boot wakes up <code>HDMI 1</code> at <code>3840x2160@60</code> and <code>4096x2160@60</code> (594 MHz pixel clock), with smooth Venus 4K hardware video decode on a living room TV.</p>
+          <h3><span class="story-num">3</span>Automatic Wi-Fi, Bluetooth A2DP, and 3.5 mm stereo audio</h3>
+          <p><code>init.pod.wifi.rc</code> loads <code>ath10k_pci</code> after <code>sys.boot_completed=1</code> so 5 GHz Wi-Fi and Bluetooth A2DP come up cleanly on every boot, and <code>J6 AUDIO</code> delivers verified left + right stereo audio over <code>SLIMBUS_6_RX</code>.</p>
         </div>
         <div class="story-item">
-          <h3><span class="story-num">4</span>Turnkey TV defaults on first boot</h3>
-          <p>Running <code>installer/flash-new-pod.ps1</code> flashes the images, marks setup complete, disables the phone Setup Wizard and lockscreen, sets <code>screen_off_timeout</code> to max so the Pod never sleeps mid-movie, and optionally installs any TV APKs you place in <code>out/tv-apks/</code>.</p>
+          <h3><span class="story-num">4</span>Clean TV defaults baked into the installer</h3>
+          <p><code>installer/flash-new-pod.ps1</code> skips the phone setup wizard, disables the lockscreen and sleep timer, hides the phone status bar (<code>policy_control immersive.full=*</code>), disables 12 leftover phone apps, and sets Projectivy Launcher as the default home screen.</p>
         </div>
       </div>
     </section>
 
     <section id="todo">
-      <h2>What is still a work in progress</h2>
+      <h2>What is left on the list</h2>
       <div class="grid-2">
         <div class="card">
-          <h3>Tidying up the TV UI</h3>
-          <p>Right now the interface is a functional bench bring-up setup, not a finished living-room UI. Hiding leftover stock phone apps, cleaning up the launcher layout, tuning 4K DPI defaults, and making the whole couch experience feel cohesive is next.</p>
+          <h3>Custom themes &amp; streaming apps</h3>
+          <p>Projectivy Launcher is up and clean, ready for whatever custom 4K wallpapers, icon packs, and streaming apps you want to add from its theming community.</p>
         </div>
         <div class="card">
           <h3>HDMI Input (<code>TC358840</code>)</h3>
-          <p>The Toshiba <code>TC358840</code> HDMI-in bridge has its device-tree nodes drafted and still needs kernel size headroom trimmed and its V4L2 capture driver brought up. (3.5 mm stereo audio, HDMI-CEC, and <code>msm_watchdog_v2</code> are all verified working!)</p>
+          <p>The Toshiba <code>TC358840</code> HDMI-in bridge has its device-tree nodes drafted and still needs kernel size headroom trimmed and its V4L2 capture driver brought up (or a zero-kernel-growth USB 3.0 UVC capture dongle).</p>
         </div>
       </div>
     </section>

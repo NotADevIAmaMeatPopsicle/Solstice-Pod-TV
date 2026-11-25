@@ -1,8 +1,8 @@
-# Software & TV UI (Work in Progress)
+# Software & TV UI
 
-> **Heads up:** The TV UI is now running **Projectivy Launcher** with the phone status bar and leftover phone apps hidden, though custom themes, icon packs, and app banners are still a work in progress.
+> **Current state:** The Pod cold-boots straight into **Android 15 (LineageOS 22.2)** and **Projectivy Launcher** with 4K@60 Hz HDMI out, automatic hot-plug / TV input-switch reconnect, 5 GHz Wi-Fi, Bluetooth A2DP, 3.5 mm stereo audio, native HDMI-CEC TV remote control, and `msm_watchdog_v2` enabled. The only remaining hardware item is `TC358840` HDMI input, plus optional custom themes and streaming apps.
 
-## What the UI and device details look like right now
+## Live screen captures & device details
 
 | Projectivy Launcher on Android 15 | Android 15 & LineageOS 22.2 version |
 | :---: | :---: |
@@ -12,7 +12,7 @@
 | :---: | :---: |
 | ![Android kernel 4.4.302-podmin+ and build number on the Mersive Solstice Pod Gen3](images/ui-kernel-version.png) | ![Android 15 Storage settings showing 16 GB internal eMMC on the Mersive Solstice Pod Gen3](images/ui-storage.png) |
 
-We switched to **Projectivy Launcher** (ad-free with an active Android TV theming/wallpaper community), hid the phone status bar (`policy_control immersive.full=*`), and disabled the 12 leftover phone/stock apps (`Dialer`, `Contacts`, `Messaging`, `Calculator`, `Clock`, `Camera`, `Calendar`, `Recorder`, `Gallery`, `Music`, and old Mersive apps).
+We switched to **Projectivy Launcher** (ad-free, with a large Android TV theming and wallpaper community), hid the phone status bar (`policy_control immersive.full=*`), and disabled the 12 leftover stock phone apps (`Dialer`, `Contacts`, `Messaging`, `Calculator`, `Clock`, `Camera`, `Calendar`, `Recorder`, `Gallery`, `Music`, and old Mersive apps) so the home screen stays clean.
 
 ### Device details at a glance
 
@@ -23,25 +23,23 @@ We switched to **Projectivy Launcher** (ad-free with an active Android TV themin
 | **Memory** | 4 GB LPDDR4 RAM |
 | **Storage** | 16 GB internal eMMC (~9.4 GB used with Android 15 + starter TV apps) |
 | **OS** | Android 15 (LineageOS `22.2-20261121-NIGHTLY-h850`) |
-| **Kernel** | `4.4.302-podmin+` |
+| **Kernel** | `4.4.302-podmin+` (with `msm_watchdog_v2` and HDMI-CEC enabled) |
 
-## What is running on the Pod right now
+## What is running under the hood
 
-Under the hood, the Mersive Solstice Pod Gen3 (`SP8096`) is running **Android 15 (LineageOS 22.2)** on top of a minimal **Linux 4.4.302** kernel (`4.4.302-podmin`).
+- **System base (`h850` donor):** Official LineageOS 22.2 for the **LG G5 (`h850`)**, which shares the Qualcomm `MSM8996 / APQ8096` platform (Adreno 530 GPU + Venus 4K hardware video decoder). Phone-only HALs (telephony, fingerprint, sensors, NFC, camera) are stripped out.
+- **Wireless HALs (`gemini` donor):** Official LineageOS 22.2 QTI Wi-Fi and Bluetooth HALs pulled from the **Xiaomi Mi 5 (`gemini`)** so the Pod's `QCA6174A / Rome` radio speaks native Android 15 alongside our upstream `ath10k_pci` driver.
+- **TV launcher & apps:** **Projectivy Launcher** runs as the default home screen, with full support for custom 4K wallpapers, icon packs, and channel rows. Optional upstream apps like `SmartTube`, `F-Droid`, and `FLauncher` install cleanly from their official releases (no APKs are bundled in this repo).
+- **Remote & input (HDMI-CEC + Flirc):** Patch `0021-mdss-hdmi-tx-enable-cec.patch` brings Qualcomm's `fb1/cec` controller online on `HDMI 1`, and `system/cec/pod-cec-daemon.c` runs on logical address `8` (`Playback Device 2`), replying to `<Set Stream Path>` (`0x86`) only for our HDMI port so your TV remote works without stealing inputs from game consoles. A **Flirc USB Gen2** or any USB keyboard/mouse also works out of the box on the rear USB 3.0 ports.
 
-- **System base:** Official LineageOS 22.2 for the **LG G5 (`h850`)**, which shares the Qualcomm `MSM8996 / APQ8096` platform (Adreno 530 GPU + Venus 4K hardware video decoder). Phone-only HALs (telephony, fingerprint, sensors, NFC, camera) are stripped out.
-- **Wireless HALs:** Official LineageOS 22.2 QTI Wi-Fi and Bluetooth HALs pulled from the **Xiaomi Mi 5 (`gemini`)** so the Pod's `QCA6174A / Rome` radio speaks native Android 15.
-- **TV launcher & apps:** Because LineageOS `h850` starts out as a phone build, we skip the phone setup wizard, turn off the lockscreen and sleep timeout, and set a TV-friendly launcher as the default home screen. So far we have tested `tvOS-Launcher` (`com.techgenius.tvoslauncher`) as the default home activity, along with `FLauncher`, `SmartTube`, and `F-Droid` as optional side-loaded apps (downloaded directly from their upstream releases; no APKs are bundled in this repo).
+## What is working today
 
-## What we have done on the software side so far
+1. **Fast cold self-boot into Android 15 (~26 s):** Everything lives on internal eMMC (`boot`, `recovery`, `system`) with `msm_watchdog_v2` enabled.
+2. **Automatic 4K@60 Hz HDMI hot-plug & TV input-switch reconnect:** `TLMM GPIO 127` wakes up native `HDMI 1` at `3840x2160@60` / `4096x2160@60` (`594 MHz` pixel clock), and our supervised `pod-hdmi-hotplug.sh` service automatically re-enables the external display whenever you switch TV inputs or hot-plug the cable.
+3. **Automatic Wi-Fi, Bluetooth A2DP, and 3.5 mm stereo audio:** `init.pod.wifi.rc` loads `ath10k_pci` after `sys.boot_completed=1`, and `J6 AUDIO` delivers verified left + right stereo audio over `SLIMBUS_6_RX`.
+4. **Clean TV defaults baked into `installer/flash-new-pod.ps1`:** Skips the phone setup wizard, disables lockscreen and sleep timer, hides the phone status bar (`policy_control immersive.full=*`), disables 12 leftover phone apps, and sets Projectivy Launcher as default home.
 
-1. **Cold self-boot into Android 15:** Everything lives on internal eMMC (`boot`, `recovery`, `system`), so unplugging power and plugging it back in boots straight into Android 15 without needing a PC attached.
-2. **Automatic Wi-Fi and Bluetooth after boot (`init.pod.wifi.rc`):** Instead of risking early-boot kernel panics in `on boot`, `system/init/init.pod.wifi.rc` waits for `sys.boot_completed=1`, loads `bluetooth-power.ko` and the upstream `ath10k_pci` Wi-Fi stack (`cfg80211`, `mac80211`, `ath`, `ath10k_core`, `ath10k_pci`, plus our tiny `wlan.ko` shim), and brings 5 GHz Wi-Fi and Bluetooth A2DP up automatically.
-3. **4K@60 Hz living-room output:** Driving `TLMM GPIO 127` HIGH on boot wakes up native `HDMI 1` (`9a0000.qcom,hdmi_tx`) at `3840x2160@60` and `4096x2160@60` (`594 MHz` pixel clock), with Adreno 530 rendering and Venus 4K hardware decode working smoothly.
-4. **Native HDMI-CEC TV remote & Flirc USB:** Removing LG's `#define BLOCK_CEC` guard (`0021-mdss-hdmi-tx-enable-cec.patch`) brings Qualcomm's `fb1/cec` controller online on `HDMI 1`, and our lightweight `pod-cec-daemon` (`system/cec/pod-cec-daemon.c`) translates standard TV remote presses straight into Linux `/dev/uinput` key events. A **Flirc USB Gen2** + **Rosewill Media Center IR remote** also works out of the box on either rear USB 3.0 port.
-5. **TV box defaults in the installer (`installer/flash-new-pod.ps1`):** On first boot, the installer marks the device provisioned, disables the phone Setup Wizard, disables the lockscreen, sets `screen_off_timeout` to max so the box never goes to sleep mid-movie, and optionally installs any TV APKs you drop into `out/tv-apks/`.
+## What is left on the list
 
-## What is still a work in progress
-
-- **Tidying up the TV UI:** Right now it is a functional bring-up UI, not a finished living-room experience. Cleaning up the launcher layout, hiding leftover stock phone apps, tuning 4K TV DPI/overscan defaults, and making the overall look and feel cohesive is next.
-- **HDMI Input (`TC358840`):** The Toshiba HDMI-to-CSI-2 bridge has its device-tree nodes drafted, and the next step is trimming kernel size headroom and bringing up the V4L2 capture driver (see [docs/AUDIO-AND-HDMI-IN.md](AUDIO-AND-HDMI-IN.md)).
+- **Custom themes & streaming apps:** Projectivy is up and clean, ready for whatever custom 4K wallpapers, icon packs, and streaming apps you want to add.
+- **HDMI Input (`TC358840`):** Device-tree nodes are drafted; next step is trimming kernel headroom under `0x2000000` and bringing up the V4L2 capture driver (see [docs/AUDIO-AND-HDMI-IN.md](AUDIO-AND-HDMI-IN.md)).
