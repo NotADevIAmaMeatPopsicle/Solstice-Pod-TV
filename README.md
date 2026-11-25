@@ -27,7 +27,7 @@ Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now 
 
 ## Inside the box
 
-The first catch when you work on a Mersive Solstice Pod Gen3 (`SP8096`): **there are no external reset or fastboot buttons on the enclosure.** To reach the internal **`S3` (`VOL-`)** tactile button (needed for fastboot mode) or the unpopulated **`P9 UART`** (`RX`/`TX`/`GND`) serial header, you open the plastic case and lift the PCB (`ASSY_003304_REVP2`) off its internal metal heatsink. See the [step-by-step teardown & flashing walkthrough](#teardown--flashing-walkthrough) below for exact screw locations and button timing.
+The first surprise when you start working on a Mersive Solstice Pod Gen3 (`SP8096`): **there are no external reset or fastboot buttons anywhere on the case.** To reach the internal **`VOL-` (`S3`)** button for fastboot — or the unpopulated **`P9 UART`** (`RX`/`TX`/`GND`) serial header — you have to open the plastic shell and lift the board (`ASSY_003304_REVP2`) out. Once it's open, though, it's a really clean board to work on. Jump down to the [teardown & flashing walkthrough](#teardown--flashing-walkthrough) for the exact screws and button steps.
 
 | Full board (`ASSY_003304_REVP2`) | APQ8096, QCA6174A Wi-Fi/BT & internal buttons |
 | :---: | :---: |
@@ -85,36 +85,41 @@ Getting a 2016-era `APQ8096` appliance all the way from stock Android 7.1.1 (Lin
 
 ## Teardown & flashing walkthrough
 
-Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los22-recovery-signed.img`, `pod-los22-system.simg`) using [docs/BUILD.md](docs/BUILD.md) and installed Android Platform Tools (`adb`/`fastboot`, plus the Google USB `Android Bootloader Interface` driver on Windows), converting a stock Mersive Solstice Pod Gen3 (`SP8096`) takes about **5–10 minutes**:
+Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los22-recovery-signed.img`, `pod-los22-system.simg`) from [docs/BUILD.md](docs/BUILD.md) and have Android Platform Tools (`adb` and `fastboot`, plus the Google `Android Bootloader Interface` USB driver on Windows), getting a stock Mersive Solstice Pod Gen3 (`SP8096`) onto Android 15 takes about **5–10 minutes**:
 
-| Step 1 — Bottom cover (4 screws under rubber feet) | Step 2 — Board removal (6 screws on PCB underside) |
+| Step 1 — Bottom cover (4 screws under the rubber feet) | Step 2 — Board screws (6 screws holding the board in) |
 | :---: | :---: |
-| ![Underside of the Mersive Solstice Pod Gen3 showing arrows pointing to the 4 rubber feet hiding the case screws](docs/images/teardown-bottom-4-feet.jpg) | ![Underside of the SP8096 PCB with arrows pointing to the 6 board mounting screws](docs/images/teardown-pcb-6-screws.jpg) |
+| ![Underside of the Mersive Solstice Pod Gen3 with arrows pointing to the 4 rubber feet](docs/images/teardown-bottom-4-feet.jpg) | ![Underside of the SP8096 PCB with arrows pointing to the 6 board screws](docs/images/teardown-pcb-6-screws.jpg) |
 
-1. **Remove the bottom cover (4 screws):** Unplug power and all cables. Flip the Pod upside down, peel back the **4 rubber feet** in the corners, remove the 4 case screws underneath, and lift off the bottom cover.
-2. **Free the PCB from the heatsink (6 screws):** Remove the **6 screws on the underside of the PCB** (4 corner screws + 2 inner mounting screws, marked above) and carefully lift the board off the internal metal heatsink to expose the top side of the board.
-3. **Enter Fastboot mode with `S3` (`VOL-`):**
-   - Connect a **USB-C data cable** from the Pod's **front USB-C port** to your PC (the rear USB 3.0 ports are host-only).
-   - Find the **`S3` (`VOL-`)** tactile button near the edge of the top side of the PCB (between `VOL+` and `PWR`, shown in the SoC closeup above).
-   - **Press and hold `S3` (`VOL-`)**, plug in **12 V DC power** (or PoE+ Ethernet), keep holding `VOL-` for **~3–5 seconds**, and release.
-   - Confirm your PC sees the Pod in fastboot mode:
+1. **Take off the bottom cover (4 screws):** Unplug power and any cables, flip the Pod over, and peel back the **4 rubber feet** in the corners. Take out the 4 screws underneath and lift the bottom cover off.
+2. **Pull the board out and set the aluminum block aside (6 screws):** Once the bottom cover is off, you'll see **6 screws** holding the board in place (4 in the corners and 2 in the middle, marked above). Take those out and the board is free to lift right out. That aluminum heatsink block isn't bolted to the board — it's only held on with a light layer of thermal paste, and mine fell right off while I was pulling the board out. Just set the aluminum block aside so you can see and reach the buttons on the top of the board.
+3. **Hold `VOL-` (`S3`) while powering on to enter Fastboot:**
+   - Plug a **USB-C data cable** into the Pod's **front USB-C port** and connect it to your PC (the rear USB 3.0 ports won't work for fastboot or ADB).
+   - Find the **`VOL-` (`S3`)** button on the top side of the board, just to the right of the USB-C port (between `VOL+` and `PWR`, marked below).
+
+   <p align="center">
+     <img src="docs/images/teardown-vol-down-button.jpg" alt="Closeup of the front USB-C port and the VOL+, VOL- (S3), and PWR buttons with an arrow pointing to VOL- (S3)" width="540">
+   </p>
+
+   - **Press and hold `VOL-` (`S3`)**, plug in **12 V power** (or PoE+), keep holding it for **about 3–5 seconds**, and then let go.
+   - Check that your PC sees the Pod in fastboot mode:
      ```powershell
      fastboot devices
      ```
-     You should see a device ID followed by `fastboot`. *(On Windows, if nothing appears, open Device Manager and bind the device to the Google `Android Bootloader Interface` driver.)*
-4. **Flash & provision Android 15:**
-   Back up stock partitions (`boot`, `recovery`, `persist`, `modem`, `bluetooth`) first if you haven't already, then run the installer:
+     You should see a device ID followed by `fastboot`. *(If nothing shows up on Windows, check Device Manager for an unknown Android device and assign it the Google `Android Bootloader Interface` driver.)*
+4. **Back up stock partitions and flash Android 15:**
+   If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first. Then run the installer script:
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
      -PodName pod-02 `
      -ImagesDir .\out\images `
      -PlatformToolsDir .\platform-tools
    ```
-   The installer flashes `boot`, `recovery`, and `system`, formats `userdata` and `cache`, reboots into Android 15, disables the phone Setup Wizard / sleep timeout, and verifies Wi-Fi (`wlan0`) and Bluetooth. It **never touches `persist`, `modem`, or `bt_firmware`**, preserving each Pod's factory MAC addresses and calibration.
-5. **Reassemble & plug into your TV:**
-   Unplug power and USB-C, seat the PCB back onto the internal metal heatsink, reinstall the **6 PCB screws**, snap the bottom cover back on with the **4 case screws**, and press the **4 rubber feet** back in place. Connect **`HDMI 1` (the rightmost rear HDMI port)** to your 4K TV, plug a USB keyboard/mouse or **Flirc USB** receiver into a rear USB 3.0 port, and power it on.
+   The script flashes `boot`, `recovery`, and `system`, formats `userdata` and `cache`, reboots into Android 15, skips the phone setup wizard and sleep timer, and prints out a quick check of the kernel, Wi-Fi (`wlan0`), and Bluetooth. It **never touches `persist`, `modem`, or `bt_firmware`**, so your Pod keeps its factory MAC addresses and calibration.
+5. **Put it back together and hook it up to your TV:**
+   Unplug power and USB-C, set the aluminum heatsink block back onto the board (making sure the thermal paste lines up cleanly), and put the **6 board screws** back in. Snap the bottom cover back on with the **4 case screws** and press the **4 rubber feet** back in place. Plug **`HDMI 1` (the rightmost rear HDMI port)** into your 4K TV, plug a USB keyboard/mouse or **Flirc USB** receiver into one of the rear USB 3.0 ports, and power it up.
 
-See [installer/README.md](installer/README.md) and [docs/SAFETY.md](docs/SAFETY.md) before flashing.
+Read [installer/README.md](installer/README.md) and [docs/SAFETY.md](docs/SAFETY.md) before flashing.
 
 ---
 
