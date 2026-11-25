@@ -75,8 +75,8 @@ Getting a 2016-era `APQ8096` appliance all the way from stock Android 7.1.1 (Lin
 4. **Ditching `qcacld-3.0` and catching a 1-line crash in `ath10k`.**
    Stock `qcacld-3.0` kept SSR-crashing on Linux 4.4.302. Switching to upstream `ath10k_pci` enumerated the card cleanly, then immediately panicked on `insmod` with a NULL pointer dereference at `0x0000001c` inside `ath10k_ce_send_nolock`.
    Turning on live `dmesg -w` led straight to `ce.c:491`: a Qualcomm CAF `WCN3990` backport had replaced `src_ring->sw_index` with `vaddr_rri_on_ddr[ce_id]` without checking `if (ar->rri_on_ddr)`. On QCA6174A PCI, `vaddr_rri_on_ddr` is `NULL`, and BMI uses Copy Engine 7 (`7 * 4 = 0x1c`). Fixing that line (`0017`), closing an edge-triggered MSI unmask race + disabling `pci_ps`/ASPM (`0018`), loading `WLAN.RM.4.4.1` (`firmware-5.bin`), and adding an 8-line `wlan.ko` shim for `/sys/module/wlan/parameters/fwpath` brought **5 GHz Wi-Fi** up at **866 Mbps Rx, 0% packet loss** alongside Bluetooth A2DP.
-5. **Couch control with Flirc USB.**
-   Without an Android TV `tv.cec` HAL yet, plugging a **Flirc USB Gen2** into the rear USB 3.0 port with an old **Rosewill Media Center IR remote** worked out of the box as a native HID keyboard/remote.
+5. **Couch control with native HDMI-CEC (and Flirc USB).**
+   We started out using a **Flirc USB Gen2** with an old **Rosewill Media Center IR remote** on the rear USB 3.0 port, which worked out of the box as native HID navigation. Then we dug into `mdss_hdmi_tx.c` and found a single `#define BLOCK_CEC` line that LG had left in their phone kernel. Deleting that one line (`0021`) brought Qualcomm's native `fb1/cec` controller right online on `HDMI 1`. Our lightweight `pod-cec-daemon` (`system/cec/pod-cec-daemon.c`) claims logical address `8` (so it doesn't collide with game consoles on `LA 4` or steal TV inputs) and turns a regular TV remote into native Android navigation over `/dev/uinput`.
 
 ---
 
@@ -143,7 +143,7 @@ Read [installer/README.md](installer/README.md) and [docs/SAFETY.md](docs/SAFETY
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Donor strategy, DTB, `ath10k_pci`, and HAL details
 - **[docs/BUILD.md](docs/BUILD.md)**: Reproducible Ubuntu 24.04 / WSL2 build guide
 - **[docs/SAFETY.md](docs/SAFETY.md)**: `0x2000000` ceiling, RAM-boot rule, and recovery notes
-- **[docs/AUDIO-AND-HDMI-IN.md](docs/AUDIO-AND-HDMI-IN.md)**: 3.5 mm right-channel & `TC358840` HDMI-in roadmap
+- **[docs/AUDIO-AND-HDMI-IN.md](docs/AUDIO-AND-HDMI-IN.md)**: Verified 3.5 mm stereo audio notes & `TC358840` HDMI-in roadmap
 - **[NOTICE.md](NOTICE.md)**: Licensing, attribution, and what isn't stored in this repo
 
 Big thanks to [erikb-lab/solstice-pod-gen3-androidtv](https://github.com/erikb-lab/solstice-pod-gen3-androidtv) for the initial Solstice Pod Gen3 Android TV lead and bring-up work that helped get this project started.

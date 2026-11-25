@@ -18,7 +18,7 @@ make O="$POD_OUT" msm_defconfig
 scripts/config --file "$POD_OUT/.config" \
   -e SERIAL_MSM -e SERIAL_MSM_CONSOLE -e SERIAL_EARLYCON \
   -e CMDLINE_EXTEND -d CMDLINE_FROM_BOOTLOADER \
-  --set-str CMDLINE "earlycon=msm_serial_dm,0x075b0000 console=ttyMSM0,115200n8 ignore_loglevel androidboot.selinux=permissive watchdog_v2.enable=0" \
+  --set-str CMDLINE "earlycon=msm_serial_dm,0x075b0000 console=ttyMSM0,115200n8 ignore_loglevel androidboot.selinux=permissive" \
   -e MMC_SDHCI_MSM \
   -e USB_CONFIGFS -e USB_CONFIGFS_F_FS -e USB_CONFIGFS_UEVENT \
   -e NOP_USB_XCEIV \

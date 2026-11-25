@@ -12,7 +12,7 @@
 | :---: | :---: |
 | ![Android kernel 4.4.302-podmin+ and build number on the Mersive Solstice Pod Gen3](images/ui-kernel-version.png) | ![Android 15 Storage settings showing 16 GB internal eMMC on the Mersive Solstice Pod Gen3](images/ui-storage.png) |
 
-You can see the launcher is still rough around the edges (default widgets and a handful of leftover stock Android app icons still sitting in the dock), which is next on the list now that the core hardware is behaving.
+We have hidden the 12 leftover phone/stock apps (`Dialer`, `Contacts`, `Messaging`, `Calculator`, `Clock`, `Camera`, `Calendar`, `Recorder`, `Gallery`, `Music`, and old Mersive apps) so the dock is down to a clean single row of TV apps. Default launcher widgets and overall look and feel are still a work in progress.
 
 ### Device details at a glance
 

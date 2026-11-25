@@ -39,7 +39,7 @@ export POD_KERNEL_SRC="$POD_WORK/android_kernel_lge_msm8996"
 export POD_OUT="$POD_WORK/build-pod-minimal"
 export POD_JOBS="$(nproc)"
 
-# Apply Pod patches 0001..0020 and copy shims
+# Apply Pod patches 0001..0021 and copy shims
 cd "$POD_KERNEL_SRC"
 for p in /path/to/repo/kernel/patches/*.patch; do
   git apply "$p"
@@ -49,6 +49,11 @@ grep -q "wlan.o" drivers/misc/Makefile || echo "obj-m += wlan.o" >> drivers/misc
 
 # Build Image.gz and loadable modules (ath10k_pci, bluetooth-power, wlan, etc.)
 bash /path/to/repo/kernel/scripts/build-minimal-diagnostic.sh
+
+# Build static arm64 HDMI-CEC daemon (install to /vendor/bin/pod-cec-daemon)
+aarch64-linux-gnu-gcc -static -O2 -Wall -Wextra \
+  /path/to/repo/system/cec/pod-cec-daemon.c -o "$POD_WORK/pod-cec-daemon"
+aarch64-linux-gnu-strip "$POD_WORK/pod-cec-daemon"
 
 # Build DTB, enforce < 0x2000000 layout ceiling, pack & verify signed boot image
 bash /path/to/repo/kernel/scripts/rebuild-dtb-and-pack-los22.sh

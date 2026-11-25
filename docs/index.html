@@ -396,8 +396,8 @@
           <p>Stock <code>qcacld-3.0</code> kept SSR-crashing on Linux 4.4.302. Switching to upstream <code>ath10k_pci</code> enumerated the card cleanly, then immediately panicked at <code>0x0000001c</code> in <code>ath10k_ce_send_nolock</code>. Live <code>dmesg -w</code> pointed straight to <code>ce.c:491</code>: a CAF <code>WCN3990</code> backport dereferenced <code>vaddr_rri_on_ddr[ce_id]</code> without checking <code>if (ar-&gt;rri_on_ddr)</code> (<code>NULL[7] = 0x1c</code>). Patching that line (<code>0017</code>), closing an MSI unmask race + disabling <code>pci_ps</code>/ASPM (<code>0018</code>), loading <code>WLAN.RM.4.4.1</code> (<code>firmware-5.bin</code>), and adding an 8-line <code>wlan.ko</code> shim for <code>/sys/module/wlan/parameters/fwpath</code> brought <strong>5 GHz Wi-Fi</strong> up at <strong>866 Mbps Rx, 0% loss</strong> alongside Bluetooth A2DP.</p>
         </div>
         <div class="story-item">
-          <h3><span class="story-num">5</span>Couch control with Flirc USB</h3>
-          <p>Without an Android TV <code>tv.cec</code> HAL yet, plugging a <strong>Flirc USB Gen2</strong> into the rear USB 3.0 port with an old Rosewill Media Center IR remote worked out of the box as a native HID keyboard/remote.</p>
+          <h3><span class="story-num">5</span>Couch control with native HDMI-CEC (and Flirc USB)</h3>
+          <p>We started out with a <strong>Flirc USB Gen2</strong> and an old Rosewill Media Center IR remote on the rear USB 3.0 port. Later we spotted a single <code>#define BLOCK_CEC</code> line LG had left in <code>mdss_hdmi_tx.c</code>. Removing that line (<code>0021</code>) brought Qualcomm's native <code>fb1/cec</code> controller online on <code>HDMI 1</code>, and our lightweight <code>pod-cec-daemon</code> (running on logical address <code>8</code> so it never collides with consoles on <code>LA 4</code> or steals TV inputs) turns a regular TV remote into native Android navigation over <code>/dev/uinput</code>.</p>
         </div>
       </div>
     </section>
