@@ -47,7 +47,7 @@ Because the Pod runs an unlocked custom Android 15 ROM without Google Android TV
 | --- | --- | --- |
 | **YouTube (SmartTube)** | Works great | Full 4K@60 Hz with Venus hardware decode, ad-free, remote-friendly |
 | **Xbox Remote Play / Cloud (Better xCloud)** | Works great | Open-source Android TV app for streaming from a local Xbox or Xbox Cloud Gaming |
-| **PC Game Streaming (Moonlight / Steam Link)** | Works great | Low-latency streaming over Gigabit Ethernet with Bluetooth or USB controllers (install Steam Link via Aurora Store) |
+| **PC Game Streaming (Steam Link)** | Works great | Low-latency streaming over Gigabit Ethernet with Bluetooth or USB controllers (install Steam Link via Aurora Store) |
 | **Self-Hosted & Local Media (Plex, Jellyfin, Kodi, VLC)** | Works great | Full 4K hardware video decode; install Plex via Aurora Store or Jellyfin/Kodi from upstream releases |
 | **App Stores (F-Droid & Aurora Store)** | Works great | Aurora Store installs official Play Store APKs anonymously without needing Google Play Services |
 | **Netflix** | Limited (L3) | Official Android TV app blocks uncertified devices; mobile/tablet APK caps at 480p/540p (Widevine L3) |
