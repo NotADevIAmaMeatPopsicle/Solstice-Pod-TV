@@ -1,0 +1,34 @@
+From: SP8096 Android 15 Port <sp8096@local>
+Date: Tue, 24 Nov 2026 23:42:00 -0500
+Subject: [PATCH] ath10k: guard vaddr_rri_on_ddr dereference in ath10k_ce_send_nolock
+
+On QCA6174A PCI devices, ar->rri_on_ddr is false and
+ar_opaque->vaddr_rri_on_ddr is NULL (only allocated by snoc for WCN3990).
+ath10k_ce_send_nolock() unconditionally called
+ath10k_ce_src_ring_read_index_get_from_ddr(ar, ce_state->id), causing a
+NULL pointer dereference at 0x1c (ce_id=7 * 4) during BMI probe.
+
+Guard the DDR RRI read with ar->rri_on_ddr and fall back to
+src_ring->sw_index when rri_on_ddr is not enabled.
+---
+ drivers/net/wireless/ath/ath10k/ce.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/ce.c b/drivers/net/wireless/ath/ath10k/ce.c
+index 1111111..2222222 100644
+--- a/drivers/net/wireless/ath/ath10k/ce.c
++++ b/drivers/net/wireless/ath/ath10k/ce.c
+@@ -488,7 +488,10 @@ int ath10k_ce_send_nolock(struct ath10k_ce_pipe *ce_state,
+ 		ath10k_warn(ar, "%s: send more we can (nbytes: %d, max: %d)\n",
+ 			    __func__, nbytes, ce_state->src_sz_max);
+ 
+-	sw_index = ath10k_ce_src_ring_read_index_get_from_ddr(ar, ce_state->id);
++	if (ar->rri_on_ddr)
++		sw_index = ath10k_ce_src_ring_read_index_get_from_ddr(ar, ce_state->id);
++	else
++		sw_index = src_ring->sw_index;
+ 	if (unlikely(CE_RING_DELTA(nentries_mask,
+ 				   write_index, sw_index - 1) <= 0)) {
+ 		ret = -ENOSR;
+-- 
+2.43.0

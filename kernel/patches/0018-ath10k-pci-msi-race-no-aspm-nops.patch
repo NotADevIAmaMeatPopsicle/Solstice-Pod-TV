@@ -1,0 +1,59 @@
+From: SP8096 Android 15 Port <sp8096@local>
+Date: Wed, 25 Nov 2026 00:01:00 -0500
+Subject: [PATCH] ath10k: fix MSI unmask race, disable ASPM, and disable pci_ps on APQ8096
+
+On APQ8096 msm_pcie without cnss:
+1. Re-check CE_INTERRUPT_SUMMARY after ath10k_pci_irq_msi_fw_unmask() to
+   close the edge-triggered MSI race in ath10k_pci_napi_poll().
+2. Keep PCIe ASPM disabled in ath10k_pci_hif_start().
+3. Disable pci_ps on wall-powered APQ8096 so QCA6174A stays awake during
+   WMI/HTT initialization and steady-state operation.
+---
+ drivers/net/wireless/ath/ath10k/pci.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath10k/pci.c b/drivers/net/wireless/ath/ath10k/pci.c
+index 1111111..2222222 100644
+--- a/drivers/net/wireless/ath/ath10k/pci.c
++++ b/drivers/net/wireless/ath/ath10k/pci.c
+@@ -2016,8 +2016,9 @@ static int ath10k_pci_hif_start(struct ath10k *ar)
+ 	ath10k_pci_irq_enable(ar);
+ 	ath10k_pci_rx_post(ar);
+ 
++	/* Keep PCIe ASPM disabled on APQ8096 msm_pcie without cnss */
+ 	pcie_capability_write_word(ar_pci->pdev, PCI_EXP_LNKCTL,
+-				   ar_pci->link_ctl);
++				   ar_pci->link_ctl & ~PCI_EXP_LNKCTL_ASPMC);
+ 
+ 	return 0;
+ }
+@@ -2824,13 +2825,15 @@ static int ath10k_pci_napi_poll(struct napi_struct *ctx, int budget)
+ 		 * complete boot sequence in x86 platform. So before enabling
+ 		 * interrupts safer to check for pending interrupts for
+ 		 * immediate servicing.
+ 		 */
++		ath10k_pci_enable_legacy_irq(ar);
++		ath10k_pci_irq_msi_fw_unmask(ar);
++		/* Re-check after unmasking to close the edge-triggered MSI race */
+ 		if (CE_INTERRUPT_SUMMARY(ar, ar_opaque)) {
++			ath10k_pci_disable_and_clear_legacy_irq(ar);
++			ath10k_pci_irq_msi_fw_mask(ar);
+ 			napi_reschedule(ctx);
+ 			goto out;
+ 		}
+-		ath10k_pci_enable_legacy_irq(ar);
+-		ath10k_pci_irq_msi_fw_unmask(ar);
+ 	}
+ 
+ out:
+@@ -3243,7 +3246,7 @@ static int ath10k_pci_probe(struct pci_dev *pdev,
+ 	ar_pci->pdev = pdev;
+ 	ar_pci->dev = &pdev->dev;
+ 	ar_pci->ar = ar;
+-	ar_pci->pci_ps = pci_ps;
++	ar_pci->pci_ps = false; /* keep QCA6174 awake on wall-powered APQ8096 */
+ 	ar->id.vendor = pdev->vendor;
+ 	ar->id.device = pdev->device;
+ 	ar->id.subsystem_vendor = pdev->subsystem_vendor;
+-- 
+2.43.0

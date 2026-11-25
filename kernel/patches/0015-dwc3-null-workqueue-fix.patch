@@ -1,0 +1,14 @@
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 31918257..64505b0e 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -1311,7 +1311,8 @@ err0:
+ 	 * memory region the next time probe is called.
+ 	 */
+ 	res->start -= DWC3_GLOBALS_REGS_START;
+-	destroy_workqueue(dwc->dwc_wq);
++	if (dwc->dwc_wq)
++		destroy_workqueue(dwc->dwc_wq);
+ 
+ 	return ret;
+ }

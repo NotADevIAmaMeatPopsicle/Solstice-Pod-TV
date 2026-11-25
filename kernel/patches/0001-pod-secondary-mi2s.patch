@@ -1,0 +1,54 @@
+diff --git a/sound/soc/msm/Kconfig b/sound/soc/msm/Kconfig
+index f4b82b47..e3277f95 100644
+--- a/sound/soc/msm/Kconfig
++++ b/sound/soc/msm/Kconfig
+@@ -234,6 +234,14 @@ config SND_LGE_MABL
+ 	help
+ 	 To support LGE DSP MABL
+ 
++config SND_POD_SEC_MI2S
++	bool "Experimental Solstice Pod secondary MI2S output"
++	depends on SND_SOC_MSM8996 && SND_USE_SEC_MI2S
++	depends on !SND_SOC_ES9018 && !SND_SOC_ES9218P
++	help
++	  Experimental stub-codec secondary MI2S output for SP8096.
++	  This has not been tested on hardware.
++
+ config SND_USE_SEC_MI2S
+ 	bool "USE SEC MI2S PORT"
+ 	default n
+diff --git a/sound/soc/msm/msm8996.c b/sound/soc/msm/msm8996.c
+index dc304aeb..ab16c39f 100644
+--- a/sound/soc/msm/msm8996.c
++++ b/sound/soc/msm/msm8996.c
+@@ -8049,6 +8049,22 @@ static struct snd_soc_dai_link msm8996_common_be_dai_links[] = {
+ 		.be_hw_params_fixup = msm_be_hw_params_fixup,
+ 		.ignore_suspend = 1,
+ 	},
++#ifdef CONFIG_SND_POD_SEC_MI2S
++	{
++		.name = LPASS_BE_SEC_MI2S_RX,
++		.stream_name = "Pod Secondary MI2S Playback",
++		.cpu_dai_name = "msm-dai-q6-mi2s.1",
++		.platform_name = "msm-pcm-routing",
++		.codec_name = "msm-stub-codec.1",
++		.codec_dai_name = "msm-stub-rx",
++		.no_pcm = 1,
++		.dpcm_playback = 1,
++		.be_id = MSM_BACKEND_DAI_SECONDARY_MI2S_RX,
++		.be_hw_params_fixup = msm_be_sec_mi2s_hw_params_fixup,
++		.ops = &msm8996_sec_mi2s_be_ops,
++		.ignore_suspend = 1,
++	},
++#else
+ 	{
+ 		.name = LPASS_BE_TERT_MI2S_TX,
+ 		.stream_name = "Tertiary MI2S Capture",
+@@ -8063,6 +8079,7 @@ static struct snd_soc_dai_link msm8996_common_be_dai_links[] = {
+ 		.ops = &msm8996_mi2s_be_ops,
+ 		.ignore_suspend = 1,
+ 	},
++#endif /* CONFIG_SND_POD_SEC_MI2S */
+ 	{
+ 		.name = LPASS_BE_USB_AUDIO_RX,
+ 		.stream_name = "USB Audio Playback",

@@ -1,0 +1,43 @@
+diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+--- a/drivers/spmi/spmi-pmic-arb.c
++++ b/drivers/spmi/spmi-pmic-arb.c
+@@ -510,17 +510,20 @@ static void qpnpint_spmi_write(struct irq_data *d, u8 reg, void *buf, size_t len)
+ 				    d->irq);
+ }
+ 
+-static void qpnpint_spmi_read(struct irq_data *d, u8 reg, void *buf, size_t len)
++static int qpnpint_spmi_read(struct irq_data *d, u8 reg, void *buf, size_t len)
+ {
+ 	struct spmi_pmic_arb *pa = irq_data_get_irq_chip_data(d);
+ 	u8 sid = HWIRQ_SID(d->hwirq);
+ 	u8 per = HWIRQ_PER(d->hwirq);
++	int ret;
+ 
+-	if (pmic_arb_read_cmd(pa->spmic, SPMI_CMD_EXT_READL, sid,
+-			      (per << 8) + reg, buf, len))
++	ret = pmic_arb_read_cmd(pa->spmic, SPMI_CMD_EXT_READL, sid,
++				(per << 8) + reg, buf, len);
++	if (ret)
+ 		dev_err_ratelimited(&pa->spmic->dev,
+ 				"failed irqchip transaction on %x\n",
+ 				    d->irq);
++	return ret;
+ }
+ 
+ static void cleanup_irq(struct spmi_pmic_arb *pa, u16 apid, int id)
+@@ -732,11 +735,14 @@ static int qpnpint_get_irqchip_state(struct irq_data *d,
+ {
+ 	u8 irq = HWIRQ_IRQ(d->hwirq);
+ 	u8 status = 0;
++	int ret;
+ 
+ 	if (which != IRQCHIP_STATE_LINE_LEVEL)
+ 		return -EINVAL;
+ 
+-	qpnpint_spmi_read(d, QPNPINT_REG_RT_STS, &status, 1);
++	ret = qpnpint_spmi_read(d, QPNPINT_REG_RT_STS, &status, 1);
++	if (ret)
++		return ret;
+ 	*state = !!(status & BIT(irq));
+ 
+ 	return 0;

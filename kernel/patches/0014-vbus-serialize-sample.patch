@@ -1,0 +1,51 @@
+--- a/drivers/platform/msm/pod-usb-vbus.c
++++ b/drivers/platform/msm/pod-usb-vbus.c
+@@ -4,6 +4,7 @@
+ #include <linux/extcon.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
++#include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/consumer.h>
+@@ -14,6 +15,7 @@
+ 	struct extcon_dev *extcon;
+ 	struct regulator *vin;
+ 	int irq;
++	struct mutex sample_lock;
+ };
+ 
+ static const unsigned int pod_cables[] = {
+@@ -25,16 +27,21 @@
+ 	bool level;
+ 	int ret;
+ 
++	/* Serialize probe's first sample with threaded cable-edge updates. */
++	mutex_lock(&pod->sample_lock);
+ 	ret = irq_get_irqchip_state(pod->irq, IRQCHIP_STATE_LINE_LEVEL, &level);
+ 	if (ret) {
+ 		dev_err(pod->dev, "cannot read VBUS IRQ line: %d\n", ret);
+-		return ret;
++		goto out;
+ 	}
+ 	/* The Pod HS controller supports high speed; do not advertise SS. */
+ 	ret = extcon_set_cable_state_(pod->extcon, EXTCON_USB_SPEED, 0);
+ 	if (ret)
+-		return ret;
+-	return extcon_set_cable_state_(pod->extcon, EXTCON_USB, level);
++		goto out;
++	ret = extcon_set_cable_state_(pod->extcon, EXTCON_USB, level);
++out:
++	mutex_unlock(&pod->sample_lock);
++	return ret;
+ }
+ 
+ static irqreturn_t pod_vbus_update(int irq, void *data)
+@@ -54,6 +61,7 @@
+ 	if (!pod)
+ 		return -ENOMEM;
+ 	pod->dev = &pdev->dev;
++	mutex_init(&pod->sample_lock);
+ 	pod->extcon = devm_extcon_dev_allocate(&pdev->dev, pod_cables);
+ 	if (IS_ERR(pod->extcon))
+ 		return PTR_ERR(pod->extcon);

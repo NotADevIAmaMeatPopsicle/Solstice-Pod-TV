@@ -1,0 +1,58 @@
+name: Repo Hygiene & Script Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check Python syntax
+        run: |
+          python3 -m py_compile kernel/scripts/*.py
+
+      - name: Check Bash script syntax
+        run: |
+          for f in kernel/scripts/*.sh system/scripts/*.sh; do
+            echo "Checking $f"
+            bash -n "$f"
+          done
+
+      - name: Enforce LF line endings on Linux/Android files
+        run: |
+          python3 - <<'PY'
+          import pathlib, sys
+          bad = []
+          exts = {".sh", ".rc", ".patch", ".py", ".dts", ".dtsi", ".c", ".h"}
+          for p in pathlib.Path(".").rglob("*"):
+              if ".git" in p.parts or not p.is_file():
+                  continue
+              if p.suffix in exts:
+                  if b"\r\n" in p.read_bytes():
+                      bad.append(str(p))
+          if bad:
+              print("CRLF found in Linux/Android files:", bad)
+              sys.exit(1)
+          print("All Linux/Android files use LF line endings.")
+          PY
+
+      - name: Block accidental binary blobs, APKs, and keys
+        run: |
+          python3 - <<'PY'
+          import pathlib, sys
+          forbidden = {".img", ".simg", ".raw", ".bin", ".ko", ".apk", ".zip", ".pem", ".key", ".pk8", ".so"}
+          bad = [
+              str(p) for p in pathlib.Path(".").rglob("*")
+              if ".git" not in p.parts and p.is_file() and p.suffix.lower() in forbidden
+          ]
+          if bad:
+              print("Forbidden binary/key files detected:", bad)
+              sys.exit(1)
+          print("No forbidden binaries or keys found.")
+          PY

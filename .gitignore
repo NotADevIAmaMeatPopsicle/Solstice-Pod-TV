@@ -1,0 +1,38 @@
+# Private backups, raw partition dumps, and prebuilt images (NEVER commit)
+pod-backups/
+*.img
+*.simg
+*.raw
+*.bin
+*.mbn
+*.mdt
+*.b0*
+*.b1*
+*.b2*
+*.ko
+*.apk
+*.zip
+*.tar.gz
+*.tar.xz
+
+# Keys, certificates, and local secrets
+*.pem
+*.key
+*.pk8
+*.x509
+*.jks
+*.keystore
+.env
+*credentials*
+
+# Toolchains, SDKs, and build artifacts
+android-platform-tools/
+android-usb-driver/
+out/
+build/
+__pycache__/
+*.pyc
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

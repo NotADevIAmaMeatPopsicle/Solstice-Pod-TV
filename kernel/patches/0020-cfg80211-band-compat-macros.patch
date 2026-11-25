@@ -1,0 +1,28 @@
+From: SP8096 Android 15 Port <sp8096@local>
+Date: Tue, 24 Nov 2026 23:47:00 -0500
+Subject: [PATCH] cfg80211: add IEEE80211_BAND_* compatibility macros for mac80211/ath10k
+
+Restore IEEE80211_BAND_2GHZ/5GHZ/60GHZ/NUM_BANDS aliases to NL80211_BAND_*
+so in-tree mac80211 and ath/ath10k compile cleanly on Linux 4.4.302.
+---
+ include/net/cfg80211.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/include/net/cfg80211.h b/include/net/cfg80211.h
+index 1111111..2222222 100644
+--- a/include/net/cfg80211.h
++++ b/include/net/cfg80211.h
+@@ -5570,4 +5570,11 @@ static inline bool cfg80211_is_element_inherited(const struct element *elem,
+ 						 const struct element *non_inherit_elem);
+ #endif
+ 
++#ifndef IEEE80211_BAND_2GHZ
++#define IEEE80211_BAND_2GHZ NL80211_BAND_2GHZ
++#define IEEE80211_BAND_5GHZ NL80211_BAND_5GHZ
++#define IEEE80211_BAND_60GHZ NL80211_BAND_60GHZ
++#define IEEE80211_NUM_BANDS NUM_NL80211_BANDS
++#endif
++
+ #endif /* __NET_CFG80211_H */
+-- 
+2.43.0
