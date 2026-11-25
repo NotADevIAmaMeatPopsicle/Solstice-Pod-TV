@@ -2,6 +2,14 @@
 
 > **Heads up:** The software side is still a work in progress, and **the UI has not been prettied up yet.** Right now the goal has been getting the underlying hardware rock-solid (cold self-boot, 4K@60 Hz HDMI, hardware video decode, 5 GHz Wi-Fi, Bluetooth, Ethernet, and IR remote input) before spending time polishing the front-end look and feel.
 
+## What the UI looks like right now
+
+| Current TV launcher (work in progress) | Android 15 (LineageOS 22.2) Settings |
+| :---: | :---: |
+| ![Current TV launcher screen capture on the Mersive Solstice Pod Gen3](images/ui-launcher-wip.jpg) | ![Android 15 Settings screen capture on the Mersive Solstice Pod Gen3](images/ui-android15-settings.png) |
+
+You can see it is still rough around the edges (default widgets and a handful of leftover stock Android app icons still sitting in the dock), which is next on the list now that the core hardware is behaving.
+
 ## What is running on the Pod right now
 
 Under the hood, the Mersive Solstice Pod Gen3 (`SP8096`) is running **Android 15 (LineageOS 22.2)** on top of a minimal **Linux 4.4.302** kernel (`4.4.302-podmin`).

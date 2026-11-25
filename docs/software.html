@@ -150,6 +150,49 @@
     }
     .card p:last-child { margin-bottom: 0; }
 
+    figure.photo {
+      margin: 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    figure.photo img {
+      width: 100%;
+      height: auto;
+      display: block;
+      cursor: zoom-in;
+      transition: transform 0.2s ease;
+    }
+    figure.photo img:hover { transform: scale(1.015); }
+    figure.photo figcaption {
+      padding: 11px 14px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    figure.photo figcaption strong { color: var(--ink); display: block; margin-bottom: 2px; }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 20, 17, 0.88);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      cursor: zoom-out;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img {
+      max-width: 94vw;
+      max-height: 90vh;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
     .story-list {
       display: grid;
       gap: 14px;
@@ -228,6 +271,21 @@
       </div>
     </div>
 
+    <section id="screens">
+      <h2>What the UI looks like right now</h2>
+      <p>These are direct screen captures straight off the Pod. You can see it is still a raw bring-up UI, with default widgets and a handful of leftover stock Android app icons still sitting in the dock. Cleaning all of that up into a proper living-room setup is next now that the core hardware is behaving.</p>
+      <div class="grid-2">
+        <figure class="photo">
+          <img src="images/ui-launcher-wip.jpg" alt="Current TV launcher screen capture on the Mersive Solstice Pod Gen3">
+          <figcaption><strong>Current TV launcher (work in progress)</strong>Early launcher bring-up on Android 15 with SmartTube, FLauncher, and stock apps still in the dock.</figcaption>
+        </figure>
+        <figure class="photo">
+          <img src="images/ui-android15-settings.png" alt="Android 15 Settings screen capture on the Mersive Solstice Pod Gen3">
+          <figcaption><strong>Android 15 (LineageOS 22.2) Settings</strong>Standard Android 15 settings running over 5 GHz Wi-Fi on the Pod.</figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section id="stack">
       <h2>What the software stack is</h2>
       <p>Stock Solstice Pods ship with a locked-down Android 7.1.1 image on Linux 3.18. We replaced that with a clean <strong>Android 15 (LineageOS 22.2)</strong> userspace running on our own minimal <strong>Linux 4.4.302</strong> kernel.</p>
@@ -305,5 +363,28 @@
       <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/NOTICE.md">Notice</a>
     </div>
   </footer>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+  <script>
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    document.querySelectorAll('figure.photo img').forEach(img => {
+      img.addEventListener('click', () => {
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lb.classList.add('open');
+        lb.setAttribute('aria-hidden', 'false');
+      });
+    });
+    lb.addEventListener('click', () => {
+      lb.classList.remove('open');
+      lb.setAttribute('aria-hidden', 'true');
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') lb.click();
+    });
+  </script>
 </body>
 </html>
