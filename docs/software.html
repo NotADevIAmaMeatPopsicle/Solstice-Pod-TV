@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Software &amp; TV UI: Solstice Pod TV (Mersive Solstice Pod Gen3)</title>
+  <meta name="description" content="Android 15 (LineageOS 22.2) software stack, TV launcher setup, what works so far, and UI work in progress on the Mersive Solstice Pod Gen3 (SP8096).">
+  <style>
+    :root {
+      --bg: #f7f4ee;
+      --surface: #ffffff;
+      --surface-soft: #f0ebe1;
+      --ink: #1d231f;
+      --muted: #525d55;
+      --border: #ddd6c8;
+      --accent: #2f6f55;
+      --accent-soft: #e3efe9;
+      --blue: #2b5f8a;
+      --amber: #a35d14;
+      --amber-soft: #f8ecd9;
+      --code-bg: #1e2421;
+      --code-ink: #e8efe9;
+      --radius: 12px;
+      --shadow: 0 8px 28px rgba(29, 35, 31, 0.06);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.62;
+    }
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .wrap { max-width: 980px; margin: 0 auto; padding: 0 22px; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(247, 244, 238, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 12px 0;
+      flex-wrap: wrap;
+    }
+    .brand {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .brand span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.9rem;
+    }
+    .nav-links a { color: var(--muted); font-weight: 500; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); text-decoration: none; }
+    .nav-links a.active { font-weight: 700; }
+
+    .page-head {
+      padding: 42px 0 26px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.9rem, 3.8vw, 2.55rem);
+      line-height: 1.14;
+      letter-spacing: -0.025em;
+    }
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--muted);
+      margin: 0 0 18px;
+      max-width: 740px;
+    }
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 18px;
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--ink);
+    }
+    .pill.green { background: var(--accent-soft); border-color: #bfd9cc; color: var(--accent); }
+    .pill.amber { background: var(--amber-soft); border-color: #e7cfa7; color: var(--amber); }
+
+    section {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.45rem;
+      letter-spacing: -0.015em;
+    }
+    p { margin: 0 0 14px; }
+
+    .callout {
+      background: var(--amber-soft);
+      border-left: 4px solid var(--amber);
+      border-top: 1px solid #e7cfa7;
+      border-right: 1px solid #e7cfa7;
+      border-bottom: 1px solid #e7cfa7;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0 0;
+    }
+    .callout strong { color: var(--ink); }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+    @media (max-width: 700px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+    }
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+      color: var(--ink);
+    }
+    .card p:last-child { margin-bottom: 0; }
+
+    .story-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .story-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+    }
+    .story-item h3 {
+      margin: 0 0 6px;
+      font-size: 1.05rem;
+      color: var(--ink);
+    }
+    .story-item p:last-child { margin-bottom: 0; }
+    .story-num {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      text-align: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.88em;
+      background: var(--surface-soft);
+      padding: 2px 5px;
+      border-radius: 5px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 26px 0 42px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap nav">
+      <a class="brand" href="index.html">Solstice Pod <span>TV</span></a>
+      <nav class="nav-links">
+        <a href="index.html">Overview</a>
+        <a href="software.html" class="active">Software &amp; UI</a>
+        <a href="index.html#flash">Teardown &amp; flash</a>
+        <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="page-head">
+      <h1>Software &amp; TV UI</h1>
+      <p class="subtitle">What is actually running on the Mersive Solstice Pod Gen3 (<code>SP8096</code>), what we have built so far, and what is still rough around the edges.</p>
+      <div class="pills">
+        <span class="pill green">Android 15 · LineageOS 22.2</span>
+        <span class="pill">Linux 4.4.302-podmin</span>
+        <span class="pill amber">UI still a work in progress</span>
+      </div>
+      <div class="callout">
+        <strong>Work in progress:</strong> The TV interface has <strong>not been prettied up yet.</strong> Right now the focus has been making the underlying hardware rock-solid (cold self-boot, 4K@60 Hz HDMI, hardware video decode, 5 GHz Wi-Fi, Bluetooth, Ethernet, and IR remote input) before spending time polishing the front-end look and feel.
+      </div>
+    </div>
+
+    <section id="stack">
+      <h2>What the software stack is</h2>
+      <p>Stock Solstice Pods ship with a locked-down Android 7.1.1 image on Linux 3.18. We replaced that with a clean <strong>Android 15 (LineageOS 22.2)</strong> userspace running on our own minimal <strong>Linux 4.4.302</strong> kernel.</p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>OS &amp; GPU base (<code>h850</code> donor)</h3>
+          <p>The system image, Adreno 530 GPU drivers, and Qualcomm Venus 4K hardware video decoder come from official LineageOS 22.2 for the <strong>LG G5 (<code>h850</code>)</strong>, which shares the same <code>MSM8996 / APQ8096</code> silicon. Phone-only HALs (telephony, fingerprint, sensors, NFC, and camera) are stripped out.</p>
+        </div>
+        <div class="card">
+          <h3>Wireless HALs (<code>gemini</code> donor)</h3>
+          <p>Native Android 15 QTI Wi-Fi and Bluetooth HALs are transplanted from official LineageOS 22.2 for the <strong>Xiaomi Mi 5 (<code>gemini</code>)</strong> so the Pod's <code>QCA6174A / Rome</code> wireless module works cleanly with our upstream <code>ath10k_pci</code> driver.</p>
+        </div>
+        <div class="card">
+          <h3>TV launcher &amp; apps</h3>
+          <p>Because the donor build starts out as a phone image, we skip the phone setup wizard, turn off the lockscreen and sleep timer, and drop a TV launcher on top as the default home screen. We have tested <code>tvOS-Launcher</code> as the default home app alongside <code>FLauncher</code>, <code>SmartTube</code>, and <code>F-Droid</code> (grabbed directly from their upstream releases; no APKs are bundled here).</p>
+        </div>
+        <div class="card">
+          <h3>Remote &amp; input</h3>
+          <p>HDMI-CEC is not wired up yet, so for now we use a <strong>Flirc USB Gen2</strong> plugged into a rear USB 3.0 port with an old <strong>Rosewill Media Center IR remote</strong>. Android sees it as standard HID navigation out of the box, and any USB keyboard or mouse works the same way.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="done">
+      <h2>What we have done so far</h2>
+      <div class="story-list">
+        <div class="story-item">
+          <h3><span class="story-num">1</span>Cold self-boot straight into Android 15</h3>
+          <p>Everything lives on internal eMMC (<code>boot</code>, <code>recovery</code>, and <code>system</code>). Plug in power and it boots straight into Android 15 and your TV launcher with no PC connected.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">2</span>Automatic Wi-Fi and Bluetooth after boot</h3>
+          <p>Our <code>init.pod.wifi.rc</code> waits for <code>sys.boot_completed=1</code> before loading <code>bluetooth-power.ko</code> and the upstream <code>ath10k_pci</code> stack (plus a small <code>wlan.ko</code> shim). That way 5 GHz Wi-Fi and Bluetooth A2DP come up automatically on every boot without ever risking an early-boot lockup.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">3</span>Native 4K@60 Hz output and hardware decode</h3>
+          <p>Driving <code>TLMM GPIO 127</code> HIGH on boot wakes up <code>HDMI 1</code> at <code>3840x2160@60</code> and <code>4096x2160@60</code> (594 MHz pixel clock), with smooth Venus 4K hardware video decode on a living room TV.</p>
+        </div>
+        <div class="story-item">
+          <h3><span class="story-num">4</span>Turnkey TV defaults on first boot</h3>
+          <p>Running <code>installer/flash-new-pod.ps1</code> flashes the images, marks setup complete, disables the phone Setup Wizard and lockscreen, sets <code>screen_off_timeout</code> to max so the Pod never sleeps mid-movie, and optionally installs any TV APKs you place in <code>out/tv-apks/</code>.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="todo">
+      <h2>What is still a work in progress</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Prettying up the TV UI</h3>
+          <p>Right now the interface is a functional bench bring-up setup, not a finished living-room UI. Polishing the launcher layout, 4K DPI and overscan defaults, TV banners/icons, and making the whole couch experience feel cohesive is still on the to-do list.</p>
+        </div>
+        <div class="card">
+          <h3>HDMI-CEC remote control</h3>
+          <p>Adding an <code>android.hardware.tv.cec</code> HAL so any regular TV remote controls the Pod over HDMI without needing a Flirc USB dongle.</p>
+        </div>
+        <div class="card">
+          <h3>3.5 mm stereo audio &amp; HDMI input</h3>
+          <p>The 3.5 mm jack's right-channel mixer fix is staged and waiting for a headphone re-test, and the Toshiba <code>TC358840</code> HDMI-in bridge still needs kernel size headroom trimmed and its V4L2 capture driver brought up.</p>
+        </div>
+        <div class="card">
+          <h3>Final polish &amp; watchdog</h3>
+          <p>Re-enabling <code>msm_watchdog_v2</code> once the remaining drivers settle down so the box is rock-solid for long-term living-room use.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <div>Solstice Pod TV &middot; Apache-2.0 (scripts/docs) &amp; GPL-2.0 (kernel patches/shims)</div>
+    <div>
+      <a href="index.html">Overview</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/SOFTWARE.md">Software doc</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/BUILD.md">Build guide</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/NOTICE.md">Notice</a>
+    </div>
+  </footer>
+</body>
+</html>

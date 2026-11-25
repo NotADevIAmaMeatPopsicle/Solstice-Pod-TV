@@ -15,7 +15,7 @@ Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now.
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0_%2F_GPL--2.0-blue?style=flat" alt="License" height="18"></a>
 </p>
 
-**[Inside the box](#inside-the-box)** · **[The bench rig](#the-bench-rig)** · **[The bring-up story](#the-bring-up-story)** · **[Current status](#current-status)** · **[Teardown & flashing walkthrough](#teardown--flashing-walkthrough)** · **[Build your own](docs/BUILD.md)** · **[Safety rules](docs/SAFETY.md)**
+**[Inside the box](#inside-the-box)** · **[The bring-up story](#the-bring-up-story)** · **[Software & UI](docs/SOFTWARE.md)** · **[Current status](#current-status)** · **[Teardown & flashing walkthrough](#teardown--flashing-walkthrough)** · **[Build your own](docs/BUILD.md)** · **[Safety rules](docs/SAFETY.md)**
 
 <p align="center">
   <img src="docs/images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view showing HDMI-IN and USB-C" width="460"><br>
@@ -125,6 +125,7 @@ Read [installer/README.md](installer/README.md) and [docs/SAFETY.md](docs/SAFETY
 
 ## Documentation, credits & licensing
 
+- **[docs/SOFTWARE.md](docs/SOFTWARE.md)**: What the Android 15 / TV UI software is, what is done so far, and UI work in progress
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Donor strategy, DTB, `ath10k_pci`, and HAL details
 - **[docs/BUILD.md](docs/BUILD.md)**: Reproducible Ubuntu 24.04 / WSL2 build guide
 - **[docs/SAFETY.md](docs/SAFETY.md)**: `0x2000000` ceiling, RAM-boot rule, and recovery notes
