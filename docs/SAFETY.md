@@ -1,6 +1,6 @@
 # Safety & Non-Brick Rules
 
-The Mersive Solstice Pod Gen3 (`SP8096`) is a sealed appliance with **no external fastboot/reset pinhole**. If a flashed `boot` image hangs before `adbd` starts, recovering fastboot requires disassembling the enclosure to hold the internal PCB Volume-Down button during power-on.
+The Mersive Solstice Pod Gen3 (`SP8096`) has **no external reset or fastboot buttons** on its enclosure. If a flashed `boot` image hangs before `adbd` starts, recovering fastboot requires opening the case to hold the internal **`S3` (`VOL-`)** tactile button on the PCB during power-on.
 
 Follow these rules on every build:
 
