@@ -2,13 +2,28 @@
 
 > **Heads up:** The software side is still a work in progress, and **the UI has not been prettied up yet.** Right now the goal has been getting the underlying hardware rock-solid (cold self-boot, 4K@60 Hz HDMI, hardware video decode, 5 GHz Wi-Fi, Bluetooth, Ethernet, and IR remote input) before spending time polishing the front-end look and feel.
 
-## What the UI looks like right now
+## What the UI and device details look like right now
 
-| Current TV launcher (work in progress) | Android 15 (LineageOS 22.2) Settings |
+| Current TV launcher (work in progress) | Android 15 & LineageOS 22.2 version |
 | :---: | :---: |
-| ![Current TV launcher screen capture on the Mersive Solstice Pod Gen3](images/ui-launcher-wip.jpg) | ![Android 15 Settings screen capture on the Mersive Solstice Pod Gen3](images/ui-android15-settings.png) |
+| ![Current TV launcher screen capture on the Mersive Solstice Pod Gen3](images/ui-launcher-wip.jpg) | ![Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3](images/ui-android15-version.png) |
 
-You can see it is still rough around the edges (default widgets and a handful of leftover stock Android app icons still sitting in the dock), which is next on the list now that the core hardware is behaving.
+| Custom kernel (`4.4.302-podmin+`) & build info | Internal storage (16 GB eMMC) |
+| :---: | :---: |
+| ![Android kernel 4.4.302-podmin+ and build number on the Mersive Solstice Pod Gen3](images/ui-kernel-version.png) | ![Android 15 Storage settings showing 16 GB internal eMMC on the Mersive Solstice Pod Gen3](images/ui-storage.png) |
+
+You can see the launcher is still rough around the edges (default widgets and a handful of leftover stock Android app icons still sitting in the dock), which is next on the list now that the core hardware is behaving.
+
+### Device details at a glance
+
+| Spec | Running on the Pod |
+| --- | --- |
+| **Processor** | Qualcomm Snapdragon 820 (`APQ8096`), quad-core Kryo (`arm64-v8a`) |
+| **GPU & Video** | Adreno 530 + Qualcomm Venus 4K hardware video decode |
+| **Memory** | 4 GB LPDDR4 RAM |
+| **Storage** | 16 GB internal eMMC (~9.4 GB used with Android 15 + starter TV apps) |
+| **OS** | Android 15 (LineageOS `22.2-20261121-NIGHTLY-h850`) |
+| **Kernel** | `4.4.302-podmin+` |
 
 ## What is running on the Pod right now
 
