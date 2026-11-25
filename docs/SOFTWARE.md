@@ -4,9 +4,9 @@
 
 ## Live screen captures & device details
 
-| Home screen, ready to use | SmartTube running on the Pod |
+| Home screen, ready to use | Scrolling the app row |
 | :---: | :---: |
-| ![Projectivy Launcher home screen with Plex, Snes9x EX+, Spotify, SmartTube and Better xCloud](images/ui-home-apps.jpg) | ![SmartTube home feed on the Mersive Solstice Pod Gen3](images/ui-smarttube.jpg) |
+| ![Projectivy Launcher home screen with Plex, Snes9x EX+, Spotify, SmartTube and Better xCloud](images/ui-home-apps.jpg) | ![Projectivy Launcher home screen scrolled to Spotify, SmartTube and Better xCloud](images/ui-home-spotify.jpg) |
 
 | Android 15 & LineageOS 22.2 version | Custom kernel (`4.4.302-podmin+`) & build info |
 | :---: | :---: |
