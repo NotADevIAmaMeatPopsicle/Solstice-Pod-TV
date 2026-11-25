@@ -45,4 +45,4 @@ service pod_cec /vendor/bin/pod-cec-daemon
 on property:sys.boot_completed=1
     start pod_hdmi_hotplug
     start pod_cec
-    exec_background u:r:shell:s0 root root -- /system/bin/sh -c "sleep 2; insmod /vendor/lib/modules/ccm.ko; insmod /vendor/lib/modules/mac80211.ko; insmod /vendor/lib/modules/ath.ko; insmod /vendor/lib/modules/ath10k_core.ko; insmod /vendor/lib/modules/ath10k_pci.ko irq_mode=2 reset_mode=1; insmod /vendor/lib/modules/wlan.ko; chown wifi:wifi /sys/module/wlan/parameters/fwpath; chmod 0666 /sys/module/wlan/parameters/fwpath; sleep 3; /system/bin/svc wifi enable"
+    exec_background u:r:shell:s0 root root -- /system/bin/sh -c "sleep 2; /system/bin/dumpsys battery set present 0; insmod /vendor/lib/modules/ccm.ko; insmod /vendor/lib/modules/mac80211.ko; insmod /vendor/lib/modules/ath.ko; insmod /vendor/lib/modules/ath10k_core.ko; insmod /vendor/lib/modules/ath10k_pci.ko irq_mode=2 reset_mode=1; insmod /vendor/lib/modules/wlan.ko; chown wifi:wifi /sys/module/wlan/parameters/fwpath; chmod 0666 /sys/module/wlan/parameters/fwpath; sleep 3; /system/bin/svc wifi enable"

@@ -59,7 +59,7 @@ Start-Sleep -Seconds 2
 & $adb wait-for-device
 
 Write-Host "`n=== 4. Configuring TV box settings (disable SetupWizard, lockscreen, sleep, status bar, landscape lock, phone apps) ==="
-& $adb shell "settings put global device_provisioned 1; settings put secure user_setup_complete 1; settings put system screen_off_timeout 2147483647; settings put system accelerometer_rotation 0; settings put system user_rotation 0; settings put global policy_control immersive.full=*; wm fixed-to-user-rotation enabled; wm user-rotation lock 0; locksettings set-disabled true 2>/dev/null || true; pm disable-user --user 0 org.lineageos.setupwizard 2>/dev/null || true"
+& $adb shell "settings put global device_provisioned 1; settings put secure user_setup_complete 1; settings put secure icon_blacklist battery; settings put system screen_off_timeout 2147483647; settings put system accelerometer_rotation 0; settings put system user_rotation 0; settings put global policy_control immersive.status=*; wm fixed-to-user-rotation enabled; wm user-rotation lock 0; locksettings set-disabled true 2>/dev/null || true; pm disable-user --user 0 org.lineageos.setupwizard 2>/dev/null || true"
 foreach ($pkg in @("com.android.dialer","com.android.contacts","com.android.messaging","com.android.calculator2","com.android.deskclock","org.lineageos.aperture","org.lineageos.etar","org.lineageos.recorder","org.lineageos.glimpse","org.lineageos.twelve","com.mersive.solstice.webapp","com.splashtop.m360.mersive")) {
     & $adb shell "pm disable-user --user 0 $pkg 2>/dev/null || true"
 }
