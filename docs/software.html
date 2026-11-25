@@ -267,17 +267,17 @@
         <span class="pill amber">UI still a work in progress</span>
       </div>
       <div class="callout">
-        <strong>Work in progress:</strong> The TV interface has <strong>not been prettied up yet.</strong> Right now the focus has been making the underlying hardware rock-solid (cold self-boot, 4K@60 Hz HDMI, hardware video decode, 5 GHz Wi-Fi, Bluetooth, Ethernet, and IR remote input) before spending time polishing the front-end look and feel.
+        <strong>Work in progress:</strong> The TV interface is running <strong>Projectivy Launcher</strong> with leftover phone apps hidden and the phone status bar turned off, though custom icon packs, themes, and streaming apps are still being tuned.
       </div>
     </div>
 
     <section id="screens">
       <h2>What the UI and device details look like right now</h2>
-      <p>These are direct screen captures straight off the Pod. We have stripped the leftover phone apps (Dialer, Contacts, SMS, Camera, Calendar, Calculator, etc.) out of the dock so it is down to a clean single row of TV apps, though the default launcher widgets and overall look are still a work in progress.</p>
+      <p>These are direct screen captures straight off the Pod. We switched to <strong>Projectivy Launcher</strong> (which has a large Android TV theming and wallpaper community), hid the phone status bar with immersive mode, and disabled the 12 leftover stock phone apps so the home screen stays clean and ad-free.</p>
       <div class="grid-2">
         <figure class="photo">
-          <img src="images/ui-launcher-wip.jpg" alt="Current TV launcher screen capture on the Mersive Solstice Pod Gen3">
-          <figcaption><strong>Current TV launcher (work in progress)</strong>Single-row dock on Android 15 with leftover phone apps hidden (SmartTube, AudioFX, Browser, F-Droid, Files, FLauncher, and Settings).</figcaption>
+          <img src="images/ui-launcher-wip.jpg" alt="Projectivy Launcher running on the Mersive Solstice Pod Gen3 (Android 15)">
+          <figcaption><strong>Projectivy Launcher on Android 15</strong>Clean full-bleed TV home screen with leftover phone apps and the phone status bar hidden.</figcaption>
         </figure>
         <figure class="photo">
           <img src="images/ui-android15-version.png" alt="Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3">
@@ -319,7 +319,7 @@
         </div>
         <div class="card">
           <h3>TV launcher &amp; apps</h3>
-          <p>Because the donor build starts out as a phone image, we skip the phone setup wizard, turn off the lockscreen and sleep timer, and drop a TV launcher on top as the default home screen. We have tested <code>tvOS-Launcher</code> as the default home app alongside <code>FLauncher</code>, <code>SmartTube</code>, and <code>F-Droid</code> (grabbed directly from their upstream releases; no APKs are bundled here).</p>
+          <p>Because the donor build starts out as a phone image, we skip the phone setup wizard, turn off the lockscreen, sleep timer, and phone status bar, hide 12 leftover phone apps, and set <strong>Projectivy Launcher</strong> as the default home screen (alongside optional upstream apps like <code>FLauncher</code>, <code>SmartTube</code>, and <code>F-Droid</code>; no APKs are bundled here).</p>
         </div>
         <div class="card">
           <h3>Remote &amp; input (HDMI-CEC + Flirc)</h3>

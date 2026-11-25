@@ -58,8 +58,8 @@ Start-Sleep -Seconds 10
 Start-Sleep -Seconds 2
 & $adb wait-for-device
 
-Write-Host "`n=== 4. Configuring TV box settings (disable SetupWizard, lockscreen, sleep, phone apps) ==="
-& $adb shell "settings put global device_provisioned 1; settings put secure user_setup_complete 1; settings put system screen_off_timeout 2147483647; locksettings set-disabled true 2>/dev/null || true; pm disable-user --user 0 org.lineageos.setupwizard 2>/dev/null || true"
+Write-Host "`n=== 4. Configuring TV box settings (disable SetupWizard, lockscreen, sleep, status bar, phone apps) ==="
+& $adb shell "settings put global device_provisioned 1; settings put secure user_setup_complete 1; settings put system screen_off_timeout 2147483647; settings put global policy_control immersive.full=*; locksettings set-disabled true 2>/dev/null || true; pm disable-user --user 0 org.lineageos.setupwizard 2>/dev/null || true"
 foreach ($pkg in @("com.android.dialer","com.android.contacts","com.android.messaging","com.android.calculator2","com.android.deskclock","org.lineageos.aperture","org.lineageos.etar","org.lineageos.recorder","org.lineageos.glimpse","org.lineageos.twelve","com.mersive.solstice.webapp","com.splashtop.m360.mersive")) {
     & $adb shell "pm disable-user --user 0 $pkg 2>/dev/null || true"
 }
@@ -70,9 +70,9 @@ if (-not $SkipProvisionApps -and (Test-Path $ApksDir)) {
         Write-Host "Installing $($_.Name)..."
         & $adb install -r $_.FullName
     }
-    $hasTvos = (& $adb shell "pm list packages com.techgenius.tvoslauncher" 2>$null)
-    if ($hasTvos -match "com.techgenius.tvoslauncher") {
-        & $adb shell "cmd package set-home-activity com.techgenius.tvoslauncher/.MainActivity"
+    $hasProj = (& $adb shell "pm list packages com.spocky.projengmenu" 2>$null)
+    if ($hasProj -match "com.spocky.projengmenu") {
+        & $adb shell "cmd package set-home-activity com.spocky.projengmenu/.ui.home.MainActivity"
     }
 }
 

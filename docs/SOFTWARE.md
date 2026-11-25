@@ -1,18 +1,18 @@
 # Software & TV UI (Work in Progress)
 
-> **Heads up:** The software side is still a work in progress, and **the UI has not been prettied up yet.** Right now the goal has been getting the underlying hardware rock-solid (cold self-boot, 4K@60 Hz HDMI, hardware video decode, 5 GHz Wi-Fi, Bluetooth, Ethernet, and IR remote input) before spending time polishing the front-end look and feel.
+> **Heads up:** The TV UI is now running **Projectivy Launcher** with the phone status bar and leftover phone apps hidden, though custom themes, icon packs, and app banners are still a work in progress.
 
 ## What the UI and device details look like right now
 
-| Current TV launcher (work in progress) | Android 15 & LineageOS 22.2 version |
+| Projectivy Launcher on Android 15 | Android 15 & LineageOS 22.2 version |
 | :---: | :---: |
-| ![Current TV launcher screen capture on the Mersive Solstice Pod Gen3](images/ui-launcher-wip.jpg) | ![Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3](images/ui-android15-version.png) |
+| ![Projectivy Launcher running on the Mersive Solstice Pod Gen3](images/ui-launcher-wip.jpg) | ![Android 15 and LineageOS 22.2 version screen on the Mersive Solstice Pod Gen3](images/ui-android15-version.png) |
 
 | Custom kernel (`4.4.302-podmin+`) & build info | Internal storage (16 GB eMMC) |
 | :---: | :---: |
 | ![Android kernel 4.4.302-podmin+ and build number on the Mersive Solstice Pod Gen3](images/ui-kernel-version.png) | ![Android 15 Storage settings showing 16 GB internal eMMC on the Mersive Solstice Pod Gen3](images/ui-storage.png) |
 
-We have hidden the 12 leftover phone/stock apps (`Dialer`, `Contacts`, `Messaging`, `Calculator`, `Clock`, `Camera`, `Calendar`, `Recorder`, `Gallery`, `Music`, and old Mersive apps) so the dock is down to a clean single row of TV apps. Default launcher widgets and overall look and feel are still a work in progress.
+We switched to **Projectivy Launcher** (ad-free with an active Android TV theming/wallpaper community), hid the phone status bar (`policy_control immersive.full=*`), and disabled the 12 leftover phone/stock apps (`Dialer`, `Contacts`, `Messaging`, `Calculator`, `Clock`, `Camera`, `Calendar`, `Recorder`, `Gallery`, `Music`, and old Mersive apps).
 
 ### Device details at a glance
 
