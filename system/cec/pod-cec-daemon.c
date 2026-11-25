@@ -21,7 +21,7 @@
 
 #define CEC_BASE        "/sys/devices/virtual/graphics/fb1/cec"
 #define CEC_PA_PATH     "/sys/devices/virtual/graphics/fb1/pa"
-#define LOGICAL_ADDR    4  /* Playback Device 1 */
+#define LOGICAL_ADDR    8  /* Playback Device 2 (avoids colliding with consoles on LA 4) */
 #define OSD_NAME        "Solstice Pod"
 
 struct cec_msg {
@@ -219,8 +219,9 @@ int main(void) {
     signal(SIGTERM, on_sig);
     signal(SIGINT, on_sig);
 
+    write_sysfs_str(CEC_BASE "/clear_logical_addr", "1");
     write_sysfs_str(CEC_BASE "/enable", "1");
-    write_sysfs_str(CEC_BASE "/logical_addr", "4");
+    write_sysfs_str(CEC_BASE "/logical_addr", "8");
 
     g_uinput_fd = init_uinput();
     if (g_uinput_fd < 0) {
