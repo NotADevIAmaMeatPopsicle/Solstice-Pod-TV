@@ -1,0 +1,12 @@
+﻿diff --git a/drivers/video/fbdev/msm/mdss_hdmi_tx.c b/drivers/video/fbdev/msm/mdss_hdmi_tx.c
+index 030c901b..b91b28aa 100644
+--- a/drivers/video/fbdev/msm/mdss_hdmi_tx.c
++++ b/drivers/video/fbdev/msm/mdss_hdmi_tx.c
+@@ -2053,7 +2053,6 @@ end:
+ 	return rc;
+ }
+ 
+-#define BLOCK_CEC
+ #ifndef BLOCK_CEC
+ static int hdmi_tx_init_cec_hw(struct hdmi_tx_ctrl *hdmi_ctrl)
+ {

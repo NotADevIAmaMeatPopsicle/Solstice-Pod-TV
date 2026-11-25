@@ -11,4 +11,4 @@ Follow these rules on every build:
    before booting or flashing any new `boot.img`.
 3. **ALWAYS RAM-boot first (`fastboot boot`):** Never `fastboot flash boot` an untested kernel or DTB. Confirm it boots to `adb root` via `fastboot boot` first. If a RAM-booted kernel panics, power-cycling automatically returns to the known-good `boot` partition on eMMC.
 4. **NEVER put untested `insmod` commands in `on boot`:** Test new `.ko` modules live from `/data/local/tmp/` via `adb root` while streaming `dmesg -w`. Only automate verified modules inside `on property:sys.boot_completed=1` so `adbd` is always reachable.
-5. **Keep `watchdog_v2.enable=0` only during active bring-up:** Once all remaining drivers (3.5 mm audio / HDMI-in) are finalized, re-enable `msm_watchdog_v2` for production stability.
+5. **Hardware watchdog (`msm_watchdog_v2`):** Enabled by default in production builds; only pass `watchdog_v2.enable=0` temporarily when debugging early-boot kernel hangs over UART.
