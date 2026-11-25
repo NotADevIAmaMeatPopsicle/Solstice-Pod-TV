@@ -36,8 +36,6 @@ The first catch when you work on an SP8096: **there are no external reset or fas
 | :---: | :---: |
 | ![Lower half of the SP8096 PCB showing Gigabit Ethernet, PoE module, 3.5 mm audio jack, USB 3.0 ports, and P9 UART](docs/images/pcb-io-uart-eth.jpg) | ![Purple FT232H USB-to-serial breakout wired into the SP8096 P9 UART header with an inline resistor harness](docs/images/uart-bench-rig.jpg) |
 
-*All photographs show physical hardware on the bench (EXIF stripped; no unit serials or MAC stickers).*
-
 ---
 
 ## The bench rig
