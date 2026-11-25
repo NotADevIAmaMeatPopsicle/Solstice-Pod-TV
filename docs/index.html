@@ -58,16 +58,20 @@
       font-size: 1rem;
       color: var(--ink);
       letter-spacing: -0.01em;
+      text-decoration: none;
     }
+    .brand:hover { text-decoration: none; }
     .brand span { color: var(--accent); }
     .nav-links {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
       font-size: 0.9rem;
+      align-items: center;
     }
-    .nav-links a { color: var(--muted); font-weight: 500; }
+    .nav-links a { color: var(--muted); font-weight: 500; padding: 3px 0; border-bottom: 2px solid transparent; }
     .nav-links a:hover { color: var(--accent); text-decoration: none; }
+    .nav-links a.active { color: var(--accent); font-weight: 700; border-bottom-color: var(--accent); }
 
     /* Hero */
     .hero {
@@ -314,13 +318,14 @@
 <body>
   <header>
     <div class="wrap nav">
-      <div class="brand">Solstice Pod <span>TV</span></div>
+      <a class="brand" href="index.html">Solstice Pod <span>TV</span></a>
       <nav class="nav-links">
+        <a href="index.html" class="active">Overview</a>
         <a href="#inside">Inside the box</a>
         <a href="#story">Bring-up story</a>
-        <a href="software.html">Software &amp; UI</a>
         <a href="#status">Status</a>
         <a href="#flash">Teardown &amp; flash</a>
+        <a href="software.html">Software &amp; UI</a>
         <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV">GitHub</a>
       </nav>
     </div>
@@ -334,11 +339,11 @@
         <div class="pills">
           <span class="pill">APQ8096 · Snapdragon 820</span>
           <span class="pill green">Android 15 · LineageOS 22.2</span>
-          <span class="pill">Linux 4.4.302-podmin</span>
-          <span class="pill amber">Active hardware bring-up</span>
+          <span class="pill">Linux 4.4.302-podmin+</span>
+          <span class="pill green">HDMI-CEC + 4K@60 Hz</span>
         </div>
         <p>Surplus <strong>Mersive Solstice Pod Gen3</strong> (<code>SP8096</code>) units are compact matte-black plastic presentation boxes stuck on Android 7.1.1 and Linux 3.18. Inside sits a Snapdragon 820, 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in bridge.</p>
-        <p>Self-booting Android 15 (LineageOS 22.2) is running on physical hardware with 4K@60 Hz HDMI out, Venus 4K hardware video decode, 5 GHz Wi-Fi (<code>ath10k_pci</code>), Bluetooth A2DP, Gigabit Ethernet, and Flirc IR remote verified on a living room TV.</p>
+        <p>Self-booting Android 15 (LineageOS 22.2) with <strong>Projectivy Launcher</strong> and <code>msm_watchdog_v2</code> is running on physical hardware with 4K@60 Hz HDMI out (auto-reconnecting on hot-plug or TV input switch), Venus 4K hardware video decode, 5 GHz Wi-Fi (<code>ath10k_pci</code>), Bluetooth A2DP, Gigabit Ethernet, 3.5 mm stereo audio, native HDMI-CEC TV remote control, and Flirc IR remote verified on a living room TV.</p>
       </div>
       <figure class="hero-card">
         <img src="images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view">
@@ -486,11 +491,11 @@
 
       <div class="grid-2">
         <figure class="photo">
-          <img src="images/teardown-bottom-4-feet.jpg" alt="Underside of the Mersive Solstice Pod Gen3 with arrows pointing to the 4 rubber feet">
+          <img src="images/teardown-bottom-4-feet.jpg" alt="Underside of the Mersive Solstice Pod Gen3 with arrows pointing to the 4 rubber feet" style="height: 260px; object-fit: contain; background: #141916;">
           <figcaption><strong>Step 1: Bottom cover (4 screws)</strong>Peel back the 4 rubber feet marked above, take out the case screws, and lift the bottom cover off.</figcaption>
         </figure>
         <figure class="photo">
-          <img src="images/teardown-pcb-6-screws.jpg" alt="Underside of the SP8096 PCB with arrows pointing to the 6 board screws">
+          <img src="images/teardown-pcb-6-screws.jpg" alt="Underside of the SP8096 PCB with arrows pointing to the 6 board screws" style="height: 260px; object-fit: contain; background: #141916;">
           <figcaption><strong>Step 2: Board screws (6 screws)</strong>Take out these 6 screws (4 corners + 2 in the middle) and the board is free to lift right out.</figcaption>
         </figure>
       </div>
@@ -535,6 +540,7 @@
   <footer class="wrap">
     <div>Solstice Pod TV &middot; Apache-2.0 (scripts/docs) &amp; GPL-2.0 (kernel patches/shims)</div>
     <div>
+      <a href="index.html">Overview</a> &middot;
       <a href="software.html">Software &amp; UI</a> &middot;
       <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/ARCHITECTURE.md">Architecture</a> &middot;
       <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/BUILD.md">Build guide</a> &middot;

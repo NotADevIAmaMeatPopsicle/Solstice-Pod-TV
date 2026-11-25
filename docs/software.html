@@ -57,17 +57,20 @@
       font-size: 1rem;
       color: var(--ink);
       letter-spacing: -0.01em;
+      text-decoration: none;
     }
+    .brand:hover { text-decoration: none; }
     .brand span { color: var(--accent); }
     .nav-links {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
       font-size: 0.9rem;
+      align-items: center;
     }
-    .nav-links a { color: var(--muted); font-weight: 500; }
-    .nav-links a:hover, .nav-links a.active { color: var(--accent); text-decoration: none; }
-    .nav-links a.active { font-weight: 700; }
+    .nav-links a { color: var(--muted); font-weight: 500; padding: 3px 0; border-bottom: 2px solid transparent; }
+    .nav-links a:hover { color: var(--accent); text-decoration: none; }
+    .nav-links a.active { color: var(--accent); font-weight: 700; border-bottom-color: var(--accent); }
 
     .page-head {
       padding: 42px 0 26px;
@@ -249,8 +252,11 @@
       <a class="brand" href="index.html">Solstice Pod <span>TV</span></a>
       <nav class="nav-links">
         <a href="index.html">Overview</a>
-        <a href="software.html" class="active">Software &amp; UI</a>
+        <a href="index.html#inside">Inside the box</a>
+        <a href="index.html#story">Bring-up story</a>
+        <a href="index.html#status">Status</a>
         <a href="index.html#flash">Teardown &amp; flash</a>
+        <a href="software.html" class="active">Software &amp; UI</a>
         <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV">GitHub</a>
       </nav>
     </div>
@@ -369,9 +375,17 @@
     <div>Solstice Pod TV &middot; Apache-2.0 (scripts/docs) &amp; GPL-2.0 (kernel patches/shims)</div>
     <div>
       <a href="index.html">Overview</a> &middot;
-      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/SOFTWARE.md">Software doc</a> &middot;
+      <a href="software.html">Software &amp; UI</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/ARCHITECTURE.md">Architecture</a> &middot;
       <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/BUILD.md">Build guide</a> &middot;
+      <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/docs/SAFETY.md">Safety</a> &middot;
       <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/blob/main/NOTICE.md">Notice</a>
+    </div>
+    <div style="flex-basis: 100%; font-size: 0.84rem; opacity: 0.9;">
+      Big thanks to <a href="https://github.com/erikb-lab/solstice-pod-gen3-androidtv">erikb-lab/solstice-pod-gen3-androidtv</a> for the initial Solstice Pod Gen3 Android TV lead that helped get this project started.
+    </div>
+    <div style="flex-basis: 100%; font-size: 0.8rem; opacity: 0.85;">
+      Front and rear reference images are from Mersive Technologies documentation; underside enclosure photo adapted from public FCC filing <code>2ADCSSP8096</code>. All PCB, bench, and UI captures are original. Unaffiliated with Mersive Technologies.
     </div>
   </footer>
 
