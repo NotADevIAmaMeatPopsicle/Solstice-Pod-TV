@@ -5,8 +5,8 @@ mod catalog;
 
 use backend::{
     save_config, spawn_app_job, spawn_backup, spawn_download_platform_tools,
-    spawn_install_or_upgrade, spawn_quick_action, spawn_restore, start_poller, DeviceMode,
-    JobStatus, LogLevel, SharedState,
+    spawn_install_or_upgrade, spawn_quick_action, spawn_restore, spawn_wifi_adb_connect,
+    start_poller, DeviceMode, JobStatus, LogLevel, SharedState,
 };
 use catalog::catalog;
 use eframe::egui::{self, Color32, RichText, Rounding, Stroke, Vec2};
@@ -17,7 +17,6 @@ use std::sync::{Arc, Mutex};
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum Tab {
-    Dashboard,
     Install,
     Apps,
     Backup,
@@ -35,6 +34,7 @@ struct PodToolApp {
     tab: Tab,
     os_target: OsTarget,
     selected_serial: String,
+    wifi_ip_input: String,
     install_apps_on_flash: bool,
     selected_app_ids: HashSet<String>,
     force_redownload: bool,
@@ -60,11 +60,13 @@ impl PodToolApp {
                 selected_app_ids.insert(app.id.to_string());
             }
         }
+        let wifi_ip_input = state.lock().unwrap().config.last_wifi_adb_ip.clone();
         Self {
             state,
-            tab: Tab::Dashboard,
+            tab: Tab::Install,
             os_target: OsTarget::Android15Tv,
             selected_serial: String::new(),
+            wifi_ip_input,
             install_apps_on_flash: true,
             selected_app_ids,
             force_redownload: false,
@@ -144,14 +146,13 @@ impl eframe::App for PodToolApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         ctx.request_repaint_after(std::time::Duration::from_millis(400));
 
-        let (dark, checks, devices, backups, flash_state, job_status, job_step, job_progress, job_checks, logs, cfg_snap) = {
+        let (dark, checks, devices, backups, job_status, job_step, job_progress, job_checks, logs, cfg_snap) = {
             let s = self.state.lock().unwrap();
             (
                 s.config.dark_mode,
                 s.checks.clone(),
                 s.devices.clone(),
                 s.backups.clone(),
-                s.flash_state.clone(),
                 s.job_status.clone(),
                 s.job_step.clone(),
                 s.job_progress,
@@ -230,7 +231,6 @@ impl eframe::App for PodToolApp {
                 ui.label(RichText::new("NAVIGATION").size(10.5).strong().weak());
                 ui.add_space(4.0);
                 for (t, lbl) in [
-                    (Tab::Dashboard, "Dashboard"),
                     (Tab::Install, "Install & Upgrade"),
                     (Tab::Apps, "App Picker"),
                     (Tab::Backup, "Backup & Restore"),
@@ -407,6 +407,9 @@ impl eframe::App for PodToolApp {
                                             DeviceMode::Unauthorized => ("UNAUTH", red),
                                         };
                                         pill(ui, mtxt, mcol, Color32::WHITE);
+                                        if d.serial.contains(':') {
+                                            pill(ui, "WI-FI", pond, Color32::WHITE);
+                                        }
                                         if d.saved_state == "done" {
                                             pill(ui, "VERIFIED", moss, Color32::WHITE);
                                         }
@@ -453,6 +456,30 @@ impl eframe::App for PodToolApp {
                             }
                         }
                     });
+
+                    // Wireless ADB connect bar
+                    ui.add_space(8.0);
+                    ui.horizontal(|ui| {
+                        ui.label(RichText::new("Wireless ADB:").size(12.0).weak());
+                        ui.add(
+                            egui::TextEdit::singleline(&mut self.wifi_ip_input)
+                                .hint_text("192.168.x.x (port 5555)")
+                                .desired_width(175.0),
+                        );
+                        let has_ip = !self.wifi_ip_input.trim().is_empty();
+                        if ui.add_enabled(!busy && has_ip, egui::Button::new("Connect Wi-Fi Pod")).clicked() {
+                            let ip = self.wifi_ip_input.trim().to_string();
+                            {
+                                let mut s = self.state.lock().unwrap();
+                                s.config.last_wifi_adb_ip = ip.clone();
+                                save_config(&s.config);
+                            }
+                            spawn_wifi_adb_connect(Arc::clone(&self.state), ip, false);
+                        }
+                        if ui.add_enabled(!busy && has_ip, egui::Button::new("Disconnect")).clicked() {
+                            spawn_wifi_adb_connect(Arc::clone(&self.state), self.wifi_ip_input.trim().to_string(), true);
+                        }
+                    });
                 });
 
                 ui.add_space(12.0);
@@ -470,85 +497,6 @@ impl eframe::App for PodToolApp {
 
                 // --- ACTIVE TAB ---
                 match self.tab {
-                    Tab::Dashboard => {
-                        // 1. Quick Start Guide
-                        card_frame(dark).show(ui, |ui| {
-                            ui.label(RichText::new("Quick Start").size(15.5).strong());
-                            ui.add_space(6.0);
-                            ui.label("1. Enter Fastboot: connect the Pod's front USB-C port to this computer, hold internal VOL- (S3), and plug in 12 V power for 3 to 5 seconds.");
-                            ui.label("2. Back up factory partitions (optional on stock Pods): use Backup & Restore to save boot, recovery, persist, modem, and bluetooth with SHA-256 verification.");
-                            ui.label("3. Install or Upgrade: open Install & Upgrade for a clean flash (or keep-data upgrade), and pick optional upstream apps in App Picker.");
-                            ui.add_space(8.0);
-                            ui.horizontal_wrapped(|ui| {
-                                if ui.button("Go to Install & Upgrade").clicked() {
-                                    self.tab = Tab::Install;
-                                }
-                                if ui.button("Open App Picker").clicked() {
-                                    self.tab = Tab::Apps;
-                                }
-                                if ui.button("Open Backup & Restore").clicked() {
-                                    self.tab = Tab::Backup;
-                                }
-                            });
-                        });
-
-                        ui.add_space(10.0);
-
-                        // 2. Selected Pod Live Health
-                        card_frame(dark).show(ui, |ui| {
-                            ui.label(RichText::new("Selected Pod Details").size(15.0).strong());
-                            ui.add_space(6.0);
-                            if let Some(ref d) = active_dev {
-                                ui.label(format!("Serial: {}", d.serial));
-                                ui.label(format!("Mode: {:?}", d.mode));
-                                if d.mode == DeviceMode::Android {
-                                    if !d.android_ver.is_empty() { ui.label(format!("Android Version: {}", d.android_ver)); }
-                                    if !d.kernel.is_empty() { ui.label(format!("Kernel: {}", d.kernel)); }
-                                    if !d.wifi_ip.is_empty() { ui.label(format!("Wi-Fi IP: {}", d.wifi_ip)); }
-                                    if !d.storage.is_empty() { ui.label(format!("Internal Storage: {}", d.storage)); }
-                                    if !d.home_app.is_empty() { ui.label(format!("Default Home: {}", d.home_app)); }
-                                    ui.label(format!(
-                                        "Background Services: HDMI-CEC {} | HDMI Hot-Plug {}",
-                                        if d.cec_on { "Running" } else { "Stopped" },
-                                        if d.hotplug_on { "Running" } else { "Stopped" }
-                                    ));
-                                } else if d.mode == DeviceMode::Fastboot {
-                                    ui.label(format!("Fastboot Product: {}", d.product));
-                                    ui.label(RichText::new("Ready for clean install, keep-data upgrade, or backup restore.").weak());
-                                }
-                            } else {
-                                ui.label(RichText::new("Connect a Pod to inspect live hardware, kernel, network, and service health.").weak());
-                            }
-                        });
-
-                        ui.add_space(10.0);
-
-                        // 3. Flashed Pod Fleet History
-                        card_frame(dark).show(ui, |ui| {
-                            let done_cnt = flash_state.values().filter(|v| v.as_str() == "done").count();
-                            ui.horizontal(|ui| {
-                                ui.label(RichText::new("Flashed Pod Fleet").size(15.0).strong());
-                                pill(ui, &format!("{} verified", done_cnt), moss, Color32::WHITE);
-                            });
-                            ui.add_space(6.0);
-                            if flash_state.is_empty() {
-                                ui.label(RichText::new("No Pods flashed by Pod Patcher yet. Verified serials will be tracked here automatically.").weak());
-                            } else {
-                                let mut entries: Vec<_> = flash_state.iter().collect();
-                                entries.sort_by(|a, b| a.0.cmp(b.0));
-                                for (ser, st) in entries {
-                                    ui.horizontal(|ui| {
-                                        ui.label(RichText::new(ser).monospace().strong());
-                                        if st == "done" {
-                                            pill(ui, "VERIFIED", moss, Color32::WHITE);
-                                        } else {
-                                            pill(ui, st, red, Color32::WHITE);
-                                        }
-                                    });
-                                }
-                            }
-                        });
-                    }
                     Tab::Install => {
                         card_frame(dark).show(ui, |ui| {
                             ui.label(RichText::new("Install, Upgrade & Resume").size(15.5).strong());

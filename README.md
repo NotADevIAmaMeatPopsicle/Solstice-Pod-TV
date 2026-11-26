@@ -122,10 +122,12 @@ Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los2
      ```
      You should see a device ID followed by `fastboot`. *(If nothing shows up on Windows, check Device Manager for an unknown Android device and assign it the Google `Android Bootloader Interface` driver.)*
 4. **Back up stock partitions and flash Android 15:**
-   If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first. You can use the **cross-platform GUI flasher** on **Windows, macOS, or Linux** (supports live device status, clean install, keep-data upgrade, progress bars, and SHA-256 verified backup/restore):
+   If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first. You can use **[Pod Patcher](tools/solstice-pod-tool/README.md)**, our single-file pure Rust desktop app for **Windows, macOS, and Linux** (auto-downloads Google Platform Tools, Easy/Advanced modes, live USB and Wireless ADB detection, clean install, keep-data upgrade, vetted 33-app picker, and SHA-256 backup/restore):
    ```bash
-   python3 tools/pod-flasher/pod_flasher.py
+   cd tools/solstice-pod-tool && cargo build --release
    ```
+   *(If you download a prebuilt unsigned binary from Releases on Windows, SmartScreen will prompt "Windows protected your PC"; click **More info -> Run anyway**, or build from source above.)*
+
    Or on Windows, run the PowerShell CLI installer directly:
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `

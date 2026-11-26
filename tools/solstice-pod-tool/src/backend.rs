@@ -63,6 +63,8 @@ pub struct AppConfig {
     pub opt_wifi_adb: bool,
     #[serde(default)]
     pub opt_usb_mtp: bool,
+    #[serde(default)]
+    pub last_wifi_adb_ip: String,
 }
 
 impl Default for AppConfig {
@@ -84,6 +86,7 @@ impl Default for AppConfig {
             opt_disable_phone_apps: true,
             opt_wifi_adb: false,
             opt_usb_mtp: false,
+            last_wifi_adb_ip: String::new(),
         }
     }
 }
@@ -1144,6 +1147,28 @@ pub fn spawn_app_job(
             Ok(())
         })();
         finish_job(&state, res);
+    });
+}
+
+pub fn spawn_wifi_adb_connect(state: Arc<Mutex<SharedState>>, host: String, disconnect: bool) {
+    thread::spawn(move || {
+        let adb = state.lock().unwrap().checks.adb_path.clone();
+        let Some(adb) = adb else {
+            state.lock().unwrap().push_log(LogLevel::Error, "ADB not found. Download Platform Tools first.");
+            return;
+        };
+        let target = if host.contains(':') {
+            host.trim().to_string()
+        } else {
+            format!("{}:5555", host.trim())
+        };
+        let verb = if disconnect { "disconnect" } else { "connect" };
+        let res = run_capture(&adb, &[verb, &target]);
+        let mut s = state.lock().unwrap();
+        match res {
+            Ok(out) => s.push_log(LogLevel::Ok, format!("adb {} {}: {}", verb, target, out)),
+            Err(e) => s.push_log(LogLevel::Error, format!("adb {} {} failed: {}", verb, target, e)),
+        }
     });
 }
 
