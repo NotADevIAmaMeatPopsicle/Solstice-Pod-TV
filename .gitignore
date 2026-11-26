@@ -33,6 +33,7 @@ android-platform-tools/
 android-usb-driver/
 out/
 build/
+target/
 __pycache__/
 *.pyc
 *.log
