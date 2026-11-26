@@ -1,4 +1,4 @@
-name: Build Solstice Pod Tool (Windows / macOS / Linux)
+name: Build Pod Patcher (Windows / macOS / Linux)
 
 on:
   push:
@@ -13,14 +13,14 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            artifact: solstice-pod-tool-windows-x64.exe
-            bin: target/release/solstice-pod-tool.exe
+            artifact: PodPatcher-windows-x64.exe
+            bin: target/release/PodPatcher.exe
           - os: macos-latest
-            artifact: solstice-pod-tool-macos-arm64
-            bin: target/release/solstice-pod-tool
+            artifact: PodPatcher-macos-arm64
+            bin: target/release/PodPatcher
           - os: ubuntu-latest
-            artifact: solstice-pod-tool-linux-x64
-            bin: target/release/solstice-pod-tool
+            artifact: PodPatcher-linux-x64
+            bin: target/release/PodPatcher
 
     runs-on: ${{ matrix.os }}
     steps:

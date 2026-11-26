@@ -88,7 +88,7 @@ impl PodToolApp {
             v.window_fill = Color32::from_rgb(26, 31, 29);
             v.faint_bg_color = Color32::from_rgb(31, 37, 35);
             v.widgets.noninteractive.bg_fill = Color32::from_rgb(30, 36, 34);
-            v.widgets.noninteractive.bg_stroke = Stroke::new(1.0, Color32::from_rgb(48, 57, 54));
+            v.widgets.noninteractive.bg_stroke = Stroke::new(1.0_f32, Color32::from_rgb(48, 57, 54));
             v.widgets.inactive.bg_fill = Color32::from_rgb(38, 46, 43);
             v.widgets.hovered.bg_fill = Color32::from_rgb(49, 60, 56);
             v.selection.bg_fill = Color32::from_rgb(46, 107, 79);
@@ -99,7 +99,7 @@ impl PodToolApp {
             v.window_fill = Color32::from_rgb(255, 253, 248);
             v.faint_bg_color = Color32::from_rgb(239, 236, 228);
             v.widgets.noninteractive.bg_fill = Color32::from_rgb(255, 253, 248);
-            v.widgets.noninteractive.bg_stroke = Stroke::new(1.0, Color32::from_rgb(218, 213, 201));
+            v.widgets.noninteractive.bg_stroke = Stroke::new(1.0_f32, Color32::from_rgb(218, 213, 201));
             v.selection.bg_fill = Color32::from_rgb(46, 107, 79);
             v
         };
@@ -129,7 +129,7 @@ fn card_frame(dark: bool) -> egui::Frame {
             Color32::from_rgb(255, 253, 248)
         })
         .stroke(Stroke::new(
-            1.0,
+            1.0_f32,
             if dark {
                 Color32::from_rgb(48, 57, 54)
             } else {
@@ -144,13 +144,14 @@ impl eframe::App for PodToolApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         ctx.request_repaint_after(std::time::Duration::from_millis(400));
 
-        let (dark, checks, devices, backups, job_status, job_step, job_progress, job_checks, logs, cfg_snap) = {
+        let (dark, checks, devices, backups, flash_state, job_status, job_step, job_progress, job_checks, logs, cfg_snap) = {
             let s = self.state.lock().unwrap();
             (
                 s.config.dark_mode,
                 s.checks.clone(),
                 s.devices.clone(),
                 s.backups.clone(),
+                s.flash_state.clone(),
                 s.job_status.clone(),
                 s.job_step.clone(),
                 s.job_progress,
@@ -181,8 +182,8 @@ impl eframe::App for PodToolApp {
             .resizable(false)
             .show(ctx, |ui| {
                 ui.add_space(10.0);
-                ui.label(RichText::new("THE POD MOD").size(16.0).strong().color(moss));
-                ui.label(RichText::new("Solstice Pod Gen3 (SP8096) Flasher").size(11.5).weak());
+                ui.label(RichText::new("Pod Patcher").size(18.0).strong().color(moss));
+                ui.label(RichText::new("Solstice Pod Gen3 (SP8096)").size(11.5).weak());
                 ui.add_space(10.0);
 
                 // OS Target selector (Android 15 now, Linux/Docker slot ready)
@@ -202,9 +203,9 @@ impl eframe::App for PodToolApp {
                 ui.label(RichText::new("NAVIGATION").size(10.5).strong().weak());
                 ui.add_space(4.0);
                 for (t, lbl) in [
-                    (Tab::Dashboard, "Dashboard & Devices"),
+                    (Tab::Dashboard, "Dashboard"),
                     (Tab::Install, "Install & Upgrade"),
-                    (Tab::Apps, "App Picker (Ninite)"),
+                    (Tab::Apps, "App Picker"),
                     (Tab::Backup, "Backup & Restore"),
                     (Tab::Settings, "Paths & Settings"),
                 ] {
@@ -333,7 +334,7 @@ impl eframe::App for PodToolApp {
                 if !checks.driver_warnings.is_empty() {
                     egui::Frame::none()
                         .fill(Color32::from_rgb(78, 52, 16))
-                        .stroke(Stroke::new(1.0, amber))
+                        .stroke(Stroke::new(1.0_f32, amber))
                         .rounding(Rounding::same(8.0))
                         .inner_margin(egui::Margin::same(10.0))
                         .show(ui, |ui| {
@@ -440,7 +441,86 @@ impl eframe::App for PodToolApp {
 
                 // --- ACTIVE TAB ---
                 match self.tab {
-                    Tab::Dashboard | Tab::Install => {
+                    Tab::Dashboard => {
+                        // 1. Quick Start Guide
+                        card_frame(dark).show(ui, |ui| {
+                            ui.label(RichText::new("Quick Start").size(15.5).strong());
+                            ui.add_space(6.0);
+                            ui.label("1. Enter Fastboot: connect the Pod's front USB-C port to this computer, hold internal VOL- (S3), and plug in 12 V power for 3 to 5 seconds.");
+                            ui.label("2. Back up factory partitions (optional on stock Pods): use Backup & Restore to save boot, recovery, persist, modem, and bluetooth with SHA-256 verification.");
+                            ui.label("3. Install or Upgrade: open Install & Upgrade for a clean flash (or keep-data upgrade), and pick optional upstream apps in App Picker.");
+                            ui.add_space(8.0);
+                            ui.horizontal_wrapped(|ui| {
+                                if ui.button("Go to Install & Upgrade").clicked() {
+                                    self.tab = Tab::Install;
+                                }
+                                if ui.button("Open App Picker").clicked() {
+                                    self.tab = Tab::Apps;
+                                }
+                                if ui.button("Open Backup & Restore").clicked() {
+                                    self.tab = Tab::Backup;
+                                }
+                            });
+                        });
+
+                        ui.add_space(10.0);
+
+                        // 2. Selected Pod Live Health
+                        card_frame(dark).show(ui, |ui| {
+                            ui.label(RichText::new("Selected Pod Details").size(15.0).strong());
+                            ui.add_space(6.0);
+                            if let Some(ref d) = active_dev {
+                                ui.label(format!("Serial: {}", d.serial));
+                                ui.label(format!("Mode: {:?}", d.mode));
+                                if d.mode == DeviceMode::Android {
+                                    if !d.android_ver.is_empty() { ui.label(format!("Android Version: {}", d.android_ver)); }
+                                    if !d.kernel.is_empty() { ui.label(format!("Kernel: {}", d.kernel)); }
+                                    if !d.wifi_ip.is_empty() { ui.label(format!("Wi-Fi IP: {}", d.wifi_ip)); }
+                                    if !d.storage.is_empty() { ui.label(format!("Internal Storage: {}", d.storage)); }
+                                    if !d.home_app.is_empty() { ui.label(format!("Default Home: {}", d.home_app)); }
+                                    ui.label(format!(
+                                        "Background Services: HDMI-CEC {} | HDMI Hot-Plug {}",
+                                        if d.cec_on { "Running" } else { "Stopped" },
+                                        if d.hotplug_on { "Running" } else { "Stopped" }
+                                    ));
+                                } else if d.mode == DeviceMode::Fastboot {
+                                    ui.label(format!("Fastboot Product: {}", d.product));
+                                    ui.label(RichText::new("Ready for clean install, keep-data upgrade, or backup restore.").weak());
+                                }
+                            } else {
+                                ui.label(RichText::new("Connect a Pod to inspect live hardware, kernel, network, and service health.").weak());
+                            }
+                        });
+
+                        ui.add_space(10.0);
+
+                        // 3. Flashed Pod Fleet History
+                        card_frame(dark).show(ui, |ui| {
+                            let done_cnt = flash_state.values().filter(|v| v.as_str() == "done").count();
+                            ui.horizontal(|ui| {
+                                ui.label(RichText::new("Flashed Pod Fleet").size(15.0).strong());
+                                pill(ui, &format!("{} verified", done_cnt), moss, Color32::WHITE);
+                            });
+                            ui.add_space(6.0);
+                            if flash_state.is_empty() {
+                                ui.label(RichText::new("No Pods flashed by Pod Patcher yet. Verified serials will be tracked here automatically.").weak());
+                            } else {
+                                let mut entries: Vec<_> = flash_state.iter().collect();
+                                entries.sort_by(|a, b| a.0.cmp(b.0));
+                                for (ser, st) in entries {
+                                    ui.horizontal(|ui| {
+                                        ui.label(RichText::new(ser).monospace().strong());
+                                        if st == "done" {
+                                            pill(ui, "VERIFIED", moss, Color32::WHITE);
+                                        } else {
+                                            pill(ui, st, red, Color32::WHITE);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    }
+                    Tab::Install => {
                         card_frame(dark).show(ui, |ui| {
                             ui.label(RichText::new("Install, Upgrade & Resume").size(15.5).strong());
                             ui.add_space(6.0);
@@ -473,7 +553,7 @@ impl eframe::App for PodToolApp {
                     }
                     Tab::Apps => {
                         card_frame(dark).show(ui, |ui| {
-                            ui.label(RichText::new("App Picker (Ninite-Style Official Upstream Releases)").size(15.5).strong());
+                            ui.label(RichText::new("App Picker (Official Upstream Releases)").size(15.5).strong());
                             ui.label(RichText::new("Vanilla default: Projectivy Launcher + Aptoide TV. All other vetted open-source/official apps are opt-in. Zero APKs are bundled in the repo.").size(12.0).weak());
                             ui.add_space(8.0);
 
@@ -649,16 +729,31 @@ impl eframe::App for PodToolApp {
     }
 }
 
+fn load_app_icon() -> Option<egui::IconData> {
+    let bytes = include_bytes!("../assets/icon.png");
+    let img = image::load_from_memory(bytes).ok()?.into_rgba8();
+    let (width, height) = img.dimensions();
+    Some(egui::IconData {
+        rgba: img.into_raw(),
+        width,
+        height,
+    })
+}
+
 fn main() -> eframe::Result<()> {
+    let mut vp = egui::ViewportBuilder::default()
+        .with_title("Pod Patcher")
+        .with_inner_size([1080.0, 760.0])
+        .with_min_inner_size([880.0, 620.0]);
+    if let Some(icon) = load_app_icon() {
+        vp = vp.with_icon(Arc::new(icon));
+    }
     let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default()
-            .with_title("The Pod Mod - Solstice Pod TV Flasher & Manager")
-            .with_inner_size([1080.0, 760.0])
-            .with_min_inner_size([880.0, 620.0]),
+        viewport: vp,
         ..Default::default()
     };
     eframe::run_native(
-        "The Pod Mod",
+        "Pod Patcher",
         options,
         Box::new(|cc| Ok(Box::new(PodToolApp::new(cc)))),
     )
