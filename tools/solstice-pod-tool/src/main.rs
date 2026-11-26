@@ -186,6 +186,33 @@ impl eframe::App for PodToolApp {
                 ui.label(RichText::new("Solstice Pod Gen3 (SP8096)").size(11.5).weak());
                 ui.add_space(10.0);
 
+                // Easy / Advanced mode toggle
+                ui.label(RichText::new("MODE").size(10.5).strong().weak());
+                ui.horizontal(|ui| {
+                    let adv = cfg_snap.advanced_mode;
+                    let easy_btn = egui::Button::new(
+                        RichText::new("Easy").color(if !adv { Color32::WHITE } else { ui.visuals().text_color() }),
+                    )
+                    .fill(if !adv { moss } else { Color32::TRANSPARENT })
+                    .min_size(Vec2::new(98.0, 26.0));
+                    let adv_btn = egui::Button::new(
+                        RichText::new("Advanced").color(if adv { Color32::WHITE } else { ui.visuals().text_color() }),
+                    )
+                    .fill(if adv { pond } else { Color32::TRANSPARENT })
+                    .min_size(Vec2::new(98.0, 26.0));
+                    if ui.add(easy_btn).clicked() && adv {
+                        let mut s = self.state.lock().unwrap();
+                        s.config.advanced_mode = false;
+                        save_config(&s.config);
+                    }
+                    if ui.add(adv_btn).clicked() && !adv {
+                        let mut s = self.state.lock().unwrap();
+                        s.config.advanced_mode = true;
+                        save_config(&s.config);
+                    }
+                });
+                ui.add_space(10.0);
+
                 // OS Target selector (Android 15 now, Linux/Docker slot ready)
                 ui.label(RichText::new("OS TARGET").size(10.5).strong().weak());
                 egui::ComboBox::from_id_salt("os_target")
@@ -417,11 +444,13 @@ impl eframe::App for PodToolApp {
                         if ui.add_enabled(!busy && has_dev, egui::Button::new("Reboot to Android")).clicked() {
                             spawn_quick_action(Arc::clone(&self.state), self.selected_serial.clone(), "reboot_android");
                         }
-                        if ui.add_enabled(!busy && is_android, egui::Button::new("Enable Wi-Fi ADB (5555)")).clicked() {
-                            spawn_quick_action(Arc::clone(&self.state), self.selected_serial.clone(), "wifi_adb");
-                        }
-                        if ui.add_enabled(!busy && is_android, egui::Button::new("Enable MTP + ADB")).clicked() {
-                            spawn_quick_action(Arc::clone(&self.state), self.selected_serial.clone(), "mtp");
+                        if cfg_snap.advanced_mode {
+                            if ui.add_enabled(!busy && is_android, egui::Button::new("Enable Wi-Fi ADB (5555)")).clicked() {
+                                spawn_quick_action(Arc::clone(&self.state), self.selected_serial.clone(), "wifi_adb");
+                            }
+                            if ui.add_enabled(!busy && is_android, egui::Button::new("Enable MTP + ADB")).clicked() {
+                                spawn_quick_action(Arc::clone(&self.state), self.selected_serial.clone(), "mtp");
+                            }
                         }
                     });
                 });
@@ -528,7 +557,30 @@ impl eframe::App for PodToolApp {
                             ui.add_space(10.0);
 
                             ui.checkbox(&mut self.install_apps_on_flash, "Auto-install cached APKs from your TV APKs folder");
-                            ui.add_space(10.0);
+
+                            if cfg_snap.advanced_mode {
+                                ui.add_space(10.0);
+                                ui.separator();
+                                ui.add_space(6.0);
+                                ui.label(RichText::new("Granular Provisioning Options (Advanced)").size(13.0).strong().color(pond));
+                                ui.add_space(4.0);
+                                let mut s = self.state.lock().unwrap();
+                                let mut changed = false;
+                                changed |= ui.checkbox(&mut s.config.opt_skip_setup, "Skip phone setup wizard, lockscreen, and sleep timer").changed();
+                                changed |= ui.checkbox(&mut s.config.opt_hide_battery, "Hide battery icon (wall-powered device)").changed();
+                                changed |= ui.checkbox(&mut s.config.opt_lock_landscape, "Lock landscape orientation for TV").changed();
+                                changed |= ui.checkbox(&mut s.config.opt_hide_status_bar, "Hide phone status bar (immersive.status=*)").changed();
+                                changed |= ui.checkbox(&mut s.config.opt_disable_phone_apps, "Disable 12 leftover phone & stock Mersive apps").changed();
+                                changed |= ui.checkbox(&mut s.config.opt_usb_mtp, "Enable USB MTP file transfer alongside ADB (opt-in)").changed();
+                                changed |= ui.checkbox(&mut s.config.opt_wifi_adb, "Enable Wireless ADB on port 5555 (opt-in; opens LAN debugging)").changed();
+                                if changed {
+                                    save_config(&s.config);
+                                }
+                            } else {
+                                ui.add_space(4.0);
+                                ui.label(RichText::new("Easy Mode uses safe TV defaults (Wireless ADB & USB MTP stay off unless enabled in Advanced Mode).").size(11.5).weak());
+                            }
+                            ui.add_space(12.0);
 
                             let has_dev = active_dev.is_some();
                             let is_android = active_dev.as_ref().map(|d| d.mode == DeviceMode::Android).unwrap_or(false);
@@ -543,9 +595,11 @@ impl eframe::App for PodToolApp {
                                         spawn_install_or_upgrade(Arc::clone(&self.state), d.serial.clone(), d.mode.clone(), false, false, false);
                                     }
                                 }
-                                if ui.add_enabled(!busy && is_android, egui::Button::new("Provision & Verify Only (ADB)").min_size(Vec2::new(180.0, 34.0))).clicked() {
-                                    if let Some(ref d) = active_dev {
-                                        spawn_install_or_upgrade(Arc::clone(&self.state), d.serial.clone(), d.mode.clone(), false, self.install_apps_on_flash, true);
+                                if cfg_snap.advanced_mode {
+                                    if ui.add_enabled(!busy && is_android, egui::Button::new("Provision & Verify Only (ADB)").min_size(Vec2::new(180.0, 34.0))).clicked() {
+                                        if let Some(ref d) = active_dev {
+                                            spawn_install_or_upgrade(Arc::clone(&self.state), d.serial.clone(), d.mode.clone(), false, self.install_apps_on_flash, true);
+                                        }
                                     }
                                 }
                             });
@@ -624,14 +678,18 @@ impl eframe::App for PodToolApp {
                             ui.label(RichText::new("Backup Partitions (ADB Root)").size(15.0).strong());
                             ui.label(RichText::new("Saves raw .img files + verified SHA-256 manifest into a timestamped folder per Pod serial.").weak());
                             ui.add_space(6.0);
-                            ui.horizontal_wrapped(|ui| {
-                                ui.checkbox(&mut self.bk_boot, "boot");
-                                ui.checkbox(&mut self.bk_recovery, "recovery");
-                                ui.checkbox(&mut self.bk_persist, "persist");
-                                ui.checkbox(&mut self.bk_modem, "modem");
-                                ui.checkbox(&mut self.bk_bluetooth, "bluetooth");
-                                ui.checkbox(&mut self.bk_aboot, "aboot");
-                            });
+                            if cfg_snap.advanced_mode {
+                                ui.horizontal_wrapped(|ui| {
+                                    ui.checkbox(&mut self.bk_boot, "boot");
+                                    ui.checkbox(&mut self.bk_recovery, "recovery");
+                                    ui.checkbox(&mut self.bk_persist, "persist");
+                                    ui.checkbox(&mut self.bk_modem, "modem");
+                                    ui.checkbox(&mut self.bk_bluetooth, "bluetooth");
+                                    ui.checkbox(&mut self.bk_aboot, "aboot");
+                                });
+                            } else {
+                                ui.label(RichText::new("Easy Mode backs up the 5 standard partitions: boot, recovery, persist, modem, and bluetooth.").size(11.5).weak());
+                            }
                             ui.add_space(6.0);
                             let is_android = active_dev.as_ref().map(|d| d.mode == DeviceMode::Android).unwrap_or(false);
                             if ui.add_enabled(!busy && is_android, egui::Button::new(RichText::new("Backup Selected Pod").color(Color32::WHITE)).fill(moss)).clicked() {
@@ -666,9 +724,15 @@ impl eframe::App for PodToolApp {
                                         }
                                     });
                                 ui.add_space(6.0);
-                                ui.checkbox(&mut self.restore_sensitive, RichText::new("Include sensitive factory partitions (persist/modem/bluetooth)").color(red));
-                                if self.restore_sensitive {
-                                    ui.checkbox(&mut self.confirm_sensitive, RichText::new("I confirm this backup belongs to this exact physical Pod").color(red));
+                                if cfg_snap.advanced_mode {
+                                    ui.checkbox(&mut self.restore_sensitive, RichText::new("Include sensitive factory partitions (persist/modem/bluetooth)").color(red));
+                                    if self.restore_sensitive {
+                                        ui.checkbox(&mut self.confirm_sensitive, RichText::new("I confirm this backup belongs to this exact physical Pod").color(red));
+                                    }
+                                } else {
+                                    self.restore_sensitive = false;
+                                    self.confirm_sensitive = false;
+                                    ui.label(RichText::new("Easy Mode safety lock: only restores boot/recovery/system (switch to Advanced Mode to unlock factory partitions).").size(11.5).weak());
                                 }
                                 ui.add_space(6.0);
                                 let is_fb = active_dev.as_ref().map(|d| d.mode == DeviceMode::Fastboot).unwrap_or(false);

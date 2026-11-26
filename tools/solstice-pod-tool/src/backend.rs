@@ -33,6 +33,10 @@ const DISABLE_PHONE_PKGS: &[&str] = &[
 
 const SENSITIVE_PARTS: &[&str] = &["persist", "modem", "bluetooth", "bt_firmware"];
 
+fn default_true() -> bool {
+    true
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct AppConfig {
     pub platform_tools_dir: String,
@@ -41,7 +45,24 @@ pub struct AppConfig {
     pub backups_dir: String,
     pub wifi_ssid: String,
     pub wifi_password: String,
+    #[serde(default = "default_true")]
     pub dark_mode: bool,
+    #[serde(default)]
+    pub advanced_mode: bool,
+    #[serde(default = "default_true")]
+    pub opt_skip_setup: bool,
+    #[serde(default = "default_true")]
+    pub opt_hide_battery: bool,
+    #[serde(default = "default_true")]
+    pub opt_lock_landscape: bool,
+    #[serde(default = "default_true")]
+    pub opt_hide_status_bar: bool,
+    #[serde(default = "default_true")]
+    pub opt_disable_phone_apps: bool,
+    #[serde(default)]
+    pub opt_wifi_adb: bool,
+    #[serde(default)]
+    pub opt_usb_mtp: bool,
 }
 
 impl Default for AppConfig {
@@ -55,6 +76,14 @@ impl Default for AppConfig {
             wifi_ssid: String::new(),
             wifi_password: String::new(),
             dark_mode: true,
+            advanced_mode: false,
+            opt_skip_setup: true,
+            opt_hide_battery: true,
+            opt_lock_landscape: true,
+            opt_hide_status_bar: true,
+            opt_disable_phone_apps: true,
+            opt_wifi_adb: false,
+            opt_usb_mtp: false,
         }
     }
 }
@@ -745,7 +774,7 @@ fn provision_pod(
 ) -> Result<(), String> {
     wait_for_boot(state, adb, serial)?;
 
-    set_step(state, 0.70, "Applying TV defaults & disabling phone apps...");
+    set_step(state, 0.70, "Applying selected TV settings...");
     let has_cec = run_capture(adb, &["-s", serial, "shell", "ls /vendor/bin/pod-cec-daemon 2>/dev/null"])
         .unwrap_or_default()
         .contains("pod-cec-daemon");
@@ -754,18 +783,43 @@ fn provision_pod(
         .contains("hotplug");
     let has_baked = has_cec && has_hp;
 
-    let _ = run_capture(
-        adb,
-        &[
-            "-s",
-            serial,
-            "shell",
-            "settings put global device_provisioned 1; settings put secure user_setup_complete 1; settings put secure icon_blacklist battery; dumpsys battery set present 0 2>/dev/null || true; settings put system screen_off_timeout 2147483647; settings put system accelerometer_rotation 0; settings put system user_rotation 0; settings put global policy_control immersive.status=*; wm fixed-to-user-rotation enabled; wm user-rotation lock 0; locksettings set-disabled true 2>/dev/null || true; pm disable-user --user 0 org.lineageos.setupwizard 2>/dev/null || true",
-        ],
-    );
-    for pkg in DISABLE_PHONE_PKGS {
-        let cmd = format!("pm disable-user --user 0 {} 2>/dev/null || true", pkg);
-        let _ = run_capture(adb, &["-s", serial, "shell", &cmd]);
+    let mut cmds: Vec<&str> = vec![];
+    if cfg.opt_skip_setup {
+        cmds.push("settings put global device_provisioned 1");
+        cmds.push("settings put secure user_setup_complete 1");
+        cmds.push("settings put system screen_off_timeout 2147483647");
+        cmds.push("locksettings set-disabled true 2>/dev/null || true");
+        cmds.push("pm disable-user --user 0 org.lineageos.setupwizard 2>/dev/null || true");
+    }
+    if cfg.opt_hide_battery {
+        cmds.push("settings put secure icon_blacklist battery");
+        cmds.push("dumpsys battery set present 0 2>/dev/null || true");
+    }
+    if cfg.opt_lock_landscape {
+        cmds.push("settings put system accelerometer_rotation 0");
+        cmds.push("settings put system user_rotation 0");
+        cmds.push("wm fixed-to-user-rotation enabled");
+        cmds.push("wm user-rotation lock 0");
+    }
+    if cfg.opt_hide_status_bar {
+        cmds.push("settings put global policy_control immersive.status=*");
+    }
+    if cfg.opt_usb_mtp {
+        cmds.push("svc usb setFunctions mtp true 2>/dev/null || true");
+    }
+    if !cmds.is_empty() {
+        let joined = cmds.join("; ");
+        let _ = run_capture(adb, &["-s", serial, "shell", &joined]);
+    }
+    if cfg.opt_wifi_adb {
+        state.lock().unwrap().push_log(LogLevel::Info, "Enabling Wireless ADB on port 5555...");
+        let _ = run_capture(adb, &["-s", serial, "tcpip", "5555"]);
+    }
+    if cfg.opt_disable_phone_apps {
+        for pkg in DISABLE_PHONE_PKGS {
+            let cmd = format!("pm disable-user --user 0 {} 2>/dev/null || true", pkg);
+            let _ = run_capture(adb, &["-s", serial, "shell", &cmd]);
+        }
     }
 
     if install_apps {
