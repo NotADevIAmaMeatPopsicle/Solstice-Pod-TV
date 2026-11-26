@@ -122,7 +122,11 @@ Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los2
      ```
      You should see a device ID followed by `fastboot`. *(If nothing shows up on Windows, check Device Manager for an unknown Android device and assign it the Google `Android Bootloader Interface` driver.)*
 4. **Back up stock partitions and flash Android 15:**
-   If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first. Then run the installer script:
+   If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first. You can use the **cross-platform GUI flasher** on **Windows, macOS, or Linux** (supports live device status, clean install, keep-data upgrade, progress bars, and SHA-256 verified backup/restore):
+   ```bash
+   python3 tools/pod-flasher/pod_flasher.py
+   ```
+   Or on Windows, run the PowerShell CLI installer directly:
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
      -ImagesDir .\out\images `
