@@ -536,6 +536,16 @@
           <h3><span class="story-num">4</span>Back up stock partitions and flash Android 15</h3>
           <p>If you haven't backed up this Pod yet, save copies of <code>boot</code>, <code>recovery</code>, <code>persist</code>, <code>modem</code>, and <code>bluetooth</code> first.</p>
           <p><strong>Option A: Use <a href="https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher">Pod Patcher</a> (Recommended GUI Flasher, Windows / macOS / Linux)</strong></p>
+          <div class="grid-2" style="margin: 10px 0 14px;">
+            <figure style="margin: 0;">
+              <img src="images/pod-patcher-install.png" alt="Pod Patcher Install and Upgrade tab" style="width: 100%; border-radius: 8px;">
+              <figcaption style="font-size: 0.85em; opacity: 0.8; margin-top: 4px;">Pod Patcher: Install &amp; Upgrade</figcaption>
+            </figure>
+            <figure style="margin: 0;">
+              <img src="images/pod-patcher-apps.png" alt="Pod Patcher App Picker tab" style="width: 100%; border-radius: 8px;">
+              <figcaption style="font-size: 0.85em; opacity: 0.8; margin-top: 4px;">Pod Patcher: Vetted App Picker</figcaption>
+            </figure>
+          </div>
           <ol style="margin: 0 0 12px 20px; padding: 0;">
             <li>Download the latest standalone binary from <a href="https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases/latest">Pod Patcher Releases</a> (or build from source with <code>cargo build --release</code>). Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt <em>"Windows protected your PC"</em>: click <strong>More info &rarr; Run anyway</strong> (macOS: right-click &rarr; <strong>Open</strong>). <strong>Android 15 TV</strong> is active today; <strong>Linux / Docker</strong> and <strong>Windows ARM64</strong> options are work in progress.</li>
             <li>Open <strong>Pod Patcher</strong>. The <strong>Live Self-Checks</strong> sidebar verifies <code>adb</code>/<code>fastboot</code>, your OS images, and Windows fastboot drivers. If Platform Tools are missing, click <strong>Download Platform Tools</strong> once to install Google's official copy automatically.</li>

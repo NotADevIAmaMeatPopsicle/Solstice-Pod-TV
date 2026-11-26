@@ -127,6 +127,11 @@ Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los2
    If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first.
 
    **Option A: Use [Pod Patcher](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher) (Recommended GUI Flasher, Windows / macOS / Linux)**
+
+   | Pod Patcher: Install & Upgrade | Pod Patcher: App Picker |
+   | :---: | :---: |
+   | ![Pod Patcher Install and Upgrade view](docs/images/pod-patcher-install.png) | ![Pod Patcher App Picker view](docs/images/pod-patcher-apps.png) |
+
    1. Download the latest single-file flasher binary from [Pod Patcher Releases](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases/latest) (or build from source with `cargo build --release`). *(Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt "Windows protected your PC"; click **More info -> Run anyway**. On macOS, right-click and choose **Open**. **Android 15 TV** is active today; **Linux / Docker** and **Windows ARM64** targets are listed as work in progress.)*
    2. Launch **Pod Patcher**. The **Live Self-Checks** sidebar automatically checks `adb`/`fastboot`, your OS images, and Windows fastboot drivers. If Platform Tools are missing, click **Download Platform Tools** once to install Google's official copy automatically.
    3. Open **Paths & Settings** and point **OS Images Folder** at your built `boot`, `recovery`, and `system` images (`out/images`).
