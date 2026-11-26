@@ -121,21 +121,24 @@ Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los2
      fastboot devices
      ```
      You should see a device ID followed by `fastboot`. *(If nothing shows up on Windows, check Device Manager for an unknown Android device and assign it the Google `Android Bootloader Interface` driver.)*
-4. **Back up stock partitions and flash Android 15:**
-   If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first. You can use **[Pod Patcher](tools/solstice-pod-tool/README.md)**, our single-file pure Rust desktop app for **Windows, macOS, and Linux** (auto-downloads Google Platform Tools, Easy/Advanced modes, live USB and Wireless ADB detection, clean install, keep-data upgrade, vetted 33-app picker, and SHA-256 backup/restore):
-   ```bash
-   cd tools/solstice-pod-tool && cargo build --release
-   ```
-   *(If you download a prebuilt unsigned binary from Releases on Windows, SmartScreen will prompt "Windows protected your PC"; click **More info -> Run anyway**, or build from source above.)*
+4. **Back up stock partitions and flash Android 15 (GUI with Pod Patcher, or CLI script):**
+   If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first.
 
-   Or on Windows, run the PowerShell CLI installer directly:
+   **Option A: Use [Pod Patcher](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher) (Recommended, Windows / macOS / Linux)**
+   1. Download the latest single-file binary from [Pod Patcher Releases](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases) (or build from source with `cargo build --release`). *(Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt "Windows protected your PC"; click **More info -> Run anyway**. On macOS, right-click and choose **Open**.)*
+   2. Launch **Pod Patcher**. The **Live Self-Checks** sidebar automatically checks `adb`/`fastboot`, your OS images, and Windows fastboot drivers. If Platform Tools are missing, click **Download Platform Tools** once to install Google's official copy automatically.
+   3. Open **Paths & Settings** and point **OS Images Folder** at your built `boot`, `recovery`, and `system` images (`out/images`).
+   4. *(Optional)* Open **App Picker** to pick any upstream apps you want cached (Vanilla default is just **Projectivy Launcher** and **Aptoide TV**; 31 more vetted open-source/official apps are opt-in) and click **Download Selected to APKs Folder**.
+   5. With your Pod showing as `FASTBOOT` in **Connected Pods**, open **Install & Upgrade** and click **Start Clean Install / Resume**. Pod Patcher flashes `boot`, `recovery`, and `system`, formats `userdata` and `cache` as `ext4`, applies safe TV defaults (switch to **Advanced** mode in the sidebar if you want opt-in Wireless ADB, USB MTP, or granular toggles), installs your cached APKs, and runs a pass/fail verification checklist. It **never touches `persist`, `modem`, or `bt_firmware`**.
+
+   **Option B: Windows PowerShell CLI script**
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
      -ImagesDir .\out\images `
      -PlatformToolsDir .\platform-tools `
      -ApksDir .\out\tv-apks
    ```
-   The script flashes `boot`, `recovery`, and `system`, formats `userdata` and `cache` as `ext4`, reboots into Android 15, applies the TV defaults (skips setup wizard, hides the battery icon, locks landscape, hides the phone status bar, disables leftover phone apps), installs any APKs in `ApksDir`, and runs a pass/fail verification check before marking the unit done in `flash-state.json`. It is resumable (if interrupted after flashing, re-running it picks up over ADB), supports `-Batch` for flashing multiple Pods back-to-back, and **never touches `persist`, `modem`, or `bt_firmware`**, so each Pod keeps its factory MAC addresses and calibration.
+   The CLI script flashes `boot`, `recovery`, and `system`, formats `userdata` and `cache` as `ext4`, reboots into Android 15, applies the TV defaults (skips setup wizard, hides the battery icon, locks landscape, hides the phone status bar, disables leftover phone apps), installs any APKs in `ApksDir`, and runs a pass/fail verification check before marking the unit done in `flash-state.json`. It is resumable (if interrupted after flashing, re-running it picks up over ADB), supports `-Batch` for flashing multiple Pods back-to-back, and **never touches `persist`, `modem`, or `bt_firmware`**, so each Pod keeps its factory MAC addresses and calibration.
 5. **Put it back together and hook it up to your TV:**
    Unplug power and USB-C, set the aluminum heatsink block back onto the board (making sure the thermal paste lines up cleanly), and put the **6 board screws** back in. Snap the bottom cover back on with the **4 case screws** and press the **4 rubber feet** back in place. Plug **`HDMI 1` (the rightmost rear HDMI port)** into your 4K TV, plug a USB keyboard/mouse or **Flirc USB** receiver into one of the rear USB 3.0 ports, and power it up.
 

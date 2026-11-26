@@ -522,9 +522,16 @@
         </div>
         <div class="story-item">
           <h3><span class="story-num">4</span>Back up stock partitions and flash Android 15</h3>
-          <p>If you haven't backed up this Pod yet, save copies of <code>boot</code>, <code>recovery</code>, <code>persist</code>, <code>modem</code>, and <code>bluetooth</code> first. Use <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/tree/main/tools/solstice-pod-tool"><strong>Pod Patcher</strong></a>, our single-file pure Rust native app for <strong>Windows, macOS, and Linux</strong> (1-click Platform Tools download, Easy/Advanced modes, live USB and Wireless ADB detection, clean install, keep-data upgrade, vetted 33-app picker, and SHA-256 backup/restore):</p>
-          <pre><code>cd tools/solstice-pod-tool &amp;&amp; cargo build --release</code></pre>
-          <p>If you run a prebuilt unsigned binary on Windows and SmartScreen prompts <em>"Windows protected your PC"</em>, click <strong>More info &rarr; Run anyway</strong> (or build from source above). Or run the Windows PowerShell CLI installer directly:</p>
+          <p>If you haven't backed up this Pod yet, save copies of <code>boot</code>, <code>recovery</code>, <code>persist</code>, <code>modem</code>, and <code>bluetooth</code> first.</p>
+          <p><strong>Option A: Use <a href="https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher">Pod Patcher</a> (Recommended, Windows / macOS / Linux)</strong></p>
+          <ol style="margin: 0 0 12px 20px; padding: 0;">
+            <li>Download the standalone binary from <a href="https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases">Pod Patcher Releases</a> (or build from source with <code>cargo build --release</code>). Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt <em>"Windows protected your PC"</em>: click <strong>More info &rarr; Run anyway</strong> (macOS: right-click &rarr; <strong>Open</strong>).</li>
+            <li>Open <strong>Pod Patcher</strong>. The <strong>Live Self-Checks</strong> sidebar verifies <code>adb</code>/<code>fastboot</code>, your OS images, and Windows fastboot drivers. If Platform Tools are missing, click <strong>Download Platform Tools</strong> once to install Google's official copy automatically.</li>
+            <li>Go to <strong>Paths &amp; Settings</strong> and select your <strong>OS Images Folder</strong> (<code>out/images</code>).</li>
+            <li><em>(Optional)</em> Open <strong>App Picker</strong> to pick upstream apps (Vanilla default is just <strong>Projectivy Launcher</strong> and <strong>Aptoide TV</strong>; 31 more vetted open-source/official apps are opt-in) and click <strong>Download Selected to APKs Folder</strong>.</li>
+            <li>With your Pod showing as <code>FASTBOOT</code> in <strong>Connected Pods</strong>, open <strong>Install &amp; Upgrade</strong> and click <strong>Start Clean Install / Resume</strong>. Pod Patcher flashes, formats <code>userdata</code>/<code>cache</code> as <code>ext4</code>, applies safe TV defaults (switch to <strong>Advanced</strong> mode for opt-in Wireless ADB, USB MTP, or granular toggles), installs cached APKs, and runs a pass/fail check without ever touching <code>persist</code>, <code>modem</code>, or <code>bt_firmware</code>.</li>
+          </ol>
+          <p><strong>Option B: Windows PowerShell CLI script</strong></p>
           <pre><code>powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
   -ImagesDir .\out\images `
   -PlatformToolsDir .\platform-tools `
