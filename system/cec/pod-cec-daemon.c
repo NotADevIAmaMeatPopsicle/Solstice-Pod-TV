@@ -209,6 +209,15 @@ static void handle_msg(const struct cec_msg *rx) {
             }
             break;
         }
+        case 0x70: { /* Routing Change - reply Active Source ONLY when TV routes TO our HDMI port */
+            if (rx->frame_size >= 6) {
+                uint16_t new_pa = (uint16_t)((rx->operand[2] << 8) | rx->operand[3]);
+                if (new_pa == read_physical_addr()) {
+                    send_active_source();
+                }
+            }
+            break;
+        }
         case 0x44: { /* User Control Pressed */
             if (rx->frame_size >= 3) {
                 int key = map_cec_key(rx->operand[0]);

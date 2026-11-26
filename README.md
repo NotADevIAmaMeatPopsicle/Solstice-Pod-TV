@@ -94,6 +94,8 @@ Getting a 2016-era `APQ8096` appliance all the way from stock Android 7.1.1 (Lin
 | **3.5 mm Audio Jack** | WCD9335 (`J6 AUDIO`, `SLIMBUS_6_RX`) | Working | Verified left + right stereo output (`RX2`/`RX3` mixer path) |
 | **HDMI Input** | Toshiba `TC358840` (HDMI → CSI-2) | In progress | DTB grafted; needs kernel headroom trim + V4L2 driver ([notes](docs/AUDIO-AND-HDMI-IN.md)) |
 | **HDMI-CEC** | `qcom,hdmi_tx` CEC (`0021`) + `pod-cec-daemon` | Working | Native TV remote navigation over HDMI 1 (`fb1/cec` -> `/dev/uinput`) |
+| **Linux / Docker** | Mainline Linux `6.12.22` LTS (`APQ8096`) | Work in progress | Boots on SP8096 hardware via RAM-boot (SMP, HDMI console, USB-C gadget); full peripheral & Docker bring-up underway |
+| **Windows ARM64** | Experimental `APQ8096` UEFI / drivers | Work in progress | Early research only; not ready for flashing |
 
 ---
 
@@ -124,8 +126,8 @@ Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los2
 4. **Back up stock partitions and flash Android 15 (GUI with Pod Patcher, or CLI script):**
    If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first.
 
-   **Option A: Use [Pod Patcher](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher) (Recommended, Windows / macOS / Linux)**
-   1. Download the latest single-file binary from [Pod Patcher Releases](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases) (or build from source with `cargo build --release`). *(Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt "Windows protected your PC"; click **More info -> Run anyway**. On macOS, right-click and choose **Open**.)*
+   **Option A: Use [Pod Patcher](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher) (Recommended GUI Flasher, Windows / macOS / Linux)**
+   1. Download the latest single-file flasher binary from [Pod Patcher Releases](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases/latest) (or build from source with `cargo build --release`). *(Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt "Windows protected your PC"; click **More info -> Run anyway**. On macOS, right-click and choose **Open**. **Android 15 TV** is active today; **Linux / Docker** and **Windows ARM64** targets are listed as work in progress.)*
    2. Launch **Pod Patcher**. The **Live Self-Checks** sidebar automatically checks `adb`/`fastboot`, your OS images, and Windows fastboot drivers. If Platform Tools are missing, click **Download Platform Tools** once to install Google's official copy automatically.
    3. Open **Paths & Settings** and point **OS Images Folder** at your built `boot`, `recovery`, and `system` images (`out/images`).
    4. *(Optional)* Open **App Picker** to pick any upstream apps you want cached (Vanilla default is just **Projectivy Launcher** and **Aptoide TV**; 31 more vetted open-source/official apps are opt-in) and click **Download Selected to APKs Folder**.

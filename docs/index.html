@@ -480,6 +480,18 @@
               <td><span class="tag ok">Working</span></td>
               <td>Native TV remote navigation over HDMI 1 (<code>fb1/cec</code> &rarr; <code>/dev/uinput</code>)</td>
             </tr>
+            <tr>
+              <td><strong>Linux / Docker</strong></td>
+              <td>Mainline Linux <code>6.12.22</code> LTS (<code>APQ8096</code>)</td>
+              <td><span class="tag partial">Work in progress</span></td>
+              <td>Boots on SP8096 hardware via RAM-boot (SMP, HDMI console, USB-C gadget); full peripheral &amp; Docker bring-up underway</td>
+            </tr>
+            <tr>
+              <td><strong>Windows ARM64</strong></td>
+              <td>Experimental <code>APQ8096</code> UEFI / drivers</td>
+              <td><span class="tag partial">Work in progress</span></td>
+              <td>Early research only; not ready for flashing</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -523,9 +535,9 @@
         <div class="story-item">
           <h3><span class="story-num">4</span>Back up stock partitions and flash Android 15</h3>
           <p>If you haven't backed up this Pod yet, save copies of <code>boot</code>, <code>recovery</code>, <code>persist</code>, <code>modem</code>, and <code>bluetooth</code> first.</p>
-          <p><strong>Option A: Use <a href="https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher">Pod Patcher</a> (Recommended, Windows / macOS / Linux)</strong></p>
+          <p><strong>Option A: Use <a href="https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher">Pod Patcher</a> (Recommended GUI Flasher, Windows / macOS / Linux)</strong></p>
           <ol style="margin: 0 0 12px 20px; padding: 0;">
-            <li>Download the standalone binary from <a href="https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases">Pod Patcher Releases</a> (or build from source with <code>cargo build --release</code>). Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt <em>"Windows protected your PC"</em>: click <strong>More info &rarr; Run anyway</strong> (macOS: right-click &rarr; <strong>Open</strong>).</li>
+            <li>Download the latest standalone binary from <a href="https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases/latest">Pod Patcher Releases</a> (or build from source with <code>cargo build --release</code>). Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt <em>"Windows protected your PC"</em>: click <strong>More info &rarr; Run anyway</strong> (macOS: right-click &rarr; <strong>Open</strong>). <strong>Android 15 TV</strong> is active today; <strong>Linux / Docker</strong> and <strong>Windows ARM64</strong> options are work in progress.</li>
             <li>Open <strong>Pod Patcher</strong>. The <strong>Live Self-Checks</strong> sidebar verifies <code>adb</code>/<code>fastboot</code>, your OS images, and Windows fastboot drivers. If Platform Tools are missing, click <strong>Download Platform Tools</strong> once to install Google's official copy automatically.</li>
             <li>Go to <strong>Paths &amp; Settings</strong> and select your <strong>OS Images Folder</strong> (<code>out/images</code>).</li>
             <li><em>(Optional)</em> Open <strong>App Picker</strong> to pick upstream apps (Vanilla default is just <strong>Projectivy Launcher</strong> and <strong>Aptoide TV</strong>; 31 more vetted open-source/official apps are opt-in) and click <strong>Download Selected to APKs Folder</strong>.</li>
