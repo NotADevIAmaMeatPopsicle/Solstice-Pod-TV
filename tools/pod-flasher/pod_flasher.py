@@ -16,6 +16,7 @@ import tempfile
 import threading
 import time
 import urllib.parse
+import urllib.request
 import webbrowser
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -42,6 +43,219 @@ DISABLE_PHONE_PKGS = [
     "com.mersive.solstice.webapp",
     "com.splashtop.m360.mersive",
 ]
+
+# Ninite-style curated official upstream app catalog (zero APKs bundled in repo)
+APP_CATALOG = [
+    # Launchers
+    {
+        "id": "projectivy",
+        "name": "Projectivy Launcher",
+        "category": "Launchers",
+        "desc": "Clean, ad-free TV home screen with custom wallpapers and auto-set default home.",
+        "package": "com.spocky.projengmenu",
+        "filename": "projectivy.apk",
+        "recommended": True,
+        "source": "github",
+        "repo": "spocky/miproja1",
+        "asset_regex": r"ProjectivyLauncher.*\.apk$",
+    },
+    # Streaming & Media
+    {
+        "id": "smarttube",
+        "name": "SmartTube",
+        "category": "Streaming & Media",
+        "desc": "Ad-free 4K@60 Hz YouTube TV client with SponsorBlock and remote navigation.",
+        "package": "org.smarttube.stable",
+        "filename": "smarttube.apk",
+        "recommended": True,
+        "source": "github",
+        "repo": "yuliskov/SmartTube",
+        "asset_regex": r"SmartTube.*(arm64|universal).*\.apk$|\.apk$",
+    },
+    {
+        "id": "plex",
+        "name": "Plex",
+        "category": "Streaming & Media",
+        "desc": "Official Plex client for local media servers and live TV (arm64-v8a).",
+        "package": "com.plexapp.android",
+        "filename": "plex.apk",
+        "recommended": True,
+        "source": "plex",
+    },
+    {
+        "id": "jellyfin",
+        "name": "Jellyfin for Android TV",
+        "category": "Streaming & Media",
+        "desc": "Open-source media server client with full 4K hardware video decode.",
+        "package": "org.jellyfin.androidtv",
+        "filename": "jellyfin-tv.apk",
+        "recommended": False,
+        "source": "github",
+        "repo": "jellyfin/jellyfin-androidtv",
+        "asset_regex": r"jellyfin-androidtv-.*-release\.apk$",
+    },
+    # App Stores
+    {
+        "id": "aptoide-tv",
+        "name": "Aptoide TV",
+        "category": "App Stores",
+        "desc": "Remote-friendly Android TV app store (Spotify, Netflix, Steam Link, etc.).",
+        "package": "cm.aptoidetv.pt",
+        "filename": "aptoide-tv.apk",
+        "recommended": True,
+        "source": "aptoide",
+        "aptoide_pkg": "cm.aptoidetv.pt",
+    },
+    {
+        "id": "fdroid",
+        "name": "F-Droid",
+        "category": "App Stores",
+        "desc": "Open-source Android app catalog with verified builds.",
+        "package": "org.fdroid.fdroid",
+        "filename": "fdroid.apk",
+        "recommended": True,
+        "source": "url",
+        "url": "https://f-droid.org/F-Droid.apk",
+    },
+    {
+        "id": "obtainium",
+        "name": "Obtainium",
+        "category": "App Stores",
+        "desc": "Tracks and updates apps directly from their official GitHub releases.",
+        "package": "dev.imranr.obtainium",
+        "filename": "obtainium.apk",
+        "recommended": False,
+        "source": "github",
+        "repo": "ImranR98/Obtainium",
+        "asset_regex": r"app-arm64-v8a-release\.apk$",
+    },
+    # Gaming & Emulation
+    {
+        "id": "better-xcloud",
+        "name": "Better xCloud",
+        "category": "Gaming & Emulation",
+        "desc": "Open-source Xbox Remote Play and Xbox Cloud Gaming TV client.",
+        "package": "com.redphx.betterxc",
+        "filename": "better-xcloud.apk",
+        "recommended": True,
+        "source": "github",
+        "repo": "redphx/better-xcloud-android",
+        "asset_regex": r"\.apk$",
+    },
+    {
+        "id": "snes9x-ex-plus",
+        "name": "Snes9x EX+",
+        "category": "Gaming & Emulation",
+        "desc": "Fast, controller-ready Super Nintendo emulator.",
+        "package": "com.explusalpha.Snes9xPlus",
+        "filename": "snes9x-ex-plus.apk",
+        "recommended": True,
+        "source": "github",
+        "repo": "Rakashazi/emu-ex-plus-alpha",
+        "asset_regex": r"Snes9xEXPlus.*\.apk$",
+    },
+    {
+        "id": "moonlight",
+        "name": "Moonlight",
+        "category": "Gaming & Emulation",
+        "desc": "Low-latency PC game streaming client for Sunshine / NVIDIA GameStream.",
+        "package": "com.limelight",
+        "filename": "moonlight.apk",
+        "recommended": False,
+        "source": "github",
+        "repo": "moonlight-stream/moonlight-android",
+        "asset_regex": r"app-nonRoot-release\.apk$",
+    },
+    # Utilities & Casting
+    {
+        "id": "localsend",
+        "name": "LocalSend",
+        "category": "Utilities & Casting",
+        "desc": "AirDrop-style local Wi-Fi file sharing from Mac, Windows, Linux, or phones.",
+        "package": "org.localsend.localsend_app",
+        "filename": "localsend.apk",
+        "recommended": False,
+        "source": "github",
+        "repo": "localsend/localsend",
+        "asset_regex": r"LocalSend-.*-android-arm64v8\.apk$",
+    },
+    {
+        "id": "material-files",
+        "name": "Material Files",
+        "category": "Utilities & Casting",
+        "desc": "Clean file manager with built-in FTP server for moving ROMs and media.",
+        "package": "me.zhanghai.android.files",
+        "filename": "material-files.apk",
+        "recommended": False,
+        "source": "github",
+        "repo": "zhanghai/MaterialFiles",
+        "asset_regex": r"\.apk$",
+    },
+    {
+        "id": "fcast",
+        "name": "FCast Receiver",
+        "category": "Utilities & Casting",
+        "desc": "Open-source wireless casting receiver (works without Google Play Services).",
+        "package": "org.futo.fcast.receiver",
+        "filename": "fcast-receiver.apk",
+        "recommended": False,
+        "source": "github",
+        "repo": "futo-org/fcast",
+        "asset_regex": r"fcast-receiver-android.*\.apk$",
+    },
+]
+
+
+def http_get_json(url: str, timeout: int = 20) -> dict:
+    req = urllib.request.Request(url, headers={"User-Agent": "Solstice-Pod-TV-Flasher/1.0"})
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def resolve_app_url(app: dict) -> str:
+    src = app.get("source")
+    if src == "url":
+        return app["url"]
+    if src == "github":
+        data = http_get_json(f"https://api.github.com/repos/{app['repo']}/releases/latest")
+        assets = data.get("assets", [])
+        rx = re.compile(app["asset_regex"], re.IGNORECASE)
+        for a in assets:
+            if rx.search(a.get("name", "")):
+                return a["browser_download_url"]
+        for a in assets:
+            if a.get("name", "").lower().endswith(".apk"):
+                return a["browser_download_url"]
+        raise RuntimeError(f"No matching APK asset found in GitHub repo {app['repo']}")
+    if src == "aptoide":
+        pkg = app["aptoide_pkg"]
+        data = http_get_json(f"https://ws75.aptoide.com/api/7/app/getMeta?package_name={pkg}")
+        url = data.get("data", {}).get("file", {}).get("path")
+        if not url:
+            raise RuntimeError(f"Could not resolve Aptoide download URL for {pkg}")
+        return url
+    if src == "plex":
+        data = http_get_json("https://plex.tv/api/downloads/6.json")
+        rels = data.get("computer", {}).get("Android", {}).get("releases", [])
+        for r in rels:
+            if "arm64" in r.get("label", "").lower() or "arm64" in r.get("url", "").lower():
+                return r["url"]
+        if rels:
+            return rels[0]["url"]
+        raise RuntimeError("Could not resolve Plex Android APK URL")
+    raise RuntimeError(f"Unsupported app source: {src}")
+
+
+def download_file(url: str, dest: Path, timeout: int = 120):
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    tmp = dest.with_suffix(".apk.part")
+    req = urllib.request.Request(url, headers={"User-Agent": "Solstice-Pod-TV-Flasher/1.0"})
+    with urllib.request.urlopen(req, timeout=timeout) as resp, tmp.open("wb") as out:
+        shutil.copyfileobj(resp, out, length=1024 * 256)
+    if tmp.stat().st_size < 100_000:
+        tmp.unlink(missing_ok=True)
+        raise RuntimeError(f"Downloaded file for {dest.name} looks too small/invalid")
+    os.replace(tmp, dest)
 
 
 def is_windows() -> bool:
@@ -320,6 +534,25 @@ class JobManager:
                 })
         return items
 
+    def list_catalog(self) -> list[dict]:
+        apks_dir = Path(self.config.get("apks_dir", str(REPO_ROOT / "out" / "tv-apks"))).expanduser()
+        out = []
+        for app in APP_CATALOG:
+            fpath = apks_dir / app["filename"]
+            cached = fpath.is_file() and fpath.stat().st_size > 100_000
+            out.append({
+                "id": app["id"],
+                "name": app["name"],
+                "category": app["category"],
+                "desc": app["desc"],
+                "package": app["package"],
+                "filename": app["filename"],
+                "recommended": app["recommended"],
+                "cached": cached,
+                "size_mb": round(fpath.stat().st_size / (1024 * 1024), 1) if cached else 0,
+            })
+        return out
+
     def start_job(self, kind: str, payload: dict) -> tuple[bool, str]:
         with self.lock:
             if self.job["running"]:
@@ -345,6 +578,8 @@ class JobManager:
             "provision": self._run_provision_only,
             "backup": self._run_backup,
             "restore": self._run_restore,
+            "download_apps": self._run_download_apps,
+            "install_selected_apps": self._run_install_selected_apps,
         }.get(kind)
 
         if not target:
@@ -571,6 +806,59 @@ class JobManager:
             raise RuntimeError("Select a booted Android device and ensure adb is configured.")
         self._provision(adb, serial, install_apps=bool(payload.get("install_apps", True)))
 
+    def _run_download_apps(self, payload: dict) -> list[tuple[dict, Path]]:
+        app_ids = payload.get("app_ids") or []
+        force = bool(payload.get("force_download", False))
+        selected = [a for a in APP_CATALOG if a["id"] in app_ids]
+        if not selected:
+            raise RuntimeError("Select at least one app from the catalog.")
+
+        apks_dir = Path(self.config.get("apks_dir", str(REPO_ROOT / "out" / "tv-apks"))).expanduser()
+        apks_dir.mkdir(parents=True, exist_ok=True)
+        self.log(f"Target APKs folder: {apks_dir}")
+
+        ready: list[tuple[dict, Path]] = []
+        for idx, app in enumerate(selected):
+            dest = apks_dir / app["filename"]
+            pct = 5 + int((idx + 1) * 90 / len(selected))
+            if dest.is_file() and dest.stat().st_size > 100_000 and not force:
+                self.set_progress(pct, f"Cached: {app['name']}")
+                self.log(f"[cached] {app['name']} ({dest.name})", "ok")
+                ready.append((app, dest))
+                continue
+            self.set_progress(pct, f"Downloading {app['name']}...")
+            self.log(f"Resolving official upstream release for {app['name']}...")
+            url = resolve_app_url(app)
+            self.log(f"Downloading {url}")
+            download_file(url, dest)
+            mb = dest.stat().st_size / (1024 * 1024)
+            self.log(f"Saved {dest.name} ({mb:.1f} MB)", "ok")
+            ready.append((app, dest))
+        return ready
+
+    def _run_install_selected_apps(self, payload: dict):
+        adb, _, _ = self.get_tools()
+        serial = payload.get("serial", "").strip()
+        if not serial or not adb:
+            raise RuntimeError("Select a booted Android Pod first.")
+
+        ready = self._run_download_apps(payload)
+        installed_proj = False
+        for idx, (app, apk_path) in enumerate(ready):
+            pct = 60 + int((idx + 1) * 35 / max(1, len(ready)))
+            self.set_progress(pct, f"Installing {app['name']} onto {serial}...")
+            rc = self._stream_cmd([adb, "-s", serial, "install", "-r", str(apk_path)], timeout=120)
+            if rc != 0:
+                raise RuntimeError(f"adb install failed for {app['name']}")
+            self.log(f"Installed {app['name']}", "ok")
+            if app["package"] == "com.spocky.projengmenu":
+                installed_proj = True
+
+        if installed_proj:
+            run_cmd([adb, "-s", serial, "shell", "cmd package set-home-activity com.spocky.projengmenu/.ui.home.MainActivity"], timeout=8)
+            self.log("Set Projectivy Launcher as default TV home screen.", "ok")
+        run_cmd([adb, "-s", serial, "shell", "input keyevent KEYCODE_HOME"], timeout=6)
+
     def _run_backup(self, payload: dict):
         adb, _, _ = self.get_tools()
         serial = payload.get("serial", "").strip()
@@ -728,6 +1016,7 @@ class Handler(BaseHTTPRequestHandler):
                 "config": MANAGER.config,
                 "job": job_snap,
                 "backups": MANAGER.list_backups(),
+                "catalog": MANAGER.list_catalog(),
             })
             return
         self.send_error(404)
