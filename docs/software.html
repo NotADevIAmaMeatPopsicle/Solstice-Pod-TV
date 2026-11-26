@@ -393,8 +393,8 @@
           <p><code>init.pod.wifi.rc</code> loads <code>ath10k_pci</code> after <code>sys.boot_completed=1</code> so 5 GHz Wi-Fi and Bluetooth A2DP come up cleanly on every boot, and <code>J6 AUDIO</code> delivers verified left + right stereo audio over <code>SLIMBUS_6_RX</code>.</p>
         </div>
         <div class="story-item">
-          <h3><span class="story-num">4</span>Clean TV defaults baked into the installer</h3>
-          <p><code>installer/flash-new-pod.ps1</code> skips the phone setup wizard, disables the lockscreen and sleep timer, hides the phone status bar (<code>policy_control immersive.status=*</code>), disables 12 leftover phone apps, and sets Projectivy Launcher as the default home screen.</p>
+          <h3><span class="story-num">4</span>Resumable, self-verifying TV installer</h3>
+          <p><code>installer/flash-new-pod.ps1</code> flashes and formats cleanly (even if your folder path has spaces), skips the phone setup wizard, hides the battery icon and phone status bar (<code>policy_control immersive.status=*</code>), locks landscape, disables 12 leftover phone apps, sets Projectivy Launcher as default home, and runs a pass/fail checklist. Pass <code>-Batch</code> to flash multiple Pods back-to-back, or re-run it to resume an interrupted unit over ADB.</p>
         </div>
       </div>
     </section>

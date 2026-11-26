@@ -16,16 +16,16 @@
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 -ImagesDir .\out\images -PlatformToolsDir .\platform-tools -DryRun
    ```
-5. **Flash Android 15:**
+5. **Flash Android 15 (single unit or `-Batch` for multiple units):**
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
-     -PodName pod-02 `
      -ImagesDir .\out\images `
      -PlatformToolsDir .\platform-tools `
      -ApksDir .\out\tv-apks `
      -WifiSsid "YOUR_SSID" `
      -WifiPassword "YOUR_PASSWORD"
    ```
+   Add `-Batch` to leave the script watching for the next Pod so you can flash multiple units back-to-back. The script is resumable: if a run is interrupted after flashing, re-running it detects the booted Pod over ADB and picks up at provisioning, then verifies the kernel, services, Wi-Fi, and launcher before marking the serial done in `flash-state.json`. If your `platform-tools` folder has spaces in its path, it automatically stages a temporary space-free copy so Windows `fastboot format` works cleanly. (On Windows, each new Pod serial may need the Google `Android Bootloader Interface` driver bound once in Device Manager.)
 6. **Put it back together and boot:** Unplug power and USB-C, set the aluminum heatsink block back onto the board, put the **6 board screws** back in, reinstall the bottom cover with the **4 case screws** and **4 rubber feet**, and plug **`HDMI 1` (rightmost rear HDMI)** into your TV.
 
 The installer never touches `persist`, `modem`, or `bt_firmware`, preserving each Pod's unique factory MAC addresses and calibration.

@@ -125,11 +125,11 @@ Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los2
    If you haven't backed up this Pod yet, save copies of `boot`, `recovery`, `persist`, `modem`, and `bluetooth` first. Then run the installer script:
    ```powershell
    powershell -ExecutionPolicy Bypass -File .\installer\flash-new-pod.ps1 `
-     -PodName pod-02 `
      -ImagesDir .\out\images `
-     -PlatformToolsDir .\platform-tools
+     -PlatformToolsDir .\platform-tools `
+     -ApksDir .\out\tv-apks
    ```
-   The script flashes `boot`, `recovery`, and `system`, formats `userdata` and `cache`, reboots into Android 15, skips the phone setup wizard and sleep timer, and prints out a quick check of the kernel, Wi-Fi (`wlan0`), and Bluetooth. It **never touches `persist`, `modem`, or `bt_firmware`**, so your Pod keeps its factory MAC addresses and calibration.
+   The script flashes `boot`, `recovery`, and `system`, formats `userdata` and `cache` as `ext4`, reboots into Android 15, applies the TV defaults (skips setup wizard, hides the battery icon, locks landscape, hides the phone status bar, disables leftover phone apps), installs any APKs in `ApksDir`, and runs a pass/fail verification check before marking the unit done in `flash-state.json`. It is resumable (if interrupted after flashing, re-running it picks up over ADB), supports `-Batch` for flashing multiple Pods back-to-back, and **never touches `persist`, `modem`, or `bt_firmware`**, so each Pod keeps its factory MAC addresses and calibration.
 5. **Put it back together and hook it up to your TV:**
    Unplug power and USB-C, set the aluminum heatsink block back onto the board (making sure the thermal paste lines up cleanly), and put the **6 board screws** back in. Snap the bottom cover back on with the **4 case screws** and press the **4 rubber feet** back in place. Plug **`HDMI 1` (the rightmost rear HDMI port)** into your 4K TV, plug a USB keyboard/mouse or **Flirc USB** receiver into one of the rear USB 3.0 ports, and power it up.
 

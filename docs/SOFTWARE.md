@@ -41,7 +41,7 @@ We switched to **Projectivy Launcher** (ad-free, with a large Android TV theming
 1. **Fast cold self-boot into Android 15 (~26 s):** Everything lives on internal eMMC (`boot`, `recovery`, `system`) with `msm_watchdog_v2` enabled.
 2. **Automatic 4K@60 Hz HDMI hot-plug & TV input-switch reconnect:** `TLMM GPIO 127` wakes up native `HDMI 1` at `3840x2160@60` / `4096x2160@60` (`594 MHz` pixel clock), and our supervised `pod-hdmi-hotplug.sh` service automatically re-enables the external display whenever you switch TV inputs or hot-plug the cable.
 3. **Automatic Wi-Fi, Bluetooth A2DP, and 3.5 mm stereo audio:** `init.pod.wifi.rc` loads `ath10k_pci` after `sys.boot_completed=1`, and `J6 AUDIO` delivers verified left + right stereo audio over `SLIMBUS_6_RX`.
-4. **Clean TV defaults baked into `installer/flash-new-pod.ps1`:** Skips the phone setup wizard, disables lockscreen and sleep timer, hides the phone status bar (`policy_control immersive.status=*`), disables 12 leftover phone apps, and sets Projectivy Launcher as default home.
+4. **Resumable, self-verifying TV installer (`installer/flash-new-pod.ps1`):** Flashes and formats cleanly (even if your folder path has spaces), skips the phone setup wizard, hides the battery icon and phone status bar (`policy_control immersive.status=*`), locks landscape, disables 12 leftover phone apps, sets Projectivy Launcher as default home, and runs a pass/fail verification checklist. Pass `-Batch` to flash multiple Pods back-to-back, or re-run it to resume an interrupted unit over ADB.
 
 ## App compatibility (streaming & game streaming)
 
