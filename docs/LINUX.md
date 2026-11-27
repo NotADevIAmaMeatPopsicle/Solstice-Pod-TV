@@ -25,6 +25,7 @@ Alongside Android 15 TV, the **Mersive Solstice Pod Gen3 (`SP8096` / `APQ8096`)*
 | **Wi-Fi** | QCA6174A hw3.2 (`ath10k_pci`, `wlp1s0`) | **Working** | `WLAN.RM.4.4.1-00309`, OTP calibration, hardware crypto |
 | **Bluetooth 4.2** | QCA ROME (`hci_uart`, `hci0`, `firmware-atheros`) | **Working** | `bluez` + `blueman`, actively discovering nearby BT/BLE devices |
 | **Ethernet & USB** | Atheros Gigabit (`atl1c`, `enP2p1s0`) + Rear USB 3.0 + Front USB-C `g_serial` | **Working** | SuperSpeed USB 3.0 rootfs/HID + plug-and-play `COM` serial console (`ttyGS0`) |
+| **Docker & Stacks** | `docker.io` (`overlay2` + `iptables-legacy`) + `docker-compose` | **Working** | Live-verified with `portainer/portainer-ce:latest` serving HTTP 200 on `:9000`/`:9443`; 1-click Compose stacks in Pod Patcher |
 | **Software Reboot** | `qcom,pshold` (`restart@4ab000`, `msm-restart`) | **Working** | Clean `sudo reboot` and `sudo reboot bootloader` without manual power-cycling |
 
 ---
