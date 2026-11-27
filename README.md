@@ -15,7 +15,7 @@ Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now.
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0_%2F_GPL--2.0-blue?style=flat" alt="License" height="18"></a>
 </p>
 
-**[Inside the box](#inside-the-box)** · **[The bring-up story](#the-bring-up-story)** · **[Software & UI](docs/SOFTWARE.md)** · **[Current status](#current-status)** · **[Teardown & flashing walkthrough](#teardown--flashing-walkthrough)** · **[Build your own](docs/BUILD.md)** · **[Safety rules](docs/SAFETY.md)**
+**[Inside the box](#inside-the-box)** · **[The bring-up story](#the-bring-up-story)** · **[Software & UI](docs/SOFTWARE.md)** · **[Mainline Linux 6.12](docs/LINUX.md)** · **[Current status](#current-status)** · **[Teardown & flashing walkthrough](#teardown--flashing-walkthrough)** · **[Build your own](docs/BUILD.md)** · **[Safety rules](docs/SAFETY.md)**
 
 <p align="center">
   <img src="docs/images/solstice-pod-gen3-stock.png" alt="Mersive Solstice Pod Gen3 (SP8096) front view showing HDMI-IN and USB-C" width="460"><br>
@@ -94,7 +94,7 @@ Getting a 2016-era `APQ8096` appliance all the way from stock Android 7.1.1 (Lin
 | **3.5 mm Audio Jack** | WCD9335 (`J6 AUDIO`, `SLIMBUS_6_RX`) | Working | Verified left + right stereo output (`RX2`/`RX3` mixer path) |
 | **HDMI Input** | Toshiba `TC358840` (HDMI → CSI-2) | In progress | DTB grafted; needs kernel headroom trim + V4L2 driver ([notes](docs/AUDIO-AND-HDMI-IN.md)) |
 | **HDMI-CEC** | `qcom,hdmi_tx` CEC (`0021`) + `pod-cec-daemon` | Working | Native TV remote navigation over HDMI 1 (`fb1/cec` -> `/dev/uinput`) |
-| **Linux / Docker** | Mainline Linux `6.12.22` LTS (`APQ8096`) | Work in progress | Boots on SP8096 hardware via RAM-boot (SMP, HDMI console, USB-C gadget); full peripheral & Docker bring-up underway |
+| **Linux / Docker** | Mainline Linux `6.12.22` LTS (`Debian 12` Desktop & Server) | **Working** | Full XFCE4 desktop + Docker server: Adreno 530 (`FD530`), Dual HDMI (HDMI 1 + HDMI 2 `ADV7533`), audible TV HDMI audio, Venus 4K, Wi-Fi, Bluetooth 4.2, Gigabit Ethernet, Chromium ([guide](docs/LINUX.md)) |
 | **Windows ARM64** | Experimental `APQ8096` UEFI / drivers | Work in progress | Early research only; not ready for flashing |
 
 ---
@@ -132,7 +132,7 @@ Once you have built the three images (`pod44-los22-boot-signed.img`, `pod44-los2
    | :---: | :---: |
    | ![Pod Patcher Install and Upgrade view](docs/images/pod-patcher-install.png) | ![Pod Patcher App Picker view](docs/images/pod-patcher-apps.png) |
 
-   1. Download the latest single-file flasher binary from [Pod Patcher Releases](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases/latest) (or build from source with `cargo build --release`). *(Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt "Windows protected your PC"; click **More info -> Run anyway**. On macOS, right-click and choose **Open**. **Android 15 TV** is active today; **Linux / Docker** and **Windows ARM64** targets are listed as work in progress.)*
+   1. Download the latest single-file flasher binary from [Pod Patcher Releases](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases/latest) (or build from source with `cargo build --release`). *(Because the prebuilt binaries are unsigned, Windows SmartScreen will prompt "Windows protected your PC"; click **More info -> Run anyway**. On macOS, right-click and choose **Open**. **Android 15 TV**, **Linux Desktop (Debian 12 XFCE)**, and **Linux Server (Debian 12 + Docker)** are all active; **Windows ARM64** remains work in progress.)*
    2. Launch **Pod Patcher**. The **Live Self-Checks** sidebar automatically checks `adb`/`fastboot`, your OS images, and Windows fastboot drivers. If Platform Tools are missing, click **Download Platform Tools** once to install Google's official copy automatically.
    3. Open **Paths & Settings** and point **OS Images Folder** at your built `boot`, `recovery`, and `system` images (`out/images`).
    4. *(Optional)* Open **App Picker** to pick any upstream apps you want cached (Vanilla default is just **Projectivy Launcher** and **Aptoide TV**; 31 more vetted open-source/official apps are opt-in) and click **Download Selected to APKs Folder**.
@@ -156,6 +156,7 @@ Read [installer/README.md](installer/README.md) and [docs/SAFETY.md](docs/SAFETY
 ## Documentation, credits & licensing
 
 - **[docs/SOFTWARE.md](docs/SOFTWARE.md)**: What the Android 15 / TV UI software is, what is done so far, and UI work in progress
+- **[docs/LINUX.md](docs/LINUX.md)**: Mainline Linux 6.12 LTS bring-up (Debian 12 XFCE Desktop + Docker Server, Adreno 530 `FD530`, Dual HDMI, TV HDMI audio, Venus 4K)
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Donor strategy, DTB, `ath10k_pci`, and HAL details
 - **[docs/BUILD.md](docs/BUILD.md)**: Reproducible Ubuntu 24.04 / WSL2 build guide
 - **[docs/SAFETY.md](docs/SAFETY.md)**: `0x2000000` ceiling, RAM-boot rule, and recovery notes

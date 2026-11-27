@@ -62,3 +62,7 @@ Because the Pod runs an unlocked custom Android 15 ROM without Google Android TV
 
 - **Custom themes & streaming apps:** Projectivy is up and clean, ready for whatever custom 4K wallpapers, icon packs, and streaming apps you want to add.
 - **HDMI Input (`TC358840`):** Device-tree nodes are drafted; next step is trimming kernel headroom under `0x2000000` and bringing up the V4L2 capture driver (see [docs/AUDIO-AND-HDMI-IN.md](AUDIO-AND-HDMI-IN.md)).
+
+## Alternative OS: Mainline Linux 6.12 LTS (Debian 12)
+
+Prefer a full Linux desktop or headless Docker box instead of Android 15 TV? **Mainline Linux `6.12.22` LTS** (Debian 12 Bookworm ARM64) is now hardware-verified on the SP8096 with Adreno 530 (`FD530`), Dual HDMI (Edge HDMI 1 + Middle HDMI 2 `ADV7533`), audible stereo TV HDMI audio, Venus 4K codec, Wi-Fi, Bluetooth 4.2, Gigabit Ethernet, and Chromium—available via RAM-boot test or eMMC install in **[Pod Patcher](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher)**. See **[docs/LINUX.md](LINUX.md)** for the full bring-up details and live captures.
