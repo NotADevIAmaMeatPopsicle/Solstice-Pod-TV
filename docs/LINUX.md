@@ -2,12 +2,23 @@
 
 Alongside Android 15 TV, the **Mersive Solstice Pod Gen3 (`SP8096` / `APQ8096`)** now boots **Mainline Linux `6.12.22` LTS** with persistent **Debian 12 (Bookworm) ARM64** root filesystems in two flavors—a full **XFCE4 Desktop** and a headless **Docker Server**—both selectable in **[Pod Patcher](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher)** without touching factory partitions (`persist`, `modem`, or `bt_firmware`).
 
-## Live Screen Capture (Hardware Verified on Pod `7c0e2d10`)
+## Live Screen Capture (Hardware Verified on Physical SP8096)
 
 <p align="center">
   <img src="images/linux-desktop-hw.png" alt="Mersive Solstice Pod Gen3 running Debian 12 XFCE4 on Mainline Linux 6.12.22 LTS with Adreno 530 FD530, ADSP HDMI audio, Venus 4K, Bluetooth 4.2, Wi-Fi, and Chromium" width="760">
 </p>
 <p align="center"><em>Debian 12 (Bookworm) ARM64 XFCE4 running live on Mainline Linux 6.12.22 LTS over Middle HDMI 2 (1920x1080) with hardware-accelerated Adreno 530 (Mesa <code>freedreno FD530</code>), ADSP HDMI audio, Venus 4K codec, Bluetooth 4.2, QCA6174A Wi-Fi, and Chromium.</em></p>
+
+## Download Prebuilt Images (`linux-v0.1.0`)
+
+Grab the prebuilt images and `SHA256SUMS.txt` from **[Release `linux-v0.1.0`](https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/releases/tag/linux-v0.1.0)** and flash or RAM-boot them with **[Pod Patcher v0.2.0+](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases/latest)**:
+
+- **`pod-linux612-boot-signed.img`** (`23.6 MiB`) — Shared AOSP-signed Mainline Linux `6.12.22` LTS kernel + DTB + self-syncing `switch_root` initramfs.
+- **`pod-linux612-desktop-rootfs.simg`** (`1.47 GiB` sparse / `2900 MiB` ext4) — Debian 12 XFCE4 Desktop; sized to fit cleanly inside SP8096's `3072 MiB` eMMC `system` partition.
+- **`pod-linux612-desktop-usb.img.gz`** (`598 MiB` gzipped) — Write straight to a USB 3.0 drive or microSD adapter with Raspberry Pi Imager or Balena Etcher, plug into Rear USB 3.0, and RAM-boot via Pod Patcher without touching Android 15 TV on eMMC.
+- **`pod-linux612-server-rootfs.simg`** (`882 MiB` sparse / `2048 MiB` ext4) — Headless Debian 12 ARM64 + SSH + Docker Engine (`iptables-legacy` pre-configured).
+
+Default login on both flavors: **`pod` / `pod`** (passwordless `sudo`). Factory partitions (`persist`, `modem`, `bt_firmware`) are never touched.
 
 ---
 
@@ -25,14 +36,14 @@ Alongside Android 15 TV, the **Mersive Solstice Pod Gen3 (`SP8096` / `APQ8096`)*
 | **Wi-Fi** | QCA6174A hw3.2 (`ath10k_pci`, `wlp1s0`) | **Working** | `WLAN.RM.4.4.1-00309`, OTP calibration, hardware crypto |
 | **Bluetooth 4.2** | QCA ROME (`hci_uart`, `hci0`, `firmware-atheros`) | **Working** | `bluez` + `blueman`, actively discovering nearby BT/BLE devices |
 | **Ethernet & USB** | Atheros Gigabit (`atl1c`, `enP2p1s0`) + Rear USB 3.0 + Front USB-C `g_serial` | **Working** | SuperSpeed USB 3.0 rootfs/HID + plug-and-play `COM` serial console (`ttyGS0`) |
-| **Docker & Stacks** | `docker.io` (`overlay2` + `iptables-legacy`) + `docker-compose` | **Working** | Live-verified with `portainer/portainer-ce:latest` serving HTTP 200 on `:9000`/`:9443`; 1-click Compose stacks in Pod Patcher |
+| **Docker & Stacks** | `docker.io` (`overlay2` + `iptables-legacy`) + `docker-compose` | **Working** | Live-verified with `portainer/portainer-ce:latest` (`:9000`/`:9443`) and `louislam/uptime-kuma:1` (`:3001`); 1-click Compose stacks in Pod Patcher |
 | **Software Reboot** | `qcom,pshold` (`restart@4ab000`, `msm-restart`) | **Working** | Clean `sudo reboot` and `sudo reboot bootloader` without manual power-cycling |
 
 ---
 
 ## The Mainline Bring-Up Fights
 
-Getting stock Android 7.1.1 TrustZone firmware on a 2016 `APQ8096` appliance to play nicely with **Mainline Linux 6.12** came down to five real-world fixes (all kept as minimal, clean patches):
+Getting stock Android 7.1.1 TrustZone firmware on a 2016 `APQ8096` appliance to play nicely with **Mainline Linux 6.12** came down to six real-world fixes (all kept as minimal, clean patches):
 
 1. **Keeping TrustZone happy across all four SMMUs (`0004-iommu-arm-smmu-qcom-skip-init.patch`).**
    Stock mainline `arm-smmu` resets all SMR/S2CR registers and writes `0xffffffff` to `SMR0` during probe, which immediately trips SP8096's TrustZone XPU and hard-resets the board. Porting `qcom,skip-init` and `qcom,no-smr-check` (the exact flags used in stock Linux 4.4 `pod25.dtb`) let `mdp_smmu` (`0xd00000`), `adreno_smmu` (`0xb40000`), `venus_smmu` (`0xd40000`), and `lpass_q6_smmu` (`0x1600000`) all attach cleanly with zero faults.
@@ -43,7 +54,9 @@ Getting stock Android 7.1.1 TrustZone firmware on a 2016 `APQ8096` appliance to 
 4. **Getting audible stereo HDMI 2 audio out of ADSP + `ADV7533` (`0005-asoc-qcom-apq8096-mi2s-bclk.patch`).**
    Stripping DragonBoard 820c's WCD9335 SLIMbus links and `MCLK -> RX_BIAS` route registered `card 0: MersiveSP8096`. Wiring `SECONDARY_MI2S_RX` (`gpio80/81/82`) → `&adv7533`, patching `sound/soc/qcom/apq8096.c` to set `SND_SOC_DAIFMT_BP_FP | SND_SOC_DAIFMT_I2S` + `Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT` (`1.536 MHz`), and adding `/etc/asound.conf` (`dmix` with `period_size 4096` / `buffer_size 16384`) unlocked clean stereo 48 kHz TV audio.
 5. **CPU & GPU voltage ceilings without upstream CPR3.**
-   Confirming against stock `pod25.dts` and live `i2cdetect` showed the external I2C buck regulators (`hl7509` / `ncp6335d`) are unpopulated on SP8096—voltage scaling is handled by `qcom,cpr3-msm8996-hmss-regulator` (`cpr3-ctrl@99e8000`), which isn't in mainline 6.12 yet. Locking Kryo CPUs to `729.6 MHz` (`sp8096-cpufreq-cap.service`) and capping `&gpu_opp_table` to `214 MHz` keeps everything rock-solid at `43–46 °C`.
+   Confirming against stock `pod25.dts` and live `i2cdetect` showed the external I2C buck regulators (`hl7509` / `ncp6335d`) are unpopulated on SP8096—voltage scaling is handled by `qcom,cpr3-msm8996-hmss-regulator` (`cpr3-ctrl@99e8000`), which isn't in mainline 6.12 yet. Locking Kryo CPUs to `729.6 MHz` (`sp8096-cpufreq-cap.service`) and capping `&gpu_opp_table` to `214 MHz` keeps everything rock-solid at `43–48 °C`.
+6. **Docker networking on Debian 12 (`iptables-legacy`).**
+   Our minimal kernel enables legacy `CONFIG_IP_NF_IPTABLES=y` (keeping plenty of headroom under the `0x2000000` bootloader wall), while Debian 12 defaults `iptables` to `iptables-nft`. Switching both `iptables` and `ip6tables` to `-legacy` via `update-alternatives` brought `docker.service` (`overlay2` + bridge NAT) right up—baked into both the Server image and Pod Patcher's Docker provisioner.
 
 ---
 

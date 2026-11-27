@@ -1,10 +1,10 @@
 # Legal & Licensing Notice
 
-This repository contains **only original scripts, device tree sources, kernel patches, init configurations, and documentation** for porting Android 15 (LineageOS 22.2) to the Mersive Solstice Pod Gen3 (`SP8096`).
+This repository contains **only original scripts, device tree sources, kernel patches, init configurations, and documentation** for running Android 15 (LineageOS 22.2) and Mainline Linux 6.12 LTS on the Mersive Solstice Pod Gen3 (`SP8096`).
 
 ## What Is NOT Included
 - **No proprietary Qualcomm, Mersive, LG, or Xiaomi binaries/blobs** (no `NON-HLOS.bin`, `bt_firmware`, ACDB files, proprietary `qcacld-3.0` `wlan.ko`, or QTI HAL `.so` files).
-- **No third-party APKs** (users download launchers/apps such as FLauncher, tvOS-Launcher, SmartTube, and F-Droid directly from their upstream releases).
+- **No third-party APKs** (users download launchers/apps such as Projectivy Launcher, Aptoide TV, SmartTube, and F-Droid directly from their upstream releases).
 - **No device-specific backups, MAC addresses, serial numbers, calibration data (`persist`), or personal credentials.**
 
 ## Component Licenses

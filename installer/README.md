@@ -1,5 +1,7 @@
 # Flashing a Solstice Pod Gen3 (SP8096)
 
+> **Want a GUI instead?** Grab **[Pod Patcher](https://github.com/NotADevIAmaMeatPopsicle/Pod-Patcher/releases/latest)** (Windows, macOS, Linux) for one-click Android 15 TV and Mainline Linux 6.12 flashing, SHA-256 backups, and app/Docker provisioning. Use this PowerShell CLI script if you prefer headless or batch scripting on Windows.
+
 ## Prerequisites
 1. **Android Platform Tools** (`adb.exe`, `fastboot.exe`) and the **Google USB Driver** (`Android Bootloader Interface` bound to `USB\VID_18D1&PID_D00D` in Windows Device Manager).
 2. **Prebuilt images** (built via `kernel/scripts/` and `system/scripts/` from official LineageOS 22.2 `h850` + `gemini` donors):

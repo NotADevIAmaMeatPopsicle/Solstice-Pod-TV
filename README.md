@@ -1,16 +1,18 @@
 # Solstice Pod TV
 
-### Giving a retired Mersive Solstice Pod Gen3 (`SP8096`) a second life as a 4K Android 15 TV box.
+### Giving a retired Mersive Solstice Pod Gen3 (`SP8096`) a second life as a 4K Android 15 TV box — or a Mainline Linux 6.12 desktop & Docker server.
 
 Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now. They are compact matte-black plastic conference-room boxes stuck on **Android 7.1.1** and a 2016 **Linux 3.18** kernel. Inside, though, sits a surprisingly capable **Snapdragon 820 (`APQ8096`)** with 4 GB RAM, 16 GB eMMC, dual HDMI outputs (native 4K@60 Hz + 1080p60), Gigabit Ethernet with PoE+, two USB 3.0 ports, QCA6174A Wi-Fi/Bluetooth, a 3.5 mm jack, and an HDMI-in capture bridge.
 
-**Active hardware bring-up.** Self-booting **Android 15 (LineageOS 22.2)** on a minimal **Linux 4.4.302** kernel (with `msm_watchdog_v2` enabled) is running on physical hardware, with 4K@60 Hz HDMI out (auto-reconnecting on hot-plug / TV input switch), Venus 4K hardware video decode, 5 GHz Wi-Fi (`ath10k_pci`), Bluetooth A2DP, Gigabit Ethernet, 3.5 mm stereo audio (`J6 AUDIO`), native **HDMI-CEC TV remote control**, and Flirc IR remote verified on a living room TV. `TC358840` HDMI input remains in progress. See [current status](#current-status) before flashing.
+**Two hardware-verified OS targets:**
+- **Android 15 TV (LineageOS 22.2 on Linux `4.4.302`):** Cold self-booting with 4K@60 Hz HDMI out (auto-reconnecting on hot-plug / TV input switch), Venus 4K hardware video decode, 5 GHz Wi-Fi (`ath10k_pci`), Bluetooth A2DP, Gigabit Ethernet, 3.5 mm stereo audio (`J6 AUDIO`), native **HDMI-CEC TV remote control**, and Flirc IR remote verified on a living room TV. (`TC358840` HDMI input remains in progress.)
+- **Mainline Linux `6.12.22` LTS (Debian 12 XFCE4 Desktop & Headless Docker Server):** Prebuilt images ready in **[Release `linux-v0.1.0`](https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/releases/tag/linux-v0.1.0)** with Adreno 530 (`Mesa freedreno FD530`), Dual HDMI, audible stereo TV HDMI audio, Venus 4K codec, Wi-Fi, Bluetooth 4.2, Gigabit Ethernet, and Docker Engine (`Portainer CE` & `Uptime Kuma` verified live). See **[docs/LINUX.md](docs/LINUX.md)** and [current status](#current-status) before flashing.
 
 <p>
   <a href="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/actions/workflows/ci.yml"><img src="https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/actions/workflows/ci.yml/badge.svg" alt="CI" height="18"></a>
   <img src="https://img.shields.io/badge/SoC-APQ8096-2274c7?style=flat" alt="SoC" height="18">
-  <img src="https://img.shields.io/badge/OS-Android_15-2ea44f?style=flat" alt="OS" height="18">
-  <img src="https://img.shields.io/badge/Kernel-4.4.302-00979d?style=flat" alt="Kernel" height="18">
+  <img src="https://img.shields.io/badge/Android-15_(4.4.302)-2ea44f?style=flat" alt="Android 15" height="18">
+  <img src="https://img.shields.io/badge/Linux-6.12.22_LTS-00979d?style=flat" alt="Linux 6.12 LTS" height="18">
   <img src="https://img.shields.io/badge/Status-Hardware_Tested-orange?style=flat" alt="Status" height="18">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0_%2F_GPL--2.0-blue?style=flat" alt="License" height="18"></a>
 </p>
@@ -35,7 +37,7 @@ Surplus **Mersive Solstice Pod Gen3 (`SP8096`)** units are everywhere right now.
 | **Video In** | Front `HDMI-IN` via Toshiba `TC358840` HDMI-to-CSI-2 bridge (work in progress) |
 | **Networking** | Gigabit Ethernet with PoE+ (`atl1c`) + Dual-band 802.11ac Wi-Fi & Bluetooth (`QCA6174A / QCNFA324`) |
 | **USB & Audio** | 2× rear USB 3.0, 1× front USB-C (fastboot/ADB), 3.5 mm stereo audio (`WCD9335`) |
-| **OS & Kernel** | Android 15 (LineageOS 22.2) on Linux `4.4.302-podmin+` (upgraded from stock Android 7.1.1 / Linux 3.18) |
+| **OS & Kernel** | Android 15 (LineageOS 22.2, Linux `4.4.302-podmin+`) **or** Mainline Linux `6.12.22` LTS (Debian 12 Desktop / Docker Server) |
 
 ---
 
@@ -94,7 +96,7 @@ Getting a 2016-era `APQ8096` appliance all the way from stock Android 7.1.1 (Lin
 | **3.5 mm Audio Jack** | WCD9335 (`J6 AUDIO`, `SLIMBUS_6_RX`) | Working | Verified left + right stereo output (`RX2`/`RX3` mixer path) |
 | **HDMI Input** | Toshiba `TC358840` (HDMI → CSI-2) | In progress | DTB grafted; needs kernel headroom trim + V4L2 driver ([notes](docs/AUDIO-AND-HDMI-IN.md)) |
 | **HDMI-CEC** | `qcom,hdmi_tx` CEC (`0021`) + `pod-cec-daemon` | Working | Native TV remote navigation over HDMI 1 (`fb1/cec` -> `/dev/uinput`) |
-| **Linux / Docker** | Mainline Linux `6.12.22` LTS (`Debian 12` Desktop & Server) | **Working** | Full XFCE4 desktop + Docker server: Adreno 530 (`FD530`), Dual HDMI (HDMI 1 + HDMI 2 `ADV7533`), audible TV HDMI audio, Venus 4K, Wi-Fi, Bluetooth 4.2, Gigabit Ethernet, Chromium ([guide](docs/LINUX.md)) |
+| **Linux / Docker** | Mainline Linux `6.12.22` LTS (`Debian 12` Desktop & Server) | **Working** | Full XFCE4 desktop + Docker server: Adreno 530 (`FD530`), Dual HDMI, audible TV HDMI audio, Venus 4K, Wi-Fi, Bluetooth 4.2, GbE, Chromium, Portainer & Uptime Kuma ([guide](docs/LINUX.md) · [images](https://github.com/NotADevIAmaMeatPopsicle/Solstice-Pod-TV/releases/tag/linux-v0.1.0)) |
 | **Windows ARM64** | Experimental `APQ8096` UEFI / drivers | Work in progress | Early research only; not ready for flashing |
 
 ---
